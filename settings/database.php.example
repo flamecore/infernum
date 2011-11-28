@@ -1,0 +1,9 @@
+<?php
+$settings['database'] = array(
+    'driver' => 'MySQL',
+    'host' => 'localhost',
+    'user' => 'root',
+    'password' => '',
+    'database' => 'HadesLite',
+    'prefix' => 'hlfw_',
+);

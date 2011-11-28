@@ -1,0 +1,26 @@
+HadesLite Dev Preview
+=====================
+
+ATTENTION! HadesLite is under heavy development and not usable in a production environment.
+Use it at yor own risk!
+
+The wiki will be available soon here:
+  http://forge.iceflame.net/projects/hadeslite/wiki
+
+Support on:
+  http://hades.iceflame.net
+
+
+Installation
+============
+
+1. Upload files to your server
+
+2. Configure the system by modifying the files core.php and database.php in the folder settings/
+
+3. Make sure that the directories temp/ and assets/ are writable
+     chmod -R 0777 temp/ assets/
+   or
+     chown -R www-data temp/ assets/
+
+4. Execute install.sql in your database
