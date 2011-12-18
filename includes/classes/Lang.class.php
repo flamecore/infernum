@@ -51,6 +51,8 @@ class Lang {
      * @static
      */
     public static function init($lang) {
+        global $db;
+    
         // set current language
         self::$_lang = $lang;
         
@@ -63,7 +65,7 @@ class Lang {
             // load all strings from the database
             $sql = 'SELECT s.string, s.translated FROM #PREFIX#lang_strings s, #PREFIX#lang_packs p'
                  . ' WHERE p.id = s.pack AND p.isocode = {0}';
-            $result = Core::$db->query($sql, array($lang));
+            $result = $db->query($sql, array($lang));
             while ($entry = $result->fetchAssoc())
                 self::$_strings[$entry['string']] = $entry['translated'];
             

@@ -36,11 +36,11 @@ class Template {
     private $_template;
 
     /**
-     * The name of the controller
+     * The name of the module
      * @var     string
      * @access  private
      */
-    private $_controller;
+    private $_module;
 
     /**
      * All assigned template variables
@@ -67,14 +67,14 @@ class Template {
 
     /**
      * Generates a new template object
-     * @param   string   $template    The name of the template to load (without '.tpl.php')
-     * @param   mixed    $controller  Load from this module
+     * @param   string   $template  The name of the template to load (without '.tpl.php')
+     * @param   mixed    $module    Load from this module
      * @return  void
      * @access  public
      */
-    public function __construct($template, $controller) {
+    public function __construct($template, $module) {
         $this->_template = $template;
-        $this->_controller = $controller;
+        $this->_module = $module;
     }
 
     /**
@@ -113,7 +113,7 @@ class Template {
         
         // load the template file
         $theme = Settings::get('core', 'theme');
-        $templateDir = HADES_DIR_THEMES.'/'.$theme.'/templates/'.$this->_controller;
+        $templateDir = HADES_DIR_THEMES.'/'.$theme.'/templates/'.$this->_module;
         include $templateDir.'/'.$this->_template.'.tpl.php';
         
         // output/return the template

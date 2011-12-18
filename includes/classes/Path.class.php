@@ -29,32 +29,25 @@
 class Path {
 
     /**
-     * All path parts
-     * @var     array
-     * @access  readonly
-     */
-    private $parts;
-
-    /**
-     * The controller
+     * The module
      * @var     string
      * @access  readonly
      */
-    private $controller;
+    private $module;
 
     /**
-     * The action
+     * The arguments
      * @var     string
      * @access  readonly
      */
-    private $action = array();
+    private $args = '';
 
     /**
-     * All extracted params
+     * Array of all extracted arguments
      * @var     array
      * @access  readonly
      */
-    private $params = array();
+    private $argsList = array();
 
     /**
      * Getter for readonly properties
@@ -74,42 +67,39 @@ class Path {
      */
     public function __construct($path) {
         // split the path into its parts
-        $pathParts = explode('/', $path);
+        $pathParts = explode('/', $path, 2);
         
-        // get the controller
+        // get the module
         if ($pathParts[0] != '') {
-            $controller = strtolower(str_replace('-', '_', $pathParts[0]));
+            $module = strtolower(str_replace('-', '_', $pathParts[0]));
         } else {
-            $controller = Settings::get('core', 'frontpage');
+            $module = Settings::get('core', 'frontpage');
         }
         
-        // get the action
-        if ($pathParts[1] != '') {
-            $action = strtolower(str_replace('-', '_', $pathParts[1]));
+        // get the arguments
+        if (isSet($pathParts[1]) && $pathParts[1] != '') {
+            $args = $pathParts[1];
+            $argsList = explode('/', $args);
         } else {
-            $action = 'index';
+            $args = '';
+            $argsList = array();
         }
-        
-        // get the params
-        $params = array_slice($pathParts, 2);
         
         // now we have all what we need
-        $this->parts = $pathParts;
-        $this->controller = $controller;
-        $this->action = $action;
-        $this->params = $params;
+        $this->module = $module;
+        $this->args = $args;
+        $this->argsList = $argsList;
     }
 
     /**
-     * Generates a URL from given controller, action and arguments
-     * @param   string  $controller  The controller where the link goes to
-     * @param   string  $action      The action where the link goes to
-     * @param   array   $args        The arguments to use, optional
+     * Generates a URL from given module and arguments
+     * @param   string  $module  The module where the link goes to
+     * @param   array   $args    The arguments to use, optional
      * @return  string
      * @static
      */
-    public static function build($controller, $action, $args = null) {
-        $url = '?p='.$controller.'/'.$action;
+    public static function build($module, $args = null) {
+        $url = '?p='.$module;
         if (is_array($args))
             $url .= '/'.implode('/', $args);
         return $url;

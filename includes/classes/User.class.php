@@ -52,6 +52,8 @@ class User {
      * @access  public
      */
     public function __construct($user) {
+        global $db;
+    
         // use which column to identify the user?
         if (is_int($user)) {
             $byColumn = 'id';
@@ -61,7 +63,7 @@ class User {
 
         // fetch user data for further usage
         $sql = 'SELECT * FROM #PREFIX#users WHERE '.$byColumn.' = {0} LIMIT 1';
-        $result = Core::$db->query($sql, array($user));
+        $result = $db->query($sql, array($user));
         if ($result->numRows() == 1)
             $this->info = $result->fetchRow();
     }
@@ -75,6 +77,8 @@ class User {
      * @access  public
      */
     public function updateData($keyOrData, $value = null, $userID = null) {
+        global $db;
+    
         if (is_array($keyOrData)) {
             // update multiple columns
             $dataset = array();
@@ -84,14 +88,14 @@ class User {
             if (isSet($userID))
                 $sql .= ' WHERE id = '.$userID;
             $sql .= ' LIMIT 1';
-            return Core::$db->query($sql);
+            return $db->query($sql);
         } else {
             // update a single column
             $sql = 'UPDATE #PREFIX#user SET '.$keyOrData.' = '.$value;
             if (isSet($userID))
                 $sql .= ' WHERE id = '.$userID;
             $sql .= ' LIMIT 1';
-            return Core::$db->query($sql);
+            return $db->query($sql);
         }
     }
 

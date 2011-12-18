@@ -1,6 +1,6 @@
 <?php
 $settings['core'] = array(
-    'frontpage' => 'public_home',
+    'frontpage' => 'home',
     'theme' => 'default',
     'site_name' => 'HadesLite',
     'lang' => 'en',

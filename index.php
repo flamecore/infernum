@@ -29,7 +29,7 @@
 
 define('HLFW_DIR_ROOT', __DIR__);
 define('HLFW_DIR_INCLUDES', HLFW_DIR_ROOT.'/includes');
-define('HLFW_DIR_CONTROLLERS', HLFW_DIR_ROOT.'/controllers');
+define('HLFW_DIR_MODULES', HLFW_DIR_ROOT.'/modules');
 define('HLFW_DIR_SETTINGS', HLFW_DIR_ROOT.'/settings');
 define('HLFW_DIR_TEMP', HLFW_DIR_ROOT.'/temp');
 define('HLFW_DIR_CACHE', HLFW_DIR_TEMP.'/cache');
@@ -45,28 +45,9 @@ Template::$pageTitle = Settings::get('core', 'site_name');
 // get module from params
 $path = new Path($_GET['p']);
 
-// load controller if exists
-$controller = $path->controller;
-$controllerFile = HADES_DIR_CONTROLLERS.'/'.$controller.'.php';
-if (!file_exists($controllerFile))
-    trigger_error('Controller \''.$controller.'\' does not exist', E_USER_ERROR);
-include_once $controllerFile;
-
-// create controller instance
-$controllerClass = 'controller_'.$controller;
-$instance = new $controllerClass;
-
-// determine action method
-$action = $path->action;
-if (!method_exists($instance, $action))
-    trigger_error('Action \''.$action.'\' does not exist in controller \''.$controller.'\'', E_USER_ERROR);
-
-// determine params
-$params = $path->params;
-
-// call the action method
-if (is_array($params) && !empty($params)) {
-    call_user_func_array(array($instance, $action), $params);
-} else {
-    call_user_func(array($instance, $action));
-}
+// load module if exists
+$module = $path->module;
+$moduleFile = HADES_DIR_MODULES.'/'.$module.'.php';
+if (!file_exists($moduleFile))
+    trigger_error('Module \''.$module.'\' does not exist', E_USER_ERROR);
+include $moduleFile;

@@ -65,13 +65,15 @@ class Session {
      * @access  public
      */
     public function __construct() {
+        global $db;
+    
         if (isSet($_COOKIE['hlfw_session'])) {
             // get the session ID
             $sessionID = $_COOKIE['hlfw_session'];
             
             // find unexpired session matching session ID and fetch assigned user's ID
             $sql = 'SELECT user FROM #PREFIX#sessions WHERE id = {0} AND expire > {1} LIMIT 1';
-            $result = Core::$db->query($sql, array($sessionID, date('Y-m-d H:i:s')));
+            $result = $db->query($sql, array($sessionID, date('Y-m-d H:i:s')));
             if ($result->numRows() == 1) {
                 $session = $result->fetchRow();
                 
@@ -91,7 +93,7 @@ class Session {
             
             // register the session in the database
             $sql = 'INSERT INTO #PREFIX#sessions (id, expire) VALUES({0}, {1})';
-            Core::$db->query($sql, array($sessionID, date('Y-m-d H:i:s', time()+$this->lifeTime)));
+            $db->query($sql, array($sessionID, date('Y-m-d H:i:s', time()+$this->lifeTime)));
 
             // the session is now started, set session info
             $this->sessionID = $sessionID;
@@ -127,6 +129,8 @@ class Session {
      * @access  public
      */
     public function destroy($sessionID = null) {
+        global $db;
+    
         if (is_null($sessionID)) {
             // no $sessionID given, assign ID of this session
             $sessionID = $this->sessionID;
@@ -138,7 +142,7 @@ class Session {
         
         // delete session from database
         $sql = 'DELETE FROM #PREFIX#sessions WHERE id = {0}';
-        return Core::$db->query($sql, array($sessionID));
+        return $db->query($sql, array($sessionID));
     }
     
     /**
@@ -148,6 +152,8 @@ class Session {
      * @access  public
      */
     public function refresh($sessionID = null) {
+        global $db;
+    
         if (is_null($sessionID)) {
             // no $sessionID given, assign ID of this session
             $sessionID = $this->sessionID;
@@ -155,7 +161,7 @@ class Session {
         
         // update session in database
         $sql = 'UPDATE #PREFIX#sessions SET expire = {0} WHERE id = {1} LIMIT 1';
-        return Core::$db->query($sql, array(date('Y-m-d H:i:s', time()+$this->lifeTime), $sessionID));
+        return $db->query($sql, array(date('Y-m-d H:i:s', time()+$this->lifeTime), $sessionID));
     }
     
     /**
@@ -164,8 +170,10 @@ class Session {
      * @access  public
      */
     public function cleanup() {
+        global $db;
+    
         $sql = 'DELETE FROM #PREFIX#sessions WHERE expire <= {0}';
-        return Core::$db->query($sql, array(date('Y-m-d H:i:s')));
+        return $db->query($sql, array(date('Y-m-d H:i:s')));
     }
     
     /**
@@ -176,6 +184,8 @@ class Session {
      * @access  public
      */
     public function assignUser($userID, $sessionID = null) {
+        global $db;
+    
         if (is_null($sessionID)) {
             // no $sessionID given, assign ID of this session
             $sessionID = $this->sessionID;
@@ -186,7 +196,7 @@ class Session {
         
         // update session in database
         $sql = 'UPDATE #PREFIX#sessions SET user = {0} WHERE id = {1} LIMIT 1';
-        return Core::$db->query($sql, array($userID, $sessionID));
+        return $db->query($sql, array($userID, $sessionID));
     }
     
     /**
