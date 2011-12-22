@@ -24,7 +24,7 @@
 /**
  * Simple user session manager
  *
- * @author Christian Neff <christian.neff@gmail.com>
+ * @author  Christian Neff <christian.neff@gmail.com>
  */
 class Session {
     
@@ -61,11 +61,14 @@ class Session {
     
     /**
      * Constructor
+     * @param   int     $lifeTime   The lifetime of a session in seconds. Defaults to 3600.
      * @return  void
      * @access  public
      */
-    public function __construct() {
+    public function __construct($lifeTime = 3600) {
         global $db;
+        
+        $this->lifeTime = $lifeTime;
     
         if (isSet($_COOKIE['hlfw_session'])) {
             // get the session ID
@@ -89,7 +92,7 @@ class Session {
             $sessionID = $this->_generateID();
 
             // set the session cookie
-            setcookie('hlfw_session', $sessionID, 0);
+            Http::setCookie('hlfw_session', $sessionID, time()+$this->lifeTime);
             
             // register the session in the database
             $sql = 'INSERT INTO #PREFIX#sessions (id, expire) VALUES({0}, {1})';
@@ -138,6 +141,9 @@ class Session {
             // unset session info
             unset($this->sessionID);
             unset($this->userData);
+            
+            // delete cookie
+            Http::deleteCookie('hlfw_session');
         }
         
         // delete session from database
@@ -198,14 +204,14 @@ class Session {
         $sql = 'UPDATE #PREFIX#sessions SET user = {0} WHERE id = {1} LIMIT 1';
         return $db->query($sql, array($userID, $sessionID));
     }
-    
+
     /**
      * Generates a unique session ID
      * @return  string
      * @access  private
      */
     private function _generateID() {
-        return uniqID('S', true);
+        return uniqID(time(), true);
     }
     
 }
