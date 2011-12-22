@@ -63,7 +63,7 @@ class Database_MySQL_Driver extends Database_Base_Driver {
         if ($result) {
             $this->_queryCount++;
             
-            if ($result typeof MySQLi_Result) {
+            if ($result instanceof MySQLi_Result) {
                 return new Database_MySQL_Result($result);
             } else {
                 return true;
