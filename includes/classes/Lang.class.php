@@ -29,12 +29,12 @@
 class Lang {
 
     /**
-     * The currently selected language
+     * The currently selected language pack
      * @var     string
      * @access  private
      * @static
      */
-    private static $_lang;
+    private static $_langPack;
 
     /**
      * All registered strings with their translation
@@ -47,38 +47,92 @@ class Lang {
     /**
      * Initializes the language system and loads all strings (from database or from cache if available)
      * @param   string  $lang  The name of the language pack where the strings come from
+     * @return  void
      * @access  public
      * @static
      */
-    public static function init($lang) {
+    public static function init() {
         global $db;
-    
-        // set current language
-        self::$_lang = $lang;
         
-        // use the cache?
-        $cache = new Cache('lang-'.self::$_lang);
+        if (isset($_COOKIE['hlfw_language'])) {
+            // try to set language pack by language cookie value
+            self::setLangPack($_COOKIE['hlfw_language']);
+        } else {
+            // no cookie set: use default language
+            self::setLangPack();
+        }
+
+        $cache = new Cache('langpack_'.self::$_langPack);
         if ($cache->active) {
             // load all strings from the cache file
             self::$_strings = $cache->read();
         } else {
-            // load all strings from the database
-            $sql = 'SELECT s.string, s.translated FROM #PREFIX#lang_strings s, #PREFIX#lang_packs p'
-                 . ' WHERE p.id = s.pack AND p.isocode = {0}';
-            $result = $db->query($sql, array($lang));
+            // load all strings of the selected language pack from the database
+            $sql = 'SELECT string, translated FROM #PREFIX#lang_strings WHERE langpack = {0}';
+            $result = $db->query($sql, array(self::$_langPack));
             while ($entry = $result->fetchAssoc())
                 self::$_strings[$entry['string']] = $entry['translated'];
-            
+
             // write to cache if enabled
             $cache->store(self::$_strings);
         }
+    }
+    
+    /**
+     * Gets the currently selected language pack
+     * @return  string
+     * @access  public
+     * @static
+     */
+    public static function getLangPack() {
+        return self::$_langPack;
+    }
+
+    /**
+     * Sets the currently selected language pack. If the given language pack exists TRUE is returned, otherwise or if no
+     *   pack is given the default language defined in the configuration will be used and FALSE is returned.
+     * @param   string  $lang  The new language pack to use. If this parameter is omitted, the default language defined
+     *                           in the configuration will be used.
+     * @return  bool
+     * @access  public
+     * @static
+     */
+    public static function setLangPack($lang = null) {
+        global $db;
+
+        if (isset($lang)) {
+            // does given language pack exist?
+            $sql = 'SELECT id FROM #PREFIX#lang_packs WHERE id = {0} LIMIT 1';
+            $result = $db->query($sql, array($lang));
+            if ($result->numRows() == 1) {
+                // update current language
+                self::$_langPack = $lang;
+                return true;
+            }
+        }
+        
+        // fall back to default language
+        self::$_langPack = Settings::get('core', 'lang');
+        return false;
+    }
+    
+    /**
+     * Sets the user language cookie that is used to define the user's preferred language. The cookie is automatically
+     *   detected and the language pack to use is set accordingly. 
+     * @param   string  $lang  The language to set
+     * @return  bool
+     * @access  public
+     * @static
+     */
+    public static function setUserLang($lang) {
+        return Http::setCookie('hlfw_language', $lang, '+365d');
     }
 
     /**
      * Gets the translation of a string
      * @param   string  $string  The string to translate
-     * @param   array   $vars    Variables ('%var%') to replace as array. The key is the name of the variable
-     *                             (without the percent signs).
+     * @param   array   $vars    Variables ('%var%') to replace as array. The key is the name of the variable (without
+     *                             the percent signs).
      * @return  string
      * @access  public
      * @static
@@ -90,13 +144,13 @@ class Lang {
         } else {
             $translated = $string;
         }
-        
+
         // replace variables if needed
         if (is_array($vars)) {
             foreach ($vars as $key => $val)
                 $translated = str_replace('%'.$key.'%', $val, $translated);
         }
-        
+
         // return translation
         return $translated;
     }
