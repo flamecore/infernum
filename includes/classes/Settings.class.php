@@ -48,32 +48,12 @@ class Settings {
             // load settings from cache
             self::$_settings = $cache->read();
         } else {
-            // load all config files
-            $settings = array();
+            // load settings from config files in settings dir
             self::$_settings = self::_loadFromDir(HLFW_DIR_SETTINGS);
             
             // write to cache if enabled
             $cache->store(self::$_settings);
         }
-    }
-
-    /**
-     * Reads all settings from the given directory, works recursively through all subdirectories
-     * @param   string  $dir  The absolute path to the directory to scan
-     * @return  array
-     * @access  private
-     * @static
-     * @author  Sebastian Wagner <szebi@gmx.at>
-     */
-    private static function _loadFromDir($dir) {
-        $settings = array();
-        if (!is_string($dir) || !is_dir($dir))
-            return;
-        foreach (glob($dir.'/*.php', GLOB_NOSORT) as $file)  // We need no sorting
-            require_once($file);
-        foreach (glob($dir.'/*', GLOB_ONLYDIR) as $subdir)
-            array_push($settings, self::_loadFromDir($subdir));
-        return $settings;
     }
 
     /**
@@ -106,12 +86,38 @@ class Settings {
         foreach ($settings as $settingKey => $settingVal)
             $list[] = "    '{$settingKey}' => {$settingVal}";
         
-        // generate content and write to file
+        // generate content
         $file = HADES_DIR_SETTINGS.'/'.$section.'.php';
         $content  = "\$settings['{$section}'] = array(\n";
         $content .= implode(",\n", $list);
         $content .= "\n);";
+        
         return file_put_contents($file, $content);
+    }
+
+    /**
+     * Reads all settings from the given directory, works recursively through all subdirectories
+     * @param   string  $dir  The absolute path to the directory to scan
+     * @return  array
+     * @access  private
+     * @static
+     * @author  Sebastian Wagner <szebi@gmx.at>
+     */
+    private static function _loadFromDir($dir) {
+        $settings = array();
+        
+        if (!is_string($dir) || !is_dir($dir))
+            return;
+        
+        // include all configuration files, we need no sorting
+        foreach (glob($dir.'/*.php', GLOB_NOSORT) as $file)
+            require_once($file);
+        
+        // load configuration files from all subdirectories
+        foreach (glob($dir.'/*', GLOB_ONLYDIR) as $subdir)
+            array_push($settings, self::_loadFromDir($subdir));
+        
+        return $settings;
     }
 
 }
