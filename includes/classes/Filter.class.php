@@ -29,19 +29,8 @@
 class Filter {
 
     /**
-     * Checks if a variable is a string
-     * @param   mixed  $var  The variable to check
-     * @return  bool
-     * @access  public
-     * @static
-     */
-    public static function isString($var) {
-        return is_string($var);
-    }
-
-    /**
-     * Checks if a variable is a boolean value
-     * @param   mixed   $var     The variable to check
+     * Validates the value as a boolean value
+     * @param   mixed   $var     The variable to validate
      * @param   bool    $strict  If this is TRUE, FALSE is returned only for "0", "false", "off", "no", and "", and NULL
      *                             is returned for all non-boolean values
      * @return  bool
@@ -50,48 +39,66 @@ class Filter {
      */
     public static function isBool($var, $strict = false) {
         if ($strict) {
-            $optArg = array('flags' => FILTER_NULL_ON_FAILURE);
+            $optionsArg = FILTER_NULL_ON_FAILURE;
         } else {
-            $optArg = array();
+            $optionsArg = 0;
         }
-        return filter_var($var, FITLER_VALIDATE_BOOLEAN, $optArg);
+        
+        return filter_var($var, FITLER_VALIDATE_BOOLEAN, $optionsArg);
     }
 
     /**
-     * Checks if a variable is an integer
-     * @param   mixed  $var      The variable to check
-     * @param   array  $options  One or more options as an array,
-     *                             see {@link http://www.php.net/manual/en/filter.filters.validate.php}
+     * Validates the value as integer, optionally from the specified range
+     * @param   mixed  $var       The variable to validate
+     * @param   int    $minRange  The minimum range. Optional.
+     * @param   int    $maxRange  The maximum range. Optional.
+     * @param   int    $flags     One or more of the FILTER_FLAG_* flags,
+     *                              see {@link http://www.php.net/manual/en/filter.filters.validate.php}
+     * @return  bool
+     * @access  public
+     * @static
+     */
+    public static function isInt($var, $minRange = null, $maxRange = null, $flags = 0) {
+        $options = array();
+        if (isset($minRange))
+            $options['min_range'] = $minRange;
+        if (isset($maxRange))
+            $options['max_range'] = $maxRange;
+        
+        $optionsArg = array(
+            'options' => $options,
+            'flags' => $flags
+        );
+        
+        return filter_var($var, FILTER_VALIDATE_INT, $optionsArg);
+    }
+
+    /**
+     * Validates the value as float
+     * @param   mixed  $var      The variable to validate
+     * @param   array  $decimal  The decimal point
      * @param   int    $flags    One or more of the FILTER_FLAG_* flags,
      *                             see {@link http://www.php.net/manual/en/filter.filters.validate.php}
      * @return  bool
      * @access  public
      * @static
      */
-    public static function isInt($var, $options = array(), $flags = 0) {
-        $optArg = array('options' => $options, 'flags' => $flags);
-        return filter_var($var, FILTER_VALIDATE_INT, $optArg);
+    public static function isFloat($var, $decimal = null, $flags = 0) {
+        $options = array();
+        if (isset($decimal))
+            $options['decimal'] = $decimal;
+        
+        $optionsArg = array(
+            'options' => $options,
+            'flags' => $flags
+        );
+        
+        return filter_var($var, FILTER_VALIDATE_FLOAT, $optionsArg);
     }
 
     /**
-     * Checks if a variable is a float
-     * @param   mixed  $var      The variable to check
-     * @param   array  $options  One or more options as an array,
-     *                             see {@link http://www.php.net/manual/en/filter.filters.validate.php}
-     * @param   int    $flags    One or more of the FILTER_FLAG_* flags,
-     *                             see {@link http://www.php.net/manual/en/filter.filters.validate.php}
-     * @return  bool
-     * @access  public
-     * @static
-     */
-    public static function isFloat($var, $options = array(), $flags = 0) {
-        $optArg = array('options' => $options, 'flags' => $flags);
-        return filter_var($var, FILTER_VALIDATE_FLOAT, $optArg);
-    }
-
-    /**
-     * Checks if a variable is a string in the form of an email adress
-     * @param   mixed  $var  The variable to check
+     * Validates the value as an email adress
+     * @param   mixed  $var  The variable to validate
      * @return  bool
      * @access  public
      * @static
@@ -101,8 +108,8 @@ class Filter {
     }
 
     /**
-     * Checks if a variable is a string in the form of an URL
-     * @param   mixed  $var    The variable to check
+     * Validates the value as URL, optionally with required components
+     * @param   mixed  $var    The variable to validate
      * @param   int    $flags  One or more of the FILTER_FLAG_* flags,
      *                           see {@link http://www.php.net/manual/en/filter.filters.validate.php}
      * @return  bool
@@ -110,13 +117,12 @@ class Filter {
      * @static
      */
     public static function isURL($var, $flags = 0) {
-        $optArg = array('flags' => $flags);
-        return filter_var($var, FILTER_VALIDATE_URL, $optArg);
+        return filter_var($var, FILTER_VALIDATE_URL, $flags);
     }
 
     /**
-     * Checks if a variable is a string in the form of an IP
-     * @param   mixed  $var    The variable to check
+     * Validates the value as IP address, optionally only IPv4 or IPv6 or not from private or reserved ranges
+     * @param   mixed  $var    The variable to validate
      * @param   int    $flags  One or more of the FILTER_FLAG_* flags,
      *                           see {@link http://www.php.net/manual/en/filter.filters.validate.php}
      * @return  bool
@@ -124,8 +130,7 @@ class Filter {
      * @static
      */
     public static function isIP($var, $flags = 0) {
-        $optArg = array('flags' => $flags);
-        return filter_var($var, FILTER_VALIDATE_IP, $optArg);
+        return filter_var($var, FILTER_VALIDATE_IP, $flags);
     }
 
     /**
@@ -137,8 +142,9 @@ class Filter {
      * @static
      */
     public static function matchesRegex($var, $pattern = '') {
-        $optArg = array('options' => array('regexp' => $pattern));
-        return filter_var($var, FILTER_VALIDATE_REGEXP, $optArg);
+        $optionsArg = array('options' => array('regexp' => $pattern));
+        
+        return filter_var($var, FILTER_VALIDATE_REGEXP, $optionsArg);
     }
 
     /**
@@ -148,7 +154,7 @@ class Filter {
      * @access  public
      * @static
      */
-    public static function int($var) {
+    public static function sanitizeInt($var) {
         return filter_var($var, FILTER_SANITIZE_NUMBER_INT);
     }
 
@@ -161,9 +167,8 @@ class Filter {
      * @access  public
      * @static
      */
-    public static function float($var, $flags = 0) {
-        $optArg = array('flags' => $flags);
-        return filter_var($var, FILTER_SANITIZE_NUMBER_FLOAT, $optArg);
+    public static function sanitizeFloat($var, $flags = 0) {
+        return filter_var($var, FILTER_SANITIZE_NUMBER_FLOAT, $flags);
     }
 
     /**
@@ -175,9 +180,8 @@ class Filter {
      * @access  public
      * @static
      */
-    public static function string($var, $flags = 0) {
-        $optArg = array('flags' => $flags);
-        return filter_var($var, FILTER_SANITIZE_STRING, $optArg);
+    public static function sanitizeString($var, $flags = 0) {
+        return filter_var($var, FILTER_SANITIZE_STRING, $flags);
     }
 
     /**
@@ -213,13 +217,17 @@ class Filter {
      */
     public static function formatNumber($number, $decimals = 0, $groupThousands = false) {
         $locale = localeconv();
-        return number_format($number, $decimals, $locale['decimal_point'], $groupThousands ? $locale['thousands_sep'] : '');
+        
+        $decimalPoint = $locale['decimal_point'];
+        $thousandsSep = $groupThousands ? $locale['thousands_sep'] : '';
+        
+        return number_format($number, $decimals, $decimalPoint, $thousandsSep);
     }
 
     /**
      * Formats a number as a currency string
      * @param   float   $number  The number to be formatted
-     * @param   string  $format  The money_format() format to use
+     * @param   string  $format  The money_format() format to use. Defaults to '%i'.
      * @return  string
      * @access  public
      * @static
@@ -231,7 +239,7 @@ class Filter {
     /**
      * Formats a time/date (UNIX timestamp, MySQL timestamp, string) according to locale settings
      * @param   mixed   $input   The time/date to be formatted
-     * @param   string  $format  The strftime() format to use
+     * @param   string  $format  The strftime() format to use. Defaults to '%x'.
      * @return  string
      * @access  public
      * @static
@@ -252,11 +260,12 @@ class Filter {
         } else {
             // strtotime should handle it
             $strtotime = strtotime($input);
-            if ($strtotime == -1 || $strtotime === false) {
+            if ($strtotime != -1 && $strtotime !== false) {
+                $time = $strtotime;
+            } else {
                 // strtotime() was not able to parse $input, use current time:
                 $time = time();
             }
-            $time = $strtotime;
         }
         return strftime($format, $time);
     }
