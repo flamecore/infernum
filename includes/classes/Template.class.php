@@ -52,10 +52,10 @@ class Template {
     /**
      * The title of the page
      * @var     string
-     * @access  public
+     * @access  private
      * @static
      */
-    public static $pageTitle;
+    private static $_title;
 
     /**
      * The list of all head tags
@@ -85,12 +85,12 @@ class Template {
      * @return  void
      * @access  public
      */
-    public function set($name, $value = false) {
-        if (!is_array($name) && $value) {
-            // assign var to array
+    public function set($name, $value = null) {
+        if (!is_array($name) && isset($value)) {
+            // assign a single variable
             $this->_vars[$name] = $value;
         } else {
-            // assign all array vars
+            // assign multiple variables
             foreach ($name as $name => $value) {
                 $this->_vars[$name] = $value;
             }
@@ -98,7 +98,7 @@ class Template {
     }
 
     /**
-     * Parses the template and returns it
+     * Parses the template and outputs/returns it
      * @param   bool    $output  Output generated template? Defaults to TRUE.
      * @return  string
      * @access  public
@@ -126,79 +126,107 @@ class Template {
     }
 
     /**
-     * Imports the given template of the selected theme
-     * @param   $template  The template to import
+     * Sets the given text as title or appends it to the current title
+     * @param   string  $title   The text to set as title or append to the title
+     * @param   bool    $append  Should the given text be appended to the currently set title? Defaults to TRUE.
      * @return  void
      * @access  public
      * @static
      */
-    public static function import($template) {
-        $theme = Settings::get('core', 'theme');
-        $templateDir = HADES_DIR_THEMES.'/'.$theme.'/templates';
-        include $templateDir.'/'.$template.'.tpl.php';
+    public static function setTitle($title, $append = true) {
+        if ($append && self::$_title != '') {
+            self::$_title = $title.' &bull; '.self::$_title;
+        } else {
+            self::$_title = $title;
+        }
     }
 
     /**
-     * Appends the given text to the page title
-     * @param   string  $title  The text to append
+     * Adds a meta tag to the head tags
+     * @param   string  $name     The name of the meta tag
+     * @param   string  $content  The value of the meta tag
+     * @param   bool    $once     Determines if the element should only be added once. Defaults to TRUE.
      * @return  void
      * @access  public
      * @static
      */
-    public static function setPageTitle($title) {
-        self::$pageTitle = $title.' | '.self::$pageTitle;
+    public static function addMetaTag($name, $content, $once = true) {
+        $entry = '<meta name="'.$name.'" content="'.$content.'" />';
+        
+        if ($once && in_array($entry, self::$_headTags[0]))
+            return;
+        
+        self::$_headTags[0][] = $entry;
     }
 
     /**
-     * Adds a CSS file to the list
-     * @param   string  $module  Load from this module...
-     * @param   string  $file    ... this file
-     * @param   string  $media   Only for this media types. Defaults to 'all'.
-     * @param   bool    $once    Determines if the element should only be added once. Defaults to TRUE.
-     * @return  bool
+     * Adds a link tag to the head tags
+     * @param   string  $rel   The relation attribute
+     * @param   string  $url   The URL to the file
+     * @param   string  $type  The type attribute
+     * @param   bool    $once  Determines if the element should only be added once. Defaults to TRUE.
+     * @return  void
      * @access  public
      * @static
      */
-    public static function addCSS($module, $file, $media = 'all', $once = true) {
-        $entry = array($module, $file, $media);
-        if ($once && in_array($entry, self::$_headTags['css'])) {
-            return false;
-        }
-        self::$_headTags['css'][] = $entry;
-        return true;
+    public static function addLinkTag($rel, $url, $type, $once = true) {
+        $entry = '<link rel="'.$rel.'" href="'.$url.'" type="'.$type.'" />';
+        
+        if ($once && in_array($entry, self::$_headTags[1]))
+            return;
+        
+        self::$_headTags[1][] = $entry;
     }
 
     /**
-     * Adds a JavaScript file to the list
-     * @param   string  $module  Load from this module...
-     * @param   string  $file    ... this file
-     * @param   bool    $once    Determines if the element should only be added once. Defaults to TRUE.
-     * @return  bool
+     * Adds a stylesheet link to the head tags
+     * @param   string  $url    The URL to the file
+     * @param   string  $media  Only for this media types. Defaults to 'all'.
+     * @param   bool    $once   Determines if the element should only be added once. Defaults to TRUE.
+     * @return  void
      * @access  public
      * @static
      */
-    public static function addJS($module, $file, $once = true) {
-        $entry = array($module, $file);
-        if ($once && in_array($entry, self::$_headTags['js'])) {
-            return false;
-        }
-        self::$_headTags['js'][] = $entry;
-        return true;
+    public static function addStylesheet($url, $media = 'all', $once = true) {
+        $entry = '<link rel="stylesheet" href="'.$url.'" type="text/css" media="'.$media.'" />';
+        
+        if ($once && in_array($entry, self::$_headTags[2]))
+            return;
+        
+        self::$_headTags[2][] = $entry;
     }
 
     /**
-     * Gets all registerd head tags
-     * @param   string  $type  The type of the head tags
+     * Adds a JavaScript to the head tags
+     * @param   string  $url   The URL to the file
+     * @param   bool    $once  Determines if the element should only be added once. Defaults to TRUE.
+     * @return  void
+     * @access  public
+     * @static
+     */
+    public static function addJavaScript($url, $once = true) {
+        $entry = '<script src="'.$url.'"></script>';
+        
+        if ($once && in_array($entry, self::$_headTags[3]))
+            return;
+        
+        self::$_headTags[3][] = $entry;
+    }
+
+    /**
+     * Lists all registered head tags sorted by group
      * @return  array
      * @access  public
      * @static
      */
-    public static function listHeadTags($type) {
-        if (isSet(self::$_headTags[$type])) {
-            return self::$_headTags[$type];
-        } else {
-            return array();
-        }
+    public static function getHeadTags() {
+        $tagsList = array();
+        
+        // walk through all head tags groups and add their tags to the tags list
+        foreach (self::$_headTags as $tagsGroup)
+            $tagsList += $tagsGroup;
+        
+        return $tagsList;
     }
 
 }

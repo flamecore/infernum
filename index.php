@@ -40,7 +40,7 @@ define('HLFW_DIR_THEMES', HLFW_DIR_ROOT.'/themes');
 require_once HLFW_DIR_INCLUDES.'/bootstrap.php';
 
 // set page title
-Template::$pageTitle = Settings::get('core', 'site_name');
+Template::setTitle(Settings::get('core', 'site_name'));
 
 // get module from params
 $path = new Path($_GET['p']);
