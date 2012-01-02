@@ -29,49 +29,60 @@
 class Http {
 
     /**
-     * Gets a HTTP GET variable. Returns FALSE if the variable is not set.
+     * Gets a HTTP GET variable. Returns NULL if the variable is not set.
      * @param   string  $name       The name of the variable
-     * @param   bool    $valueType  The type in which the value should be returned. Possible values are: 'string', 'int'.
-     *                                Defaults to 'string'.
+     * @param   bool    $valueType  The type in which the value should be returned. Defaults to 'string'.
      * @return  mixed
      * @access  public
      * @static
      */
     public static function getGetVar($name, $valueType = 'string') {
         if (isset($_GET[$name])) {
-            $val =& $_GET[$name];
+            $value =& $_GET[$name];
             
-            if ($valueType == 'string') {
-                return $val;
-            } elseif ($valueType == 'int') {
-                return (int) $val;
-            }
+            settype($value, $valueType);
+            
+            return $value;
         }
-
-        return false;
     }
 
     /**
-     * Gets a HTTP POST variable. Returns FALSE if the variable is not set.
+     * Gets a HTTP POST variable. Returns NULL if the variable is not set.
      * @param   string  $name       The name of the variable
-     * @param   bool    $valueType  The type in which the value should be returned. Possible values are: 'string', 'int'.
-     *                                Defaults to 'string'.
+     * @param   bool    $valueType  The type in which the value should be returned. Defaults to 'string'.
      * @return  mixed
      * @access  public
      * @static
      */
     public static function getPostVar($name, $valueType = 'string') {
         if (isset($_POST[$name])) {
-            $val =& $_POST[$name];
+            $value =& $_POST[$name];
             
-            if ($valueType == 'string') {
-                return $val;
-            } elseif ($valueType == 'int') {
-                return (int) $val;
-            }
+            settype($value, $valueType);
+            
+            return $value;
         }
+    }
 
-        return false;
+    /**
+     * Gets a HTTP cookie. Returns NULL if the cookie is not set.
+     * @param   string  $name       The name of the cookie. The prefix is prepended automatically.
+     * @param   bool    $valueType  The type in which the value should be returned. Defaults to 'string'.
+     * @return  mixed
+     * @access  public
+     * @static
+     */
+    public static function getCookie($name, $valueType = 'string') {
+        $namePrefix = Settings::get('http', 'cookie_name_prefix');
+        $name = $namePrefix.$name;
+        
+        if (isset($_COOKIE[$name])) {
+            $value =& $_COOKIE[$name];
+            
+            settype($value, $valueType);
+            
+            return $value;
+        }
     }
     
     /**
@@ -99,11 +110,14 @@ class Http {
      * @static
      */
     public static function setCookie($name, $value, $expire = 0, $path = null, $domain = null, $secure = false, $httpOnly = false) {
+        $namePrefix = Settings::get('http', 'cookie_name_prefix');
+        $name = $namePrefix.$name;
+        
         $expire = self::_parseExpireTime($expire);
         if (!isset($path))
-            $path = Settings::get('core', 'cookie_path');
+            $path = Settings::get('http', 'cookie_path');
         if (!isset($domain))
-            $domain = Settings::get('core', 'cookie_domain');
+            $domain = Settings::get('http', 'cookie_domain');
 
         if (is_array($value)) {
             foreach ($value as $elementKey => $elementValue) {

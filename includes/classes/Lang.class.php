@@ -54,9 +54,10 @@ class Lang {
     public static function init() {
         global $db;
         
-        if (isset($_COOKIE['hlfw_language'])) {
+        $userLang = Http::getCookie('language');
+        if (isset($userLang)) {
             // try to set language pack by language cookie value
-            self::setLangPack($_COOKIE['hlfw_language']);
+            self::setLangPack($userLang);
         } else {
             // no cookie set: use default language
             self::setLangPack();
@@ -125,7 +126,7 @@ class Lang {
      * @static
      */
     public static function setUserLang($lang) {
-        return Http::setCookie('hlfw_language', $lang, '+365d');
+        return Http::setCookie('language', $lang, '+365d');
     }
 
     /**

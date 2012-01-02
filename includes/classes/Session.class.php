@@ -70,10 +70,8 @@ class Session {
         
         $this->lifeTime = $lifeTime;
     
-        if (isSet($_COOKIE['hlfw_session'])) {
-            // get the session ID
-            $sessionID = $_COOKIE['hlfw_session'];
-            
+        $sessionID = Http::getCookie('session');
+        if (isset($sessionID)) {
             // find unexpired session matching session ID and fetch assigned user's ID
             $sql = 'SELECT user FROM #PREFIX#sessions WHERE id = {0} AND expire > {1} LIMIT 1';
             $result = $db->query($sql, array($sessionID, date('Y-m-d H:i:s')));
@@ -92,7 +90,7 @@ class Session {
             $sessionID = $this->_generateID();
 
             // set the session cookie
-            Http::setCookie('hlfw_session', $sessionID, time()+$this->lifeTime);
+            Http::setCookie('session', $sessionID, time()+$this->lifeTime);
             
             // register the session in the database
             $sql = 'INSERT INTO #PREFIX#sessions (id, expire) VALUES({0}, {1})';
@@ -143,7 +141,7 @@ class Session {
             unset($this->userData);
             
             // delete cookie
-            Http::deleteCookie('hlfw_session');
+            Http::deleteCookie('session');
         }
         
         // delete session from database
