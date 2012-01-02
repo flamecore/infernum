@@ -1,7 +1,7 @@
 <?php
 /**
- * HadesLite
- * Copyright (C) 2011 Hades Project
+ * Webwork
+ * Copyright (C) 2011 IceFlame.net
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -15,29 +15,29 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package     HadesLite
+ * @package     Webwork
  * @version     0.1-dev
- * @link        http://hades.iceflame.net
+ * @link        http://www.iceflame.net
  * @license     ISC License (http://www.opensource.org/licenses/ISC)
  */
 
 /**
- * HadesLite Core
+ * Webwork Core
  *
  * @author  Christian Neff <christian.neff@gmail.com>
  */
 
-define('HLFW_DIR_ROOT', __DIR__);
-define('HLFW_DIR_INCLUDES', HLFW_DIR_ROOT.'/includes');
-define('HLFW_DIR_MODULES', HLFW_DIR_ROOT.'/modules');
-define('HLFW_DIR_SETTINGS', HLFW_DIR_ROOT.'/settings');
-define('HLFW_DIR_TEMP', HLFW_DIR_ROOT.'/temp');
-define('HLFW_DIR_CACHE', HLFW_DIR_TEMP.'/cache');
-define('HLFW_DIR_ASSETS', HLFW_DIR_ROOT.'/assets');
-define('HLFW_DIR_THEMES', HLFW_DIR_ROOT.'/themes');
+define('WW_DIR_ROOT', __DIR__);
+define('WW_DIR_INCLUDES', WW_DIR_ROOT.'/includes');
+define('WW_DIR_MODULES', WW_DIR_ROOT.'/modules');
+define('WW_DIR_SETTINGS', WW_DIR_ROOT.'/settings');
+define('WW_DIR_TEMP', WW_DIR_ROOT.'/temp');
+define('WW_DIR_CACHE', WW_DIR_TEMP.'/cache');
+define('WW_DIR_ASSETS', WW_DIR_ROOT.'/assets');
+define('WW_DIR_THEMES', WW_DIR_ROOT.'/themes');
 
 // load bootstrap
-require_once HLFW_DIR_INCLUDES.'/bootstrap.php';
+require_once WW_DIR_INCLUDES.'/bootstrap.php';
 
 // set page title
 Template::setTitle(Settings::get('core', 'site_name'));
@@ -47,7 +47,7 @@ $path = new Path($_GET['p']);
 
 // load module if exists
 $module = $path->module;
-$moduleFile = HADES_DIR_MODULES.'/'.$module.'.php';
+$moduleFile = WW_DIR_MODULES.'/'.$module.'.php';
 if (!file_exists($moduleFile))
     trigger_error('Module \''.$module.'\' does not exist', E_USER_ERROR);
 include $moduleFile;

@@ -1,7 +1,7 @@
 <?php
 /**
- * HadesLite
- * Copyright (C) 2011 Hades Project
+ * Webwork
+ * Copyright (C) 2011 IceFlame.net
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -15,9 +15,9 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package     HadesLite
+ * @package     Webwork
  * @version     0.1-dev
- * @link        http://hades.iceflame.net
+ * @link        http://www.iceflame.net
  * @license     ISC License (http://www.opensource.org/licenses/ISC)
  */
  

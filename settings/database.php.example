@@ -4,6 +4,6 @@ $settings['database'] = array(
     'host' => 'localhost',
     'user' => 'root',
     'password' => '',
-    'database' => 'HadesLite',
-    'prefix' => 'hlfw_',
+    'database' => 'Webwork',
+    'prefix' => 'ww_',
 );
