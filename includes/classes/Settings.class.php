@@ -57,18 +57,20 @@ class Settings {
     }
 
     /**
-     * Gets all settings of a section (as array) or the value of a specific setting
-     * @param   string  $section  From this section...
-     * @param   string  $setting  ... grab this setting, optional
+     * Gets all settings, the settings of a section (as array) or the value of a specific setting
+     * @param   string  $section  Get setting(s) from this section. Optional.
+     * @param   string  $setting  Get this setting from the given section. Optional.
      * @return  mixed
      * @access  public
      * @static
      */
-    public static function get($section, $setting = null) {
-        if (is_string($setting)) {
+    public static function get($section = null, $setting = null) {
+        if (isset($section) && isset($setting)) {
             return self::$_settings[$section][$setting];
-        } else {
+        } elseif (isset($section)) {
             return self::$_settings[$section];
+        } else {
+            return self::$_settings;
         }
     }
 
