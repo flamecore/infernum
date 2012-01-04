@@ -43,6 +43,13 @@ class Cache {
     private $_fileName;
 
     /**
+     * Serialize the cache data?
+     * @var     bool
+     * @access  private
+     */
+    private $_serialize = true;
+
+    /**
      * Getter for readonly properties
      * @return  mixed
      * @access  public
@@ -56,17 +63,20 @@ class Cache {
      * The class constructor
      * @param   string  $cacheFile  The name of the cache file to load
      * @param   int     $lifeTime   Lifetime of the cache in seconds, 0 means infinite. Defaults to 0.
+     * @param   bool    $serialize  Serialize the cache data? Defaults to TRUE.
      * @return  void
      * @access  public
      */
-    public function __construct($cacheFile, $lifeTime = 0) {
+    public function __construct($cacheFile, $lifeTime = 0, $serialize = true) {
         // determine cache file name
-        $fileName = WW_DIR_CACHE.'/'.$cacheFile.'.cache.php';
+        $fileName = WW_DIR_CACHE.'/'.$cacheFile.'.cache';
         $this->_fileName = $fileName;
+        
+        $this->_serialize = $serialize;
         
         // caching on, file exists and has not expired?
         if (Settings::get('core', 'caching') && file_exists($fileName)) {
-            $expired = $lifeTime > 0 && filemtime($fileName) + $lifeTime < time();
+            $expired = $lifeTime > 0 && filemtime($fileName)+$lifeTime < time();
             if (!$expired) {
                 $this->active = true;
             } else {
@@ -83,13 +93,17 @@ class Cache {
      */
     public function read() {
         // active? return false if not
-        if (!$this->active) {
+        if (!$this->active)
             return false;
-        }
         
-        // read the cache file and return the unserialized data
-        $serialized = substr(file_get_contents($this->_fileName), 14);
-        return unserialize($serialized);
+        // read the cache file
+        $data = file_get_contents($this->_fileName);
+        
+        // unserialize data if serialization is enabled
+        if ($this->_serialize)
+            $data = unserialize($data);
+        
+        return $data;
     }
 
     /**
@@ -100,13 +114,15 @@ class Cache {
      */
     public function store($data) {
         // active? return false if not
-        if (!$this->active) {
+        if (!$this->active)
             return false;
-        }
         
-        // serialize data and store to cache file
-        $contents = '<?php die() ?>'.serialize($data);
-        return file_put_contents($this->_fileName, $contents);
+        // serialize data if serialization is enabled
+        if ($this->_serialize)
+            $data = serialize($data);
+        
+        // store to cache file
+        return file_put_contents($this->_fileName, $data);
     }
     
 }
