@@ -4,5 +4,6 @@ $settings['core'] = array(
     'theme' => 'default',
     'site_name' => 'Webwork',
     'lang' => 'en',
-    'caching' => false
+    'caching' => false,
+    'cache_lifetime' => 0
 );

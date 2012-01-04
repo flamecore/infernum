@@ -62,15 +62,18 @@ class Cache {
     /**
      * The class constructor
      * @param   string  $cacheFile  The name of the cache file to load
-     * @param   int     $lifeTime   Lifetime of the cache in seconds, 0 means infinite. Defaults to 0.
+     * @param   int     $lifeTime   Lifetime of the cache in seconds, 0 means infinite. Optional.
      * @param   bool    $serialize  Serialize the cache data? Defaults to TRUE.
      * @return  void
      * @access  public
      */
-    public function __construct($cacheFile, $lifeTime = 0, $serialize = true) {
+    public function __construct($cacheFile, $lifeTime = null, $serialize = true) {
         // determine cache file name
         $fileName = WW_DIR_CACHE.'/'.$cacheFile.'.cache';
         $this->_fileName = $fileName;
+        
+        if (!isset($lifeTime))
+            $lifeTime = Settings::get('core', 'cache_lifetime');
         
         $this->_serialize = $serialize;
         
