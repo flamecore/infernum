@@ -95,20 +95,35 @@ class Template {
      * @access  public
      */
     public function parse($output = true) {
-        // start output buffering
-        ob_start();
-        
-        // go through all vars and define them as real ones
-        foreach ($this->_vars as $varName => $varValue)
-            $$varName = $varValue;
-        
-        // load the template file
         $theme = Settings::get('core', 'theme');
-        $templateDir = WW_DIR_THEMES.'/'.$theme.'/templates/'.$this->_module;
-        include $templateDir.'/'.$this->_template.'.tpl.php';
+        
+        $cacheName = 'tpl_'.md5($theme.$this->_module.$this->_template);
+        $cache = new Cache($cacheName, 0, false);
+        if ($cache->active) {
+            // get template from cache
+            $template = $cache->read();
+        } else {
+            // load the template file
+            $templateDir = WW_DIR_THEMES.'/'.$theme.'/templates/'.$this->_module;
+            $template = file_get_contents($templateDir.'/'.$this->_template.'.tpl');
+
+            // replace tags by PHP code
+            $template = preg_replace('/\{(if|elseif|while|for|foreach) ([^\}]+)\}/', '<?php $1 ($2): ?>', $template);
+            $template = preg_replace('/\{else\}/', '<?php else: ?>', $template);
+            $template = preg_replace('/\{\/(if|while|for|foreach)\}/', '<?php end$1; ?>', $template);
+            $template = preg_replace('/\{([^\}]+)\}/', '<?php echo $1; ?>', $template);
+            
+            // store template to cache if enabled
+            $cache->store($template);
+        }
+        
+        // create the renderer function
+        $render = create_function('', 'extract(func_get_arg(0)); ob_start(); ?>'.$template.'<?php return ob_get_clean();');
+        
+        // render the template
+        $content = $render($this->_vars);
         
         // output/return the template
-        $content = ob_get_clean();
         if ($output) {
             echo $content;
         } else {
