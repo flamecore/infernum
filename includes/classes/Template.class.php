@@ -78,23 +78,14 @@ class Template {
     }
 
     /**
-     * Sets (a) template variable(s)
-     * @param   mixed   $name   The name of the variable. If an array is given, each of its items will be set as variable
-     *                           where the key is the name.
-     * @param   mixed   $value  The value of the variable. If you use an array in $name, this parameter can be omitted.
+     * Sets a template variable
+     * @param   mixed   $name   The name of the variable
+     * @param   mixed   $value  The value of the variable
      * @return  void
      * @access  public
      */
     public function set($name, $value = null) {
-        if (!is_array($name) && isset($value)) {
-            // assign a single variable
-            $this->_vars[$name] = $value;
-        } else {
-            // assign multiple variables
-            foreach ($name as $name => $value) {
-                $this->_vars[$name] = $value;
-            }
-        }
+        $this->_vars[$name] = $value;
     }
 
     /**
@@ -123,6 +114,16 @@ class Template {
         } else {
             return $content;
         }
+    }
+    
+    /**
+     * Returns the title
+     * @return  string 
+     * @access  public
+     * @static
+     */
+    public static function getTitle() {
+        return self::$_title;
     }
 
     /**
