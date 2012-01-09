@@ -29,18 +29,18 @@
 class Template {
 
     /**
-     * The name of the currently loaded template
+     * The path of the template to load
      * @var     string
      * @access  private
      */
-    private $_template;
+    private $_file;
 
     /**
-     * The name of the module
+     * The name of the theme where the template file is loaded from
      * @var     string
      * @access  private
      */
-    private $_module;
+    private $_theme;
 
     /**
      * All assigned template variables
@@ -67,14 +67,20 @@ class Template {
 
     /**
      * Generates a new template object
-     * @param   string   $template  The name of the template to load (without '.tpl.php')
-     * @param   mixed    $module    Load from this module
+     * @param   string  $file    The name of the template to load (without '.tpl')
+     * @param   string  $module  The name of the module where the template file is loaded from
+     * @param   string  $theme   The name of the theme where the template file is loaded from. Optional.
      * @return  void
      * @access  public
      */
-    public function __construct($template, $module) {
-        $this->_template = $template;
-        $this->_module = $module;
+    public function __construct($file, $module, $theme = null) {
+        $this->_file = $module.'/'.$file;
+        
+        if (isset($theme)) {
+            $this->_theme = $theme;
+        } else {
+            $this->_theme = Settings::get('core', 'theme');
+        }
     }
 
     /**
@@ -89,29 +95,23 @@ class Template {
     }
 
     /**
-     * Parses the template and outputs/returns it
+     * Renders the loaded template
      * @param   bool    $output  Output generated template? Defaults to TRUE.
      * @return  string
      * @access  public
      */
-    public function parse($output = true) {
-        $theme = Settings::get('core', 'theme');
-        
-        $cacheName = 'tpl_'.md5($theme.$this->_module.$this->_template);
+    public function render($output = true) {
+        $cacheName = 'tpl_'.md5($this->_theme.$this->_file);
         $cache = new Cache($cacheName, 0, false);
         if ($cache->active) {
             // get template from cache
             $template = $cache->read();
         } else {
             // load the template file
-            $templateDir = WW_DIR_THEMES.'/'.$theme.'/templates/'.$this->_module;
-            $template = file_get_contents($templateDir.'/'.$this->_template.'.tpl');
-
-            // replace tags by PHP code
-            $template = preg_replace('/\{(if|elseif|while|for|foreach) ([^\}]+)\}/', '<?php $1 ($2): ?>', $template);
-            $template = preg_replace('/\{else\}/', '<?php else: ?>', $template);
-            $template = preg_replace('/\{\/(if|while|for|foreach)\}/', '<?php end$1; ?>', $template);
-            $template = preg_replace('/\{([^\}]+)\}/', '<?php echo $1; ?>', $template);
+            $templateCode = self::loadFile($this->_file, $this->_theme);
+            
+            // parse the template code
+            $template = self::parse($templateCode, $this->_theme);
             
             // store template to cache if enabled
             $cache->store($template);
@@ -131,6 +131,42 @@ class Template {
         }
     }
     
+    /**
+     * Loads a template file from the given theme
+     * @param   string  $file   
+     * @param   string  $theme  The name of the theme where the template file is loaded from. Optional.
+     * @return  string
+     * @access  public
+     * @static 
+     */
+    public static function loadFile($file, $theme = null) {
+        if (!isset($theme))
+            $theme = Settings::get('core', 'theme');
+        
+        $templatesDir = WW_DIR_THEMES.'/'.$theme.'/templates';
+        return file_get_contents($templateDir.'/'.$file.'.tpl');
+    }
+    
+    /**
+     * Transforms template code to real PHP code
+     * @param   string  $code   
+     * @param   string  $theme  The name of the theme where the template file is loaded from. Optional.
+     * @return  string
+     * @access  public
+     * @static 
+     */
+    public static function parse($code, $theme = null) {
+        // replace conditional tags
+        $code = preg_replace('/\{(if|elseif|while|for|foreach) ([^\}]+)\}/', '<?php $1 ($2): ?>', $code);
+        $code = preg_replace('/\{else\}/', '<?php else: ?>', $code);
+        $code = preg_replace('/\{\/(if|while|for|foreach)\}/', '<?php end$1; ?>', $code);
+
+        // replace other tags like variables, constants, function calls, ...
+        $code = preg_replace('/\{([^\}]+)\}/', '<?php echo $1; ?>', $code);
+        
+        return $code;
+    }
+
     /**
      * Returns the title
      * @return  string 
