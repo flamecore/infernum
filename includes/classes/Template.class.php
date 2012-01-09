@@ -156,6 +156,13 @@ class Template {
      * @static 
      */
     public static function parse($code, $theme = null) {
+        // replace {include] tags
+        $replaceInclude = function ($match) use ($theme) {
+            $templateCode = Template::loadFile($match[1], $theme);
+            return Template::parse($templateCode, $theme);
+        };
+        $code = preg_replace('/\{include ([a-zA-Z0-9_\.\/]+)\}/', $replaceInclude, $code);
+
         // replace conditional tags
         $code = preg_replace('/\{(if|elseif|while|for|foreach) ([^\}]+)\}/', '<?php $1 ($2): ?>', $code);
         $code = preg_replace('/\{else\}/', '<?php else: ?>', $code);
