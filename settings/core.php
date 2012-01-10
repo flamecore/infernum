@@ -1,5 +1,6 @@
 <?php
 $settings['core'] = array(
+    'url' => 'http://example.com',
     'frontpage' => 'home',
     'theme' => 'default',
     'site_name' => 'Webwork',
