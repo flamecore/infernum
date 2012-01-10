@@ -156,12 +156,20 @@ class Template {
      * @static 
      */
     public static function parse($code, $theme = null) {
+        if (!isset($theme))
+            $theme = Settings::get('core', 'theme');
+        
         // replace {include] tags
         $replaceInclude = function ($match) use ($theme) {
             $templateCode = Template::loadFile($match[1], $theme);
             return Template::parse($templateCode, $theme);
         };
         $code = preg_replace('/\{include ([a-zA-Z0-9_\.\/]+)\}/', $replaceInclude, $code);
+        
+        // replace @constants@
+        $rootURL = Settings::get('core', 'url');
+        $code = str_replace('@URL_ROOT@', $rootURL, $code);
+        $code = str_replace('@URL_THEME@', $rootURL.'/themes/'.$theme, $code);
 
         // replace conditional tags
         $code = preg_replace('/\{(if|elseif|while|for|foreach) ([^\}]+)\}/', '<?php $1 ($2): ?>', $code);
