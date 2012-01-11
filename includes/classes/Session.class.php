@@ -73,7 +73,7 @@ class Session {
         $sessionID = Http::getCookie('session');
         if (isset($sessionID)) {
             // find unexpired session matching session ID and fetch assigned user's ID
-            $sql = 'SELECT user FROM #PREFIX#sessions WHERE id = {0} AND expire > {1} LIMIT 1';
+            $sql = 'SELECT user FROM @PREFIX@sessions WHERE id = {0} AND expire > {1} LIMIT 1';
             $result = $db->query($sql, array($sessionID, date('Y-m-d H:i:s')));
             if ($result->numRows() == 1) {
                 $session = $result->fetchRow();
@@ -93,7 +93,7 @@ class Session {
             Http::setCookie('session', $sessionID, time()+$this->lifeTime);
             
             // register the session in the database
-            $sql = 'INSERT INTO #PREFIX#sessions (id, expire) VALUES({0}, {1})';
+            $sql = 'INSERT INTO @PREFIX@sessions (id, expire) VALUES({0}, {1})';
             $db->query($sql, array($sessionID, date('Y-m-d H:i:s', time()+$this->lifeTime)));
 
             // the session is now started, set session info
@@ -145,7 +145,7 @@ class Session {
         }
         
         // delete session from database
-        $sql = 'DELETE FROM #PREFIX#sessions WHERE id = {0}';
+        $sql = 'DELETE FROM @PREFIX@sessions WHERE id = {0}';
         return $db->query($sql, array($sessionID));
     }
     
@@ -164,7 +164,7 @@ class Session {
         }
         
         // update session in database
-        $sql = 'UPDATE #PREFIX#sessions SET expire = {0} WHERE id = {1} LIMIT 1';
+        $sql = 'UPDATE @PREFIX@sessions SET expire = {0} WHERE id = {1} LIMIT 1';
         return $db->query($sql, array(date('Y-m-d H:i:s', time()+$this->lifeTime), $sessionID));
     }
     
@@ -176,7 +176,7 @@ class Session {
     public function cleanup() {
         global $db;
     
-        $sql = 'DELETE FROM #PREFIX#sessions WHERE expire <= {0}';
+        $sql = 'DELETE FROM @PREFIX@sessions WHERE expire <= {0}';
         return $db->query($sql, array(date('Y-m-d H:i:s')));
     }
     
@@ -199,7 +199,7 @@ class Session {
         }
         
         // update session in database
-        $sql = 'UPDATE #PREFIX#sessions SET user = {0} WHERE id = {1} LIMIT 1';
+        $sql = 'UPDATE @PREFIX@sessions SET user = {0} WHERE id = {1} LIMIT 1';
         return $db->query($sql, array($userID, $sessionID));
     }
 

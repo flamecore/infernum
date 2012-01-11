@@ -62,7 +62,7 @@ class User {
         }
 
         // fetch user data for further usage
-        $sql = 'SELECT * FROM #PREFIX#users WHERE '.$byColumn.' = {0} LIMIT 1';
+        $sql = 'SELECT * FROM @PREFIX@users WHERE '.$byColumn.' = {0} LIMIT 1';
         $result = $db->query($sql, array($user));
         if ($result->numRows() == 1)
             $this->info = $result->fetchRow();
@@ -84,14 +84,14 @@ class User {
             $dataset = array();
             foreach ($keyOrData as $key => $value)
                 $dataset[] = $key.' = '.$value;
-            $sql = 'UPDATE #PREFIX#user SET '.$dataset;
+            $sql = 'UPDATE @PREFIX@user SET '.$dataset;
             if (isSet($userID))
                 $sql .= ' WHERE id = '.$userID;
             $sql .= ' LIMIT 1';
             return $db->query($sql);
         } else {
             // update a single column
-            $sql = 'UPDATE #PREFIX#user SET '.$keyOrData.' = '.$value;
+            $sql = 'UPDATE @PREFIX@user SET '.$keyOrData.' = '.$value;
             if (isSet($userID))
                 $sql .= ' WHERE id = '.$userID;
             $sql .= ' LIMIT 1';

@@ -69,7 +69,7 @@ class Lang {
             self::$_strings = $cache->read();
         } else {
             // load all strings of the selected language pack from the database
-            $sql = 'SELECT string, translated FROM #PREFIX#lang_strings WHERE langpack = {0}';
+            $sql = 'SELECT string, translated FROM @PREFIX@lang_strings WHERE langpack = {0}';
             $result = $db->query($sql, array(self::$_langPack));
             while ($entry = $result->fetchAssoc())
                 self::$_strings[$entry['string']] = $entry['translated'];
@@ -103,7 +103,7 @@ class Lang {
 
         if (isset($lang)) {
             // does given language pack exist?
-            $sql = 'SELECT id FROM #PREFIX#lang_packs WHERE id = {0} LIMIT 1';
+            $sql = 'SELECT id FROM @PREFIX@lang_packs WHERE id = {0} LIMIT 1';
             $result = $db->query($sql, array($lang));
             if ($result->numRows() == 1) {
                 // update current language

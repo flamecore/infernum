@@ -106,6 +106,7 @@ abstract class Database_Base_Driver {
         $this->_password = $pass;
         $this->_name = $name;
         $this->_prefix = $prefix;
+        
         $this->connect();
     }
 
@@ -127,7 +128,7 @@ abstract class Database_Base_Driver {
 
     /**
      * Performs a (optionally prepared) query on the database. For successful SELECT, SHOW, DESCRIBE or EXPLAIN queries
-     *   it returns a Database_MySQL_Result object on success. For other successful queries it will return TRUE.
+     *   it returns a Database_Base_Result object on success. For other successful queries it will return TRUE.
      * @param   string  $query   The SQL query to be executed
      * @param   array   $vars    An array of values replacing the variables. Only neccessary if you're using variables.
      * @return  mixed
@@ -245,21 +246,25 @@ abstract class Database_Base_Driver {
     }
 
     /**
-     * Prepares a SQL statement. Replaces '#PREFIX#' with the database prefix and '{key}' variables with the corresponding
-     *   entries of $vars, if neccessary.
+     * Prepares a SQL statement. Replaces @HOST@, @USER@, @DATABASE@, @PREFIX@ and {variables}, if neccessary.
      * @param    string     $query  The SQL query to prepare
      * @param    array      $vars   An array of values replacing the variables. Only neccessary if you're using variables.
      * @return   string
      * @accesss  protected
      */
     protected function _prepareQuery($query, $vars = null) {
-        $query = str_replace('#PREFIX#', $this->_prefix, $query);
+        $query = str_replace('@HOST@', $this->_host, $query);
+        $query = str_replace('@USER@', $this->_user, $query);
+        $query = str_replace('@DATABASE@', $this->_name, $query);
+        $query = str_replace('@PREFIX@', $this->_prefix, $query);
+        
         if (is_array($vars)) {
             foreach ($vars as $key => $value) {
                 $value = $this->_prepareValue($value);
                 $query = str_replace('{'.$key.'}', $value, $query);
             }
         }
+        
         return $query;
     }
 
