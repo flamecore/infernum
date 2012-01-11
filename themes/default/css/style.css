@@ -1,0 +1,55 @@
+body {
+font-family: Verdana, "Verdana", Arial;
+margin: 0;
+padding: 0;
+background-color: #cccfff;
+}
+
+#wrapper {
+background-color: #fff;
+width: 800px;
+margin: 0 auto;
+border: 1px solid #ccc;
+border-top: none;
+}
+
+#header {
+padding: 20px;
+height: 40px;
+border-bottom: 5px solid #ccc;
+}
+
+#header .title  {
+margin-top: 5px;
+font-size: 20px;
+font-weight: bold;
+}
+
+#content {
+padding: 20px;
+text-align: justify;
+}
+
+#footer {
+width: 800px;
+margin: 0 auto;
+padding: 10px 0 10px 0;
+font-size: 10px;
+color: #666;
+}
+
+#footer a {
+color: #666;
+}
+
+.left {
+float: left;
+}
+
+.right {
+float: right;
+}
+
+.clear {
+clear: both;
+}
