@@ -99,7 +99,8 @@ class Path {
      * @static
      */
     public static function build($module, $args = null) {
-        $url = '?p='.$module;
+        $url  = Settings::get('core', 'url');
+        $url .= '?p='.$module;
         if (is_array($args))
             $url .= '/'.implode('/', $args);
         return $url;
