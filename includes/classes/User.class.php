@@ -78,24 +78,22 @@ class User {
      */
     public function updateData($keyOrData, $value = null, $userID = null) {
         global $db;
+        
+        if (!isset($userID))
+            $userID = $this->info['id'];
     
         if (is_array($keyOrData)) {
             // update multiple columns
             $dataset = array();
             foreach ($keyOrData as $key => $value)
-                $dataset[] = $key.' = '.$value;
-            $sql = 'UPDATE @PREFIX@user SET '.$dataset;
-            if (isSet($userID))
-                $sql .= ' WHERE id = '.$userID;
-            $sql .= ' LIMIT 1';
-            return $db->query($sql);
+                $dataset[] = $key.' = {'.$key.'}';
+            $sql = 'UPDATE @PREFIX@user SET '.implode(', ', $dataset).' WHERE id = {_id} LIMIT 1';
+            $queryVars = $keyOrData + array('_id' => $userID);
+            return $db->query($sql, $queryVars);
         } else {
             // update a single column
-            $sql = 'UPDATE @PREFIX@user SET '.$keyOrData.' = '.$value;
-            if (isSet($userID))
-                $sql .= ' WHERE id = '.$userID;
-            $sql .= ' LIMIT 1';
-            return $db->query($sql);
+            $sql = 'UPDATE @PREFIX@user SET '.$keyOrData.' = {0} WHERE id = {1} LIMIT 1';
+            return $db->query($sql, array($value, $userID));
         }
     }
 
