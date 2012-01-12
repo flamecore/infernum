@@ -135,7 +135,7 @@ abstract class Database_Base_Driver {
      * @access  public
      * @abstract
      */
-    abstract function query($query, $params = null);
+    abstract function query($query, $vars = null);
 
     /**
      * Parses and executes a SQL dump file
@@ -203,10 +203,9 @@ abstract class Database_Base_Driver {
      * @param   string  $string  The string to be escaped
      * @return  string
      * @access  public
+     * @abstract
      */
-    public function quote($string) {
-        return addslashes($string);
-    }
+    abstract public function quote($string);
 
     /**
      * Returns the last error message for the most recent query that can succeed or fail
