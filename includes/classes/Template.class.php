@@ -29,11 +29,11 @@
 class Template {
 
     /**
-     * The path of the template to load
+     * The file path of the template to load (without '.tpl')
      * @var     string
      * @access  private
      */
-    private $_file;
+    private $_filePath;
 
     /**
      * The name of the theme where the template file is loaded from
@@ -47,7 +47,7 @@ class Template {
      * @var     array
      * @access  private
      */
-    private $_vars = array();
+    private $_variables = array();
 
     /**
      * The title of the page
@@ -74,7 +74,7 @@ class Template {
      * @access  public
      */
     public function __construct($file, $module, $theme = null) {
-        $this->_file = $module.'/'.$file;
+        $this->_filePath = $module.'/'.$file;
         
         if (isset($theme)) {
             $this->_theme = $theme;
@@ -91,7 +91,7 @@ class Template {
      * @access  public
      */
     public function set($name, $value = null) {
-        $this->_vars[$name] = $value;
+        $this->_variables[$name] = $value;
     }
 
     /**
@@ -101,14 +101,14 @@ class Template {
      * @access  public
      */
     public function render($output = true) {
-        $cacheName = 'tpl_'.md5($this->_theme.$this->_file);
+        $cacheName = 'tpl_'.md5($this->_theme.$this->_filePath);
         $cache = new Cache($cacheName, 0, false);
         if ($cache->active) {
             // get template from cache
             $template = $cache->read();
         } else {
             // load the template file
-            $templateCode = self::loadFile($this->_file, $this->_theme);
+            $templateCode = self::loadFile($this->_filePath, $this->_theme);
             
             // parse the template code
             $template = self::parse($templateCode, $this->_theme);
@@ -121,7 +121,7 @@ class Template {
         $render = create_function('', 'extract(func_get_arg(0)); ob_start(); ?>'.$template.'<?php return ob_get_clean();');
         
         // render the template
-        $content = $render($this->_vars);
+        $content = $render($this->_variables);
         
         // output/return the template
         if ($output) {
@@ -133,7 +133,7 @@ class Template {
     
     /**
      * Loads a template file from the given theme
-     * @param   string  $file   
+     * @param   string  $file   The file path of the template to load (without '.tpl')
      * @param   string  $theme  The name of the theme where the template file is loaded from. Optional.
      * @return  string
      * @access  public
@@ -149,7 +149,7 @@ class Template {
     
     /**
      * Transforms template code to real PHP code
-     * @param   string  $code   
+     * @param   string  $code   The template code to transform
      * @param   string  $theme  The name of the theme where the template file is loaded from. Optional.
      * @return  string
      * @access  public
@@ -159,17 +159,17 @@ class Template {
         if (!isset($theme))
             $theme = Settings::get('core', 'theme');
         
+        // replace @constants@
+        $rootURL = Settings::get('core', 'url');
+        $code = str_replace('@URL_ROOT@', $rootURL, $code);
+        $code = str_replace('@URL_THEME@', $rootURL.'/themes/'.$theme, $code);
+        
         // replace {include] tags
         $replaceInclude = function ($match) use ($theme) {
             $templateCode = Template::loadFile($match[1], $theme);
             return Template::parse($templateCode, $theme);
         };
         $code = preg_replace('/\{include ([a-zA-Z0-9_\.\/]+)\}/', $replaceInclude, $code);
-        
-        // replace @constants@
-        $rootURL = Settings::get('core', 'url');
-        $code = str_replace('@URL_ROOT@', $rootURL, $code);
-        $code = str_replace('@URL_THEME@', $rootURL.'/themes/'.$theme, $code);
 
         // replace conditional tags
         $code = preg_replace('/\{(if|elseif|while|for|foreach) ([^\}]+)\}/', '<?php $1 ($2): ?>', $code);
