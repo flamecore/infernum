@@ -34,17 +34,17 @@
 abstract class Database_Base_Result {
     
     /**
-     * The MySQLi_Result object returned by the corresponding query
-     * @var     object
-     * @access  protected
+     * The result object returned by the corresponding query
+     * @var      object
+     * @access   protected
      */
     protected $_result;
 
     /**
      * Constructor
-     * @param   object  The MySQLi_Result object returned by the corresponding query
-     * @return  void
-     * @access  public
+     * @param    object   $result   The result object returned by the corresponding query
+     * @return   void
+     * @access   public
      */
     public function __construct($result) {
         $this->_result =& $result;
@@ -53,8 +53,8 @@ abstract class Database_Base_Result {
     /**
      * Gets a result row as an enumerated array. Returns an array of strings that corresponds to the fetched row
      *   or NULL if there are no more rows in result set.
-     * @return  array
-     * @access  public
+     * @return   array
+     * @access   public
      * @abstract
      */
     abstract public function fetchRow();
@@ -62,11 +62,11 @@ abstract class Database_Base_Result {
     /**
      * Fetches a result row as an associative array, a numeric array, or both. Returns an array of strings that
      *   corresponds to the fetched row or NULL if there are no more rows in the resultset.
-     * @param  $type   This optional parameter indicates what type of array should be produced from the current
-     *                   row data. The possible values for this parameter are 'num', 'assoc' or 'both'.
-     *                   Default: 'both'.
-     * @return array
-     * @access public
+     * @param    string   $type   This optional parameter indicates what type of array should be produced from the current
+     *                              row data. The possible values for this parameter are 'num', 'assoc' or 'both'.
+     *                              Default: 'both'.
+     * @return   array
+     * @access   public
      * @abstract
      */
     abstract public function fetchArray($type = 'both');
@@ -75,8 +75,8 @@ abstract class Database_Base_Result {
      * Fetches a result row as an associative array. Returns an associative array of strings representing the fetched row
      *   in the result set, where each key in the array represents the name of one of the result set's columns or NULL if
      *   there are no more rows in resultset.
-     * @return  array
-     * @access  public
+     * @return   array
+     * @access   public
      * @abstract
      */
     abstract public function fetchAssoc();
@@ -84,35 +84,35 @@ abstract class Database_Base_Result {
     /**
      * Fetches all result rows as an associative array, a numeric array or both. Returns an array of associative or numeric
      *   arrays holding result rows.
-     * @param  $type   This optional parameter indicates what type of array should be produced from the current
-     *                   row data. The possible values for this parameter are 'num', 'assoc' or 'both'.
-     *                   Default: 'assoc'.
-     * @return  array
-     * @access  public
+     * @param    string   $type   This optional parameter indicates what type of array should be produced from the current
+     *                              row data. The possible values for this parameter are 'num', 'assoc' or 'both'.
+     *                              Default: 'assoc'.
+     * @return   array
+     * @access   public
      * @abstract
      */
     abstract public function fetchAll($type = 'assoc');
 
     /**
      * Gets the number of rows in a result
-     * @return  int
-     * @access  public
+     * @return   int
+     * @access   public
      * @abstract
      */
     abstract public function numRows();
 
     /**
      * Gets the number of fields in a result
-     * @return  int
-     * @access  public
+     * @return   int
+     * @access   public
      * @abstract
      */
     abstract public function numFields();
 
     /**
      * Frees the memory associated with the result
-     * @return  void
-     * @access  public
+     * @return   void
+     * @access   public
      * @abstract
      */
     abstract public function free();

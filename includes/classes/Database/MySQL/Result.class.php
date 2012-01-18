@@ -31,8 +31,8 @@ class Database_MySQL_Result extends Database_Base_Result {
     /**
      * Gets a result row as an enumerated array. Returns an array of strings that corresponds to the fetched row
      *   or NULL if there are no more rows in result set.
-     * @return  array
-     * @access  public
+     * @return   array
+     * @access   public
      */
     public function fetchRow() {
         return mysqli_fetch_row($this->_result);
@@ -41,11 +41,11 @@ class Database_MySQL_Result extends Database_Base_Result {
     /**
      * Fetches a result row as an associative array, a numeric array, or both. Returns an array of strings that
      *   corresponds to the fetched row or NULL if there are no more rows in the resultset.
-     * @param  $type   This optional parameter indicates what type of array should be produced from the current
-     *                   row data. The possible values for this parameter are 'num', 'assoc' or 'both'.
-     *                   Default: 'both'.
-     * @return array
-     * @access public
+     * @param    string   $type   This optional parameter indicates what type of array should be produced from the current
+     *                              row data. The possible values for this parameter are 'num', 'assoc' or 'both'.
+     *                              Default: 'both'.
+     * @return   array
+     * @access   public
      */
     public function fetchArray($type = 'both') {
         switch ($type) {
@@ -60,8 +60,8 @@ class Database_MySQL_Result extends Database_Base_Result {
      * Fetches a result row as an associative array. Returns an associative array of strings representing the fetched row
      *   in the result set, where each key in the array represents the name of one of the result set's columns or NULL if
      *   there are no more rows in resultset.
-     * @return  array
-     * @access  public
+     * @return   array
+     * @access   public
      */
     public function fetchAssoc() {
         return mysqli_fetch_assoc($this->_result);
@@ -70,11 +70,11 @@ class Database_MySQL_Result extends Database_Base_Result {
     /**
      * Fetches all result rows as an associative array, a numeric array or both. Returns an array of associative or numeric
      *   arrays holding result rows.
-     * @param  $type   This optional parameter indicates what type of array should be produced from the current
-     *                   row data. The possible values for this parameter are 'num', 'assoc' or 'both'.
-     *                   Default: 'assoc'.
-     * @return  array
-     * @access  public
+     * @param    string   $type   This optional parameter indicates what type of array should be produced from the current
+     *                              row data. The possible values for this parameter are 'num', 'assoc' or 'both'.
+     *                              Default: 'assoc'.
+     * @return   array
+     * @access   public
      */
     public function fetchAll($type = 'assoc') {
         switch ($type) {
@@ -87,8 +87,8 @@ class Database_MySQL_Result extends Database_Base_Result {
 
     /**
      * Gets the number of rows in a result
-     * @return  int
-     * @access  public
+     * @return   int
+     * @access   public
      */
     public function numRows() {
         return mysqli_num_rows($this->_result);
@@ -96,8 +96,8 @@ class Database_MySQL_Result extends Database_Base_Result {
 
     /**
      * Gets the number of fields in a result
-     * @return  int
-     * @access  public
+     * @return   int
+     * @access   public
      */
     public function numFields() {
         return mysqli_num_fields($this->_result);
@@ -105,8 +105,8 @@ class Database_MySQL_Result extends Database_Base_Result {
 
     /**
      * Frees the memory associated with the result
-     * @return  void
-     * @access  public
+     * @return   void
+     * @access   public
      */
     public function free() {
         return mysqli_free_result($this->_result);
