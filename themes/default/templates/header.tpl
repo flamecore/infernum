@@ -3,7 +3,7 @@
     <head>
         <title>{Template::getTitle()}</title>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-        <link rel="stylesheet" href="themes/default/style.css" type="text/css" />
+        <link rel="stylesheet" href="@URL_THEME@/css/style.css" type="text/css" />
 {foreach Template::getHeadTags() as $tag}
         {$tag}
 {/foreach}
@@ -11,9 +11,6 @@
     <body>
         <div id="wrapper">
             <div id="header">
-                <div class="title">
-                    {Settings::get('core', 'site_name')}
-                </div>
+                <div class="title">{Settings::get('core', 'site_name')}</div>
             </div>
             <div id="content">
-
