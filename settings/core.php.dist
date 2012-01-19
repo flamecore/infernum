@@ -1,0 +1,13 @@
+<?php
+$settings['core'] = array(
+    'url' => 'http://localhost',
+    'frontpage' => 'start',
+    'theme' => 'default',
+    'site_name' => 'Webwork',
+    'lang' => 'en',
+    'caching' => false,
+    'cache_lifetime' => 0,
+    'cookie_name_prefix' => 'ww_',
+    'cookie_domain' => '',
+    'cookie_path' => '/'
+);

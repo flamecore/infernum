@@ -4,6 +4,6 @@ $settings['database'] = array(
     'host' => 'localhost',
     'user' => 'root',
     'password' => '',
-    'database' => 'Webwork',
+    'database' => 'webwork',
     'prefix' => 'ww_',
 );
