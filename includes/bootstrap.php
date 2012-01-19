@@ -34,10 +34,8 @@ require_once 'functions.php';
 // load settings
 Settings::init();
 
-// initialize core and connect to the database
-$dbConfig = Settings::get('database');
-$dbDriver = 'Database_'.$dbConfig['driver'].'_Driver';
-$db = new $dbDriver($dbConfig['host'], $dbConfig['user'], $dbConfig['password'], $dbConfig['database'], $dbConfig['prefix']);
+// connect to the database
+$db = Database::createDriver();
 
 // load langauge
 Lang::init(Settings::get('core', 'lang'));
