@@ -144,7 +144,7 @@ class Template {
             $theme = Settings::get('core', 'theme');
         
         $templatesDir = WW_DIR_THEMES.'/'.$theme.'/templates';
-        return file_get_contents($templateDir.'/'.$file.'.tpl');
+        return file_get_contents($templatesDir.'/'.$file.'.tpl');
     }
     
     /**
@@ -169,7 +169,7 @@ class Template {
             $templateCode = Template::loadFile($match[1], $theme);
             return Template::parse($templateCode, $theme);
         };
-        $code = preg_replace('/\{include ([a-zA-Z0-9_\.\/]+)\}/', $replaceInclude, $code);
+        $code = preg_replace_callback('/\{include ([a-zA-Z0-9_\.\/]+)\}/', $replaceInclude, $code);
 
         // replace conditional tags
         $code = preg_replace('/\{(if|elseif|while|for|foreach) ([^\}]+)\}/', '<?php $1 ($2): ?>', $code);
