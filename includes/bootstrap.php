@@ -28,6 +28,7 @@
  */
 
 // include required files
+require_once 'constants.php';
 require_once 'autoloader.php';
 require_once 'functions.php';
 
