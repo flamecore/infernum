@@ -29,100 +29,60 @@
 class Http {
 
     /**
-     * Gets a HTTP GET variable. Returns NULL if the variable is not set.
-     * @param   string  $name       The name of the variable
-     * @param   bool    $valueType  The type in which the value should be returned. Defaults to 'string'.
-     * @return  mixed
-     * @access  public
-     * @static
-     */
-    public static function getGetVar($name, $valueType = 'string') {
-        if (isset($_GET[$name])) {
-            $value =& $_GET[$name];
-            
-            settype($value, $valueType);
-            
-            return $value;
-        }
-    }
-
-    /**
-     * Gets a HTTP POST variable. Returns NULL if the variable is not set.
-     * @param   string  $name       The name of the variable
-     * @param   bool    $valueType  The type in which the value should be returned. Defaults to 'string'.
-     * @return  mixed
-     * @access  public
-     * @static
-     */
-    public static function getPostVar($name, $valueType = 'string') {
-        if (isset($_POST[$name])) {
-            $value =& $_POST[$name];
-            
-            settype($value, $valueType);
-            
-            return $value;
-        }
-    }
-
-    /**
      * Gets a HTTP cookie. Returns NULL if the cookie is not set.
-     * @param   string  $name       The name of the cookie. The prefix is prepended automatically.
-     * @param   bool    $valueType  The type in which the value should be returned. Defaults to 'string'.
-     * @return  mixed
-     * @access  public
+     * @param    string   $name   The name of the cookie. The prefix is prepended automatically.
+     * @return   mixed
+     * @access   public
      * @static
      */
-    public static function getCookie($name, $valueType = 'string') {
-        $namePrefix = Settings::get('http', 'cookie_name_prefix');
+    public static function getCookie($name) {
+        $namePrefix = Settings::get('core', 'cookie_name_prefix');
         $name = $namePrefix.$name;
         
         if (isset($_COOKIE[$name])) {
-            $value =& $_COOKIE[$name];
-            
-            settype($value, $valueType);
-            
-            return $value;
+            return $_COOKIE[$name];
+        } else {
+            return false;
         }
     }
     
     /**
      * Defines a cookie to be sent along with the rest of the HTTP headers
-     * @param   string  $name      The name of the cookie
-     * @param   mixed   $value     The value of the cookie. Can be a string or an array. If it is an array, all of its
-     *                               elements will be set all cookies with the name '<name>[<element key>]' and with the
-     *                               value of the array element.
-     * @param   mixed   $expire    The time the cookie expires. There are several input possibilities:
-     *                               * 0 (zero)     Cookie expires at the end of the session (default)
-     *                               * <timestamp>  Cookie expires at given timestamp (moment)
-     *                               * '+Xm'        Cookie expires in X minutes (period)
-     *                               * '+Xh'        Cookie expires in X hours (period)
-     *                               * '+Xd'        Cookie expires in X days (period)
-     * @param   string  $path      The path on the server in which the cookie will be available on. Defaults to the cookie
-     *                               path defined in the configuration.
-     * @param   string  $domain    The domain that the cookie is available to. Defaults to the cookie domain defined in
-     *                               the configuration.
-     * @param   bool    $secure    Indicates that the cookie should only be transmitted over a secure HTTPS connection from
-     *                               the client. Defaults to FALSE.
-     * @param   bool    $httpOnly  When TRUE the cookie will be made accessible only through the HTTP protocol. Defaults
-     *                               to FALSE.
-     * @return  bool
-     * @access  public
+     * @param    string   $name       The name of the cookie
+     * @param    mixed    $value      The value of the cookie. Can be a string or an array. If it is an array, all of its
+     *                                  elements will be set all cookies with the name '<name>[<element key>]' and with the
+     *                                  value of the array element.
+     * @param    mixed    $expire     The time the cookie expires. There are several input possibilities:
+     *                                  * 0 (zero)     Cookie expires at the end of the session (default)
+     *                                  * <timestamp>  Cookie expires at given timestamp (moment)
+     *                                  * '+Xm'        Cookie expires in X minutes (period)
+     *                                  * '+Xh'        Cookie expires in X hours (period)
+     *                                  * '+Xd'        Cookie expires in X days (period)
+     * @param    string   $path       The path on the server in which the cookie will be available on. Defaults to the
+     *                                  cookie path defined in the configuration.
+     * @param    string   $domain     The domain that the cookie is available to. Defaults to the cookie domain defined in
+     *                                  the configuration.
+     * @param    bool     $secure     Indicates that the cookie should only be transmitted over a secure HTTPS connection
+     *                                  from the client. Defaults to FALSE.
+     * @param    bool     $httpOnly   When TRUE the cookie will be made accessible only through the HTTP protocol. Defaults
+     *                                  to FALSE.
+     * @return   bool
+     * @access   public
      * @static
      */
     public static function setCookie($name, $value, $expire = 0, $path = null, $domain = null, $secure = false, $httpOnly = false) {
-        $namePrefix = Settings::get('http', 'cookie_name_prefix');
+        $namePrefix = Settings::get('core', 'cookie_name_prefix');
         $name = $namePrefix.$name;
         
         $expire = self::_parseExpireTime($expire);
         if (!isset($path))
-            $path = Settings::get('http', 'cookie_path');
+            $path = Settings::get('core', 'cookie_path');
         if (!isset($domain))
-            $domain = Settings::get('http', 'cookie_domain');
+            $domain = Settings::get('core', 'cookie_domain');
 
         if (is_array($value)) {
-            foreach ($value as $elementKey => $elementValue) {
-                self::setCookie($name.'['.$elementKey.']', $elementValue, $expire, $path, $domain, $secure, $httpOnly);
-            }
+            foreach ($value as $elementKey => $elementValue)
+                setcookie($name.'['.$elementKey.']', $elementValue, $expire, $path, $domain, $secure, $httpOnly);
             
             return true;
         } else {
@@ -131,39 +91,26 @@ class Http {
     }
     
     /**
-     * Deletes one or multiple cookies
-     * @param   string  $name     The name of the cookie
-     * @param   bool    $isArray  If it is an array cookie, this parameter indicates that all sub cookies should be
-     *                              deleted as well.
-     * @return  bool
-     * @access  public
+     * Forces the deletion of a cookie by setting it to expire
+     * @param    string   $name   The name of the cookie
+     * @return   bool
+     * @access   public
      * @static
      */
-    public static function deleteCookie($name, $isArray = false) {
-        if ($isArray) {
-            // find all cookies to delete
-            foreach ($_COOKIE as $cookieName => $cookieValue) {
-                if (fnmatch($name.'[*]', $cookieName)) {
-                    self::setCookie($cookieName, '', time()-3600);
-                }
-            }
-            
-            return true;
-        } else {
-            return self::setCookie($name, '', time()-3600);
-        }
+    public static function deleteCookie($name) {
+        return self::setCookie($name, '', time()-3600);
     }
 
     /**
      * Sends a raw HTTP header
-     * @param   string  $directive  The header directive to set or a HTTP status code string
-     * @param   string  $value      The value of the header directive you want to set. Not neccessary if you set a HTTP
-     *                                status status code string.
-     * @param   bool    $replace    Indicates whether the header should replace a previous similar header, or add a second
-     *                                header of the same type. Defaults to TRUE.
-     * @param   int     $respCode   Forces the HTTP response code to the specified value. Optional.
-     * @return  bool
-     * @access  public
+     * @param    string   $directive   The header directive to set or a HTTP status code string
+     * @param    string   $value       The value of the header directive you want to set. Not neccessary if you set a HTTP
+     *                                   status status code string.
+     * @param    bool     $replace     Indicates whether the header should replace a previous similar header, or add a second
+     *                                   header of the same type. Defaults to TRUE.
+     * @param    int      $respCode    Forces the HTTP response code to the specified value. Optional.
+     * @return   bool
+     * @access   public
      * @static
      */
     public static function setHeader($directive, $value = null, $replace = true, $respCode = null) {
@@ -182,10 +129,10 @@ class Http {
 
     /**
      * Generates a header redirection
-     * @param   string  $url       The URL where the redirection goes to
-     * @param   int     $respCode  Forces the HTTP response code to the specified value. Defaults to 302.
-     * @return  bool
-     * @access  public
+     * @param    string   $url        The URL where the redirection goes to
+     * @param    int      $respCode   Forces the HTTP response code to the specified value. Defaults to 302.
+     * @return   bool
+     * @access   public
      * @static
      */
     public static function redirect($url, $respCode = 302) {
@@ -194,14 +141,14 @@ class Http {
 
     /**
      * Parses a given expire time
-     * @param   mixed    $expireTime  The time the cookie expires. There are several input possibilities:
-     *                                  * 0 (zero)     Cookie expires at the end of the session (default)
-     *                                  * <timestamp>  Cookie expires at given timestamp (moment)
-     *                                  * '+Xm'        Cookie expires in X minutes (period)
-     *                                  * '+Xh'        Cookie expires in X hours (period)
-     *                                  * '+Xd'        Cookie expires in X days (period)
-     * @return  int
-     * @access  private
+     * @param    mixed    $expireTime   The time the cookie expires. There are several input possibilities:
+     *                                    * 0 (zero)      Cookie expires at the end of the session (default)
+     *                                    * <timestamp>   Cookie expires at given timestamp (moment)
+     *                                    * '+Xm'         Cookie expires in X minutes (period)
+     *                                    * '+Xh'         Cookie expires in X hours (period)
+     *                                    * '+Xd'         Cookie expires in X days (period)
+     * @return   int
+     * @access   private
      * @static
      */
     private static function _parseExpireTime($expireTime) {
