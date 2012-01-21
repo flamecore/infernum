@@ -143,8 +143,12 @@ class Template {
         if (!isset($theme))
             $theme = Settings::get('core', 'theme');
         
-        $templatesDir = WW_DIR_THEMES.'/'.$theme.'/templates';
-        return file_get_contents($templatesDir.'/'.$file.'.tpl');
+        $templateFile = WW_DIR_THEMES.'/'.$theme.'/templates'.'/'.$file.'.tpl';
+        
+        if (!file_exists($templateFile))
+            throw new Exception('Template file "'.$templateFile.'" does not exist');
+        
+        return file_get_contents($templateFile);
     }
     
     /**
