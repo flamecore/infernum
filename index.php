@@ -27,18 +27,25 @@
  * @author  Christian Neff <christian.neff@gmail.com>
  */
 
-// load bootstrap
-require_once 'includes/bootstrap.php';
+try {
+    // load bootstrap
+    require_once 'includes/bootstrap.php';
 
-// set page title
-Template::setTitle(Settings::get('core', 'site_name'));
+    // set page title
+    Template::setTitle(Settings::get('core', 'site_name'));
 
-// get module from params
-$path = new Path($_GET['p']);
+    // get module from params
+    $path = new Path($_GET['p']);
 
-// load module if exists
-$module = $path->module;
-$moduleFile = WW_DIR_MODULES.'/'.$module.'.php';
-if (!file_exists($moduleFile))
-    trigger_error('Module \''.$module.'\' does not exist', E_USER_ERROR);
-include $moduleFile;
+    // load module if exists
+    $module = $path->module;
+    $moduleFile = WW_DIR_MODULES.'/'.$module.'.php';
+    
+    if (!file_exists($moduleFile))
+        throw new Exception('Module "'.$module.'" does not exist');
+    
+    include $moduleFile;
+} catch (Exception $error) {
+    echo '<strong>Error:</strong> '.$error->getMessage();
+    exit();
+}
