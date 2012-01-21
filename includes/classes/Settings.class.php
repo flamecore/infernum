@@ -65,10 +65,18 @@ class Settings {
      * @static
      */
     public static function get($section = null, $setting = null) {
-        if (isset($section) && isset($setting)) {
-            return self::$_settings[$section][$setting];
-        } elseif (isset($section)) {
-            return self::$_settings[$section];
+        if (isset($section)) {
+            if (!isset(self::$_settings[$section]))
+                throw new Exception('Settings section "'.$section.'" does not exist');
+            
+            if (isset($setting)) {
+                if (!isset(self::$_settings[$section][$setting]))
+                    return false;
+                
+                return self::$_settings[$section][$setting];
+            } else {
+                return self::$_settings[$section];
+            }
         } else {
             return self::$_settings;
         }
@@ -89,7 +97,7 @@ class Settings {
             $list[] = "    '{$settingKey}' => {$settingVal}";
         
         // generate content
-        $file = HADES_DIR_SETTINGS.'/'.$section.'.php';
+        $file = WW_DIR_SETTINGS.'/'.$section.'.php';
         $content  = "\$settings['{$section}'] = array(\n";
         $content .= implode(",\n", $list);
         $content .= "\n);";
