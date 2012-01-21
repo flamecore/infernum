@@ -238,6 +238,8 @@ abstract class Database_Base_Driver {
             return '"'.$this->quote($value).'"';
         } elseif (is_array($value)) {
             return '"'.$this->quote(implode(',', $value)).'"';
+        } elseif (is_object($value)) {
+            return (string) $value;
         } else {
             return 'NULL';
         }
@@ -253,7 +255,7 @@ abstract class Database_Base_Driver {
     protected function _prepareQuery($query, $vars = null) {
         $query = str_replace('@HOST@', $this->_host, $query);
         $query = str_replace('@USER@', $this->_user, $query);
-        $query = str_replace('@DATABASE@', $this->_name, $query);
+        $query = str_replace('@DATABASE@', $this->_database, $query);
         $query = str_replace('@PREFIX@', $this->_prefix, $query);
         
         if (is_array($vars)) {
