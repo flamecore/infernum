@@ -57,7 +57,7 @@ class Database {
         $drivers = glob(WW_DIR_INCLUDES.'/classes/Database/*', GLOB_ONLYDIR);
         $drivers = array_map('basename', $drivers);
         if ($driver == '' || !in_array($driver, $drivers))
-            trigger_error('Database driver "'.$driver.'" not found or invalid', E_USER_ERROR);
+            throw new Exception('Database driver "'.$driver.'" not found or invalid');
         
         $driverClass = 'Database_'.$driver.'_Driver';
         return new $driverClass($host, $user, $password, $database, $prefix);
