@@ -34,10 +34,10 @@ class Database_MySQL_Driver extends Database_Base_Driver {
      * @access   public
      */
     public function connect() {
-        $this->_link = mysqli_connect($this->_host, $this->_user, $this->_password, $this->_database);
+        $this->_link = @mysqli_connect($this->_host, $this->_user, $this->_password, $this->_database);
         
         if (mysqli_connect_errno())
-            trigger_error('Database_MySQL_Driver: Failed connecting to the database: '.mysqli_connect_error(), E_USER_ERROR);
+            throw new Exception('Failed connecting to the database: '.mysqli_connect_error());
     }
 
     /**
@@ -60,7 +60,7 @@ class Database_MySQL_Driver extends Database_Base_Driver {
     public function query($query, $vars = null) {
         $query = $this->_prepareQuery($query, $vars);
         
-        $result = mysqli_query($this->_link, $query);
+        $result = @mysqli_query($this->_link, $query);
         if ($result) {
             $this->_queryCount++;
             
@@ -70,7 +70,7 @@ class Database_MySQL_Driver extends Database_Base_Driver {
             return true;
         }
         
-        trigger_error('Database_MySQL_Driver: Query failed: '.$this->getError(), E_USER_ERROR);
+        throw new Exception('Database query failed: '.$this->getError());
     }
 
     /**
