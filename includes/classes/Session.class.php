@@ -30,29 +30,29 @@ class Session {
     
     /**
      * The session ID of the currently opened session
-     * @var     string
-     * @access  readonly
+     * @var      string
+     * @access   readonly
      */
-    private $sessionID;
+    private $sessionID = '';
     
     /**
      * The ID of the user who is assigned to the session
-     * @var     int
-     * @access  readonly
+     * @var      int
+     * @access   readonly
      */
     private $userID = 0;
     
     /**
      * The lifetime of a session in seconds
-     * @var     int
-     * @access  public
+     * @var      int
+     * @access   public
      */
     public $lifeTime = 3600; // 60 minutes
 
     /**
      * Getter for readonly properties
-     * @return  mixed
-     * @access  public
+     * @return   mixed
+     * @access   public
      */
     public function __get($varName) {
         if ($varName[0] != '_')
@@ -61,9 +61,9 @@ class Session {
     
     /**
      * Constructor
-     * @param   int     $lifeTime   The lifetime of a session in seconds. Defaults to 3600.
-     * @return  void
-     * @access  public
+     * @param    int      $lifeTime   The lifetime of a session in seconds. Defaults to 3600.
+     * @return   void
+     * @access   public
      */
     public function __construct($lifeTime = 3600) {
         global $db;
@@ -71,7 +71,7 @@ class Session {
         $this->lifeTime = $lifeTime;
     
         $sessionID = Http::getCookie('session');
-        if (isset($sessionID)) {
+        if ($sessionID !== false) {
             // find unexpired session matching session ID and fetch assigned user's ID
             $sql = 'SELECT user FROM @PREFIX@sessions WHERE id = {0} AND expire > {1} LIMIT 1';
             $result = $db->query($sql, array($sessionID, date('Y-m-d H:i:s')));
@@ -86,25 +86,14 @@ class Session {
                 $this->refresh();
             }
         } else {
-            // generate a session ID
-            $sessionID = $this->_generateID();
-
-            // set the session cookie
-            Http::setCookie('session', $sessionID, time()+$this->lifeTime);
-            
-            // register the session in the database
-            $sql = 'INSERT INTO @PREFIX@sessions (id, expire) VALUES({0}, {1})';
-            $db->query($sql, array($sessionID, date('Y-m-d H:i:s', time()+$this->lifeTime)));
-
-            // the session is now started, set session info
-            $this->sessionID = $sessionID;
+            $this->start();
         }
     }
     
     /**
      * Destructor
-     * @return  void
-     * @access  public
+     * @return   void
+     * @access   public
      */
     public function __destruct() {
         $this->cleanup();
@@ -112,33 +101,45 @@ class Session {
     
     /**
      * Starts a new session. Returns the session ID on success or FALSE on failure.
-     * @return  string
-     * @access  public
+     * @return   string
+     * @access   public
      */
-    public function restart() {
-        // destroy the current session
-        $this->destroy();
+    public function start() {
+        if ($this->_sessionID != '')
+            return false;
         
-        // start a new session
-        $this->__construct();
+        // generate a session ID
+        $sessionID = $this->_generateID();
+
+        // set the session cookie
+        Http::setCookie('session', $sessionID, time()+$this->lifeTime);
+
+        // register the session in the database
+        $sql = 'INSERT INTO @PREFIX@sessions (id, expire) VALUES({0}, {1})';
+        $db->query($sql, array($sessionID, date('Y-m-d H:i:s', time()+$this->lifeTime)));
+
+        // the session is now started, set session info
+        $this->sessionID = $sessionID;
+        
+        return $sessionID;
     }
     
     /**
      * Destoroys the running (if the argument $sessionID is not set) or the given session
-     * @param   string  $sessionID  The session ID to destroy, optional
-     * @return  bool
-     * @access  public
+     * @param    string   $sessionID   The session ID to destroy. Optional.
+     * @return   bool
+     * @access   public
      */
     public function destroy($sessionID = null) {
         global $db;
     
-        if (is_null($sessionID)) {
+        if (!isset($sessionID)) {
             // no $sessionID given, assign ID of this session
             $sessionID = $this->sessionID;
             
             // unset session info
             unset($this->sessionID);
-            unset($this->userData);
+            unset($this->userID);
             
             // delete cookie
             Http::deleteCookie('session');
@@ -151,14 +152,14 @@ class Session {
     
     /**
      * Refreshes the running (if the argument $sessionID is not set) or the given session
-     * @param   string  $sessionID  The session ID to refresh, optional
-     * @return  bool
-     * @access  public
+     * @param    string   $sessionID   The session ID to refresh. Optional.
+     * @return   bool
+     * @access   public
      */
     public function refresh($sessionID = null) {
         global $db;
     
-        if (is_null($sessionID)) {
+        if (!isset($sessionID)) {
             // no $sessionID given, assign ID of this session
             $sessionID = $this->sessionID;
         }
@@ -170,8 +171,8 @@ class Session {
     
     /**
      * Delete expired sessions
-     * @return  bool
-     * @access  public
+     * @return   bool
+     * @access   public
      */
     public function cleanup() {
         global $db;
@@ -182,15 +183,15 @@ class Session {
     
     /**
      * Assigns a user to the running (if the argument $sessionID is not set) or the given session
-     * @param   int     $userID     The ID of the user who belongs to the session
-     * @param   string  $sessionID  The session ID to refresh, optional
-     * @return  bool
-     * @access  public
+     * @param    int      $userID      The ID of the user who belongs to the session
+     * @param    string   $sessionID   The session ID to refresh, optional
+     * @return   bool
+     * @access   public
      */
     public function assignUser($userID, $sessionID = null) {
         global $db;
     
-        if (is_null($sessionID)) {
+        if (!isset($sessionID)) {
             // no $sessionID given, assign ID of this session
             $sessionID = $this->sessionID;
             
@@ -205,8 +206,8 @@ class Session {
 
     /**
      * Generates a unique session ID
-     * @return  string
-     * @access  private
+     * @return   string
+     * @access   private
      */
     private function _generateID() {
         return uniqID(time(), true);
