@@ -30,32 +30,32 @@ class Lang {
 
     /**
      * The currently selected language pack
-     * @var     string
-     * @access  private
+     * @var      string
+     * @access   private
      * @static
      */
     private static $_langPack;
 
     /**
      * All registered strings with their translation
-     * @var     array
-     * @access  private
+     * @var      array
+     * @access   private
      * @static
      */
     private static $_strings = array();
 
     /**
      * Initializes the language system and loads all strings (from database or from cache if available)
-     * @param   string  $lang  The name of the language pack where the strings come from
-     * @return  void
-     * @access  public
+     * @param    string   $lang   The name of the language pack where the strings come from
+     * @return   void
+     * @access   public
      * @static
      */
     public static function init() {
         global $db;
         
-        $userLang = Http::getCookie('language');
-        if (isset($userLang)) {
+        $userLang = self::getUserLang();
+        if ($userLang !== false) {
             // try to set language pack by language cookie value
             self::setLangPack($userLang);
         } else {
@@ -81,8 +81,8 @@ class Lang {
     
     /**
      * Gets the currently selected language pack
-     * @return  string
-     * @access  public
+     * @return   string
+     * @access   public
      * @static
      */
     public static function getLangPack() {
@@ -92,10 +92,10 @@ class Lang {
     /**
      * Sets the currently selected language pack. If the given language pack exists TRUE is returned, otherwise or if no
      *   pack is given the default language defined in the configuration will be used and FALSE is returned.
-     * @param   string  $lang  The new language pack to use. If this parameter is omitted, the default language defined
-     *                           in the configuration will be used.
-     * @return  bool
-     * @access  public
+     * @param    string   $lang   The new language pack to use. If this parameter is omitted, the default language defined
+     *                              in the configuration will be used.
+     * @return   bool
+     * @access   public
      * @static
      */
     public static function setLangPack($lang = null) {
@@ -118,11 +118,21 @@ class Lang {
     }
     
     /**
+     * Returns the user's preferred language that is defined by the user language cookie
+     * @return   string
+     * @access   public
+     * @static
+     */
+    public static function getUserLang() {
+        return Http::getCookie('language');
+    }
+
+    /**
      * Sets the user language cookie that is used to define the user's preferred language. The cookie is automatically
      *   detected and the language pack to use is set accordingly. 
-     * @param   string  $lang  The language to set
-     * @return  bool
-     * @access  public
+     * @param    string   $lang   The language to set
+     * @return   bool
+     * @access   public
      * @static
      */
     public static function setUserLang($lang) {
