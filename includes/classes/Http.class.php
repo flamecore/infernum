@@ -29,7 +29,7 @@
 class Http {
 
     /**
-     * Gets a HTTP cookie. Returns NULL if the cookie is not set.
+     * Returns the value of an HTTP cookie. Returns FALSE if the cookie is not set.
      * @param    string   $name   The name of the cookie. The prefix is prepended automatically.
      * @return   mixed
      * @access   public
@@ -58,35 +58,28 @@ class Http {
      *                                  * '+Xm'        Cookie expires in X minutes (period)
      *                                  * '+Xh'        Cookie expires in X hours (period)
      *                                  * '+Xd'        Cookie expires in X days (period)
-     * @param    string   $path       The path on the server in which the cookie will be available on. Defaults to the
-     *                                  cookie path defined in the configuration.
-     * @param    string   $domain     The domain that the cookie is available to. Defaults to the cookie domain defined in
-     *                                  the configuration.
-     * @param    bool     $secure     Indicates that the cookie should only be transmitted over a secure HTTPS connection
-     *                                  from the client. Defaults to FALSE.
-     * @param    bool     $httpOnly   When TRUE the cookie will be made accessible only through the HTTP protocol. Defaults
-     *                                  to FALSE.
      * @return   bool
      * @access   public
      * @static
      */
-    public static function setCookie($name, $value, $expire = 0, $path = null, $domain = null, $secure = false, $httpOnly = false) {
-        $namePrefix = Settings::get('core', 'cookie_name_prefix');
-        $name = $namePrefix.$name;
+    public static function setCookie($name, $value, $expire = 0) {
+        if (headers_sent())
+            return false;
         
         $expire = self::_parseExpireTime($expire);
-        if (!isset($path))
-            $path = Settings::get('core', 'cookie_path');
-        if (!isset($domain))
-            $domain = Settings::get('core', 'cookie_domain');
+        $path   = Settings::get('core', 'cookie_path');
+        $domain = Settings::get('core', 'cookie_domain');
 
         if (is_array($value)) {
             foreach ($value as $elementKey => $elementValue)
-                setcookie($name.'['.$elementKey.']', $elementValue, $expire, $path, $domain, $secure, $httpOnly);
+                self::setCookie($name.'['.$elementKey.']', $elementValue, $expire, $path, $domain);
             
             return true;
         } else {
-            return setcookie($name, $value, $expire, $path, $domain, $secure, $httpOnly);
+            $namePrefix = Settings::get('core', 'cookie_name_prefix');
+            $name = $namePrefix.$name;
+
+            return setcookie($name, $value, $expire, $path, $domain);
         }
     }
     
