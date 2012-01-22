@@ -118,7 +118,10 @@ class Template {
         }
         
         // create the renderer function
-        $render = create_function('', 'extract(func_get_arg(0)); ob_start(); ?>'.$template.'<?php return ob_get_clean();');
+        $render = @create_function('', 'extract(func_get_arg(0)); ob_start(); ?>'.$template.'<?php return ob_get_clean();');
+        
+        if (!$render)
+            throw new Exception('Syntax error in template code');
         
         // render the template
         $content = $render($this->_variables);
