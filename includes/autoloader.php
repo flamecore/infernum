@@ -29,11 +29,13 @@
 
 function autoload($className) {
     $classFile = str_replace('_', '/', $className);
-    $classPath = WW_DIR_INCLUDES.'/classes/'.$classFile.'.class.php';
+    
+    $classPath = WW_DIR_CLASSES.'/'.$classFile.'.class.php';
     if (file_exists($classPath)) {
         require_once $classPath;
         return true;
     }
+    
     return false;
 }
 

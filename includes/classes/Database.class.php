@@ -54,7 +54,7 @@ class Database {
         if (!isset($prefix))
             $prefix = Settings::get('database', 'prefix');
         
-        $drivers = glob(WW_DIR_INCLUDES.'/classes/Database/*', GLOB_ONLYDIR);
+        $drivers = glob(WW_DIR_CLASSES.'/Database/*', GLOB_ONLYDIR);
         $drivers = array_map('basename', $drivers);
         if ($driver == '' || !in_array($driver, $drivers))
             throw new Exception('Database driver "'.$driver.'" not found or invalid');
