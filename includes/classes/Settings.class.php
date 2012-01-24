@@ -30,16 +30,16 @@ class Settings {
 
     /**
      * All loaded settings
-     * @var     array
-     * @access  private
+     * @var      array
+     * @access   private
      * @static
      */
     private static $_settings = array();
 
     /**
      * Loads all settings
-     * @return  void
-     * @access  public
+     * @return   void
+     * @access   public
      * @static
      */
     public static function init() {
@@ -57,11 +57,11 @@ class Settings {
     }
 
     /**
-     * Gets all settings, the settings of a section (as array) or the value of a specific setting
-     * @param   string  $section  Get setting(s) from this section. Optional.
-     * @param   string  $setting  Get this setting from the given section. Optional.
-     * @return  mixed
-     * @access  public
+     * Returns all settings, the settings of a section (as array) or the value of a specific setting
+     * @param    string   $section   Get setting(s) from this section. Optional.
+     * @param    string   $setting   Get this setting from the given section. Optional.
+     * @return   mixed
+     * @access   public
      * @static
      */
     public static function get($section = null, $setting = null) {
@@ -81,37 +81,43 @@ class Settings {
             return self::$_settings;
         }
     }
+    
+    /**
+     * Temporarily alters the given setting
+     * @param    string   $section   Alters setting in this section
+     * @param    string   $setting   Alters this setting in the given section
+     * @param    mixed    $value     The new value of the setting
+     * @return   mixed
+     * @access   public
+     * @static
+     */
+    public static function alter($section, $setting, $value) {
+        self::$_settings[$section][$setting] = $value;
+    }
 
     /**
      * Writes the given settings to a specified settings file
-     * @param   string  $section   The name of the settings section (the file, name without '.php')
-     * @param   array   $settings  The settings to write
-     * @return  bool
-     * @access  public
+     * @param    string   $section    The name of the settings section (the file, name without '.php')
+     * @param    array    $settings   The settings to write. If omitted, the current settings will be written.
+     * @return   bool
+     * @access   public
      * @static
      */
-    public static function write($section, $settings) {
-        // make settings list
-        $list = array();
-        foreach ($settings as $settingKey => $settingVal)
-            $list[] = "    '{$settingKey}' => {$settingVal}";
+    public static function write($section, $settings = null) {
+        if (!isset ($settings))
+            $settings = self::$_settings[$section];
         
-        // generate content
-        $file = WW_DIR_SETTINGS.'/'.$section.'.php';
-        $content  = "\$settings['{$section}'] = array(\n";
-        $content .= implode(",\n", $list);
-        $content .= "\n);";
-        
-        return file_put_contents($file, $content);
+        $content = '$settings[\''.$section.'\'] = '.var_export($settings).';';
+        return file_put_contents(WW_DIR_SETTINGS.'/'.$section.'.php', $content);
     }
 
     /**
      * Reads all settings from the given directory, works recursively through all subdirectories
-     * @param   string  $dir  The absolute path to the directory to scan
-     * @return  array
-     * @access  private
+     * @param    string   $dir   The absolute path to the directory to scan
+     * @return   array
+     * @access   private
      * @static
-     * @author  Sebastian Wagner <szebi@gmx.at>
+     * @author   Sebastian Wagner <szebi@gmx.at>
      */
     private static function _loadFromDir($dir) {
         $settings = array();
