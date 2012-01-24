@@ -1,11 +1,10 @@
 Webwork Dev Preview
 ===================
 
-ATTENTION! Webwork is under heavy development and not usable in a production environment.
-Use it at yor own risk!
+ATTENTION! Webwork is under heavy development and not usable in a production environment. Use it at yor own risk!
 
 The wiki will be available soon here:
-  http://forge.iceflame.net/projects/webwork/wiki
+  http://forge.iceflame.net/projects/webwork
 
 Support on:
   http://www.iceflame.net
@@ -14,13 +13,16 @@ Support on:
 Installation
 ============
 
-1. Upload files to your server
+1. Upload all files to your server
 
-2. Configure the system by modifying the files core.php and database.php in the folder settings/
+2. Copy the files core.php.dist and database.php.dist in directory settings/ to core.php and database.php and adapt the
+   new files to your needs
 
-3. Make sure that the directories temp/ and assets/ are writable
+3. Copy the file constants.php.dist in directory includes/ to constants.php and adapt the new file to your needs
+
+4. Make sure that the directories temp/ and assets/ are writable
      chmod -R 0777 temp/ assets/
    or
      chown -R www-data temp/ assets/
 
-4. Execute install.sql in your database
+5. Execute install.sql in your database
