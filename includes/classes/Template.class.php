@@ -30,48 +30,56 @@ class Template {
 
     /**
      * The file path of the template to load (without '.tpl')
-     * @var     string
-     * @access  private
+     * @var      string
+     * @access   private
      */
     private $_filePath;
 
     /**
      * The name of the theme where the template file is loaded from
-     * @var     string
-     * @access  private
+     * @var      string
+     * @access   private
      */
     private $_theme;
 
     /**
      * All assigned template variables
-     * @var     array
-     * @access  private
+     * @var      array
+     * @access   private
      */
     private $_variables = array();
+    
+    /**
+     * All assigned global template variables
+     * @var      array
+     * @access   private
+     * @static
+     */
+    private static $_globalVars = array();
 
     /**
      * The title of the page
-     * @var     string
-     * @access  private
+     * @var      string
+     * @access   private
      * @static
      */
     private static $_title;
 
     /**
      * The list of all head tags
-     * @var     array
-     * @access  private
+     * @var      array
+     * @access   private
      * @static
      */
     private static $_headTags = array();
 
     /**
      * Generates a new template object
-     * @param   string  $file    The name of the template to load (without '.tpl')
-     * @param   string  $module  The name of the module where the template file is loaded from
-     * @param   string  $theme   The name of the theme where the template file is loaded from. Optional.
-     * @return  void
-     * @access  public
+     * @param    string   $file     The name of the template to load (without '.tpl')
+     * @param    string   $module   The name of the module where the template file is loaded from
+     * @param    string   $theme    The name of the theme where the template file is loaded from. Optional.
+     * @return   void
+     * @access   public
      */
     public function __construct($file, $module, $theme = null) {
         $this->_filePath = $module.'/'.$file;
@@ -85,20 +93,32 @@ class Template {
 
     /**
      * Sets a template variable
-     * @param   mixed   $name   The name of the variable
-     * @param   mixed   $value  The value of the variable
-     * @return  void
-     * @access  public
+     * @param    string   $name    The name of the variable
+     * @param    mixed    $value   The value of the variable
+     * @return   void
+     * @access   public
      */
-    public function set($name, $value = null) {
+    public function set($name, $value) {
         $this->_variables[$name] = $value;
     }
 
     /**
+     * Sets a global template variable
+     * @param    string   $name    The name of the variable
+     * @param    mixed    $value   The value of the variable
+     * @return   void
+     * @access   public
+     * @static
+     */
+    public static function setGlobal($name, $value) {
+        self::$_globalVars[$name] = $value;
+    }
+
+    /**
      * Renders the loaded template
-     * @param   bool    $output  Output generated template? Defaults to TRUE.
-     * @return  string
-     * @access  public
+     * @param    bool     $output   Output generated template? Defaults to TRUE.
+     * @return   string
+     * @access   public
      */
     public function render($output = true) {
         $cacheName = 'tpl_'.md5($this->_theme.$this->_filePath);
@@ -124,7 +144,8 @@ class Template {
             throw new Exception('Syntax error in template code');
         
         // render the template
-        $content = $render($this->_variables);
+        $variables = self::$_globalVars + $this->_variables;
+        $content = $render($variables);
         
         // output/return the template
         if ($output) {
@@ -136,10 +157,10 @@ class Template {
     
     /**
      * Loads a template file from the given theme
-     * @param   string  $file   The file path of the template to load (without '.tpl')
-     * @param   string  $theme  The name of the theme where the template file is loaded from. Optional.
-     * @return  string
-     * @access  public
+     * @param    string   $file    The file path of the template to load (without '.tpl')
+     * @param    string   $theme   The name of the theme where the template file is loaded from. Optional.
+     * @return   string
+     * @access   public
      * @static 
      */
     public static function loadFile($file, $theme = null) {
@@ -156,10 +177,10 @@ class Template {
     
     /**
      * Transforms template code to real PHP code
-     * @param   string  $code   The template code to transform
-     * @param   string  $theme  The name of the theme where the template file is loaded from. Optional.
-     * @return  string
-     * @access  public
+     * @param    string   $code    The template code to transform
+     * @param    string   $theme   The name of the theme where the template file is loaded from. Optional.
+     * @return   string
+     * @access   public
      * @static 
      */
     public static function parse($code, $theme = null) {
@@ -191,8 +212,8 @@ class Template {
 
     /**
      * Returns the title
-     * @return  string 
-     * @access  public
+     * @return   string 
+     * @access   public
      * @static
      */
     public static function getTitle() {
@@ -201,10 +222,10 @@ class Template {
 
     /**
      * Sets the given text as title or appends it to the current title
-     * @param   string  $title   The text to set as title or append to the title
-     * @param   bool    $append  Should the given text be appended to the currently set title? Defaults to TRUE.
-     * @return  void
-     * @access  public
+     * @param    string   $title    The text to set as title or append to the title
+     * @param    bool     $append   Should the given text be appended to the currently set title? Defaults to TRUE.
+     * @return   void
+     * @access   public
      * @static
      */
     public static function setTitle($title, $append = true) {
@@ -217,11 +238,11 @@ class Template {
 
     /**
      * Adds a meta tag to the head tags
-     * @param   string  $name     The name of the meta tag
-     * @param   string  $content  The value of the meta tag
-     * @param   bool    $once     Determines if the element should only be added once. Defaults to TRUE.
-     * @return  void
-     * @access  public
+     * @param    string   $name      The name of the meta tag
+     * @param    string   $content   The value of the meta tag
+     * @param    bool     $once      Determines if the element should only be added once. Defaults to TRUE.
+     * @return   void
+     * @access   public
      * @static
      */
     public static function addMetaTag($name, $content, $once = true) {
@@ -235,12 +256,12 @@ class Template {
 
     /**
      * Adds a link tag to the head tags
-     * @param   string  $rel   The relation attribute
-     * @param   string  $url   The URL to the file
-     * @param   string  $type  The type attribute
-     * @param   bool    $once  Determines if the element should only be added once. Defaults to TRUE.
-     * @return  void
-     * @access  public
+     * @param    string   $rel    The relation attribute
+     * @param    string   $url    The URL to the file
+     * @param    string   $type   The type attribute
+     * @param    bool     $once   Determines if the element should only be added once. Defaults to TRUE.
+     * @return   void
+     * @access   public
      * @static
      */
     public static function addLinkTag($rel, $url, $type, $once = true) {
@@ -254,11 +275,11 @@ class Template {
 
     /**
      * Adds a stylesheet link to the head tags
-     * @param   string  $url    The URL to the file
-     * @param   string  $media  Only for this media types. Defaults to 'all'.
-     * @param   bool    $once   Determines if the element should only be added once. Defaults to TRUE.
-     * @return  void
-     * @access  public
+     * @param    string   $url     The URL to the file
+     * @param    string   $media   Only for this media types. Defaults to 'all'.
+     * @param    bool     $once    Determines if the element should only be added once. Defaults to TRUE.
+     * @return   void
+     * @access   public
      * @static
      */
     public static function addStylesheet($url, $media = 'all', $once = true) {
@@ -272,10 +293,10 @@ class Template {
 
     /**
      * Adds a JavaScript to the head tags
-     * @param   string  $url   The URL to the file
-     * @param   bool    $once  Determines if the element should only be added once. Defaults to TRUE.
-     * @return  void
-     * @access  public
+     * @param    string   $url    The URL to the file
+     * @param    bool     $once   Determines if the element should only be added once. Defaults to TRUE.
+     * @return   void
+     * @access   public
      * @static
      */
     public static function addJavaScript($url, $once = true) {
@@ -289,8 +310,8 @@ class Template {
 
     /**
      * Lists all registered head tags sorted by group
-     * @return  array
-     * @access  public
+     * @return   array
+     * @access   public
      * @static
      */
     public static function getHeadTags() {
