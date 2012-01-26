@@ -28,8 +28,18 @@
  */
 
 try {
-    // load bootstrap
-    require_once 'includes/bootstrap.php';
+    require_once 'includes/constants.php';
+    require_once 'includes/autoloader.php';
+    require_once 'includes/functions.php';
+
+    // load settings
+    Settings::init();
+
+    // connect to the database
+    $db = Database::createDriver();
+
+    // load langauge
+    Lang::init(Settings::get('core', 'lang'));
 
     // set page title
     Template::setTitle(Settings::get('core', 'site_name'));
