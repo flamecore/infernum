@@ -35,10 +35,10 @@ try {
     Template::setTitle(Settings::get('core', 'site_name'));
 
     // get module from params
-    $path = new Path($_GET['p']);
+    $path = new Path($_GET['p'], Settings::get('core', 'frontpage'));
 
     // load module if exists
-    $module = $path->module;
+    $module = $path->controller;
     $moduleFile = WW_DIR_MODULES.'/'.$module.'.php';
     
     if (!file_exists($moduleFile))

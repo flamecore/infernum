@@ -29,30 +29,30 @@
 class Path {
 
     /**
-     * The module
-     * @var     string
-     * @access  readonly
+     * The controller
+     * @var      string
+     * @access   readonly
      */
-    private $module;
+    private $controller;
 
     /**
      * The arguments
-     * @var     string
-     * @access  readonly
+     * @var      string
+     * @access   readonly
      */
     private $args = '';
 
     /**
      * Array of all extracted arguments
-     * @var     array
-     * @access  readonly
+     * @var      array
+     * @access   readonly
      */
     private $argsList = array();
 
     /**
      * Getter for readonly properties
-     * @return  mixed
-     * @access  public
+     * @return   mixed
+     * @access   public
      */
     public function __get($varName) {
         if ($varName[0] != '_')
@@ -61,19 +61,20 @@ class Path {
 
     /**
      * Initializes the path parser
-     * @param   string  $path  The path to parse
-     * @return  void
-     * @access  public
+     * @param    string   $path      The path to parse
+     * @param    string   $default   The default controller
+     * @return   void
+     * @access   public
      */
-    public function __construct($path) {
+    public function __construct($path, $default = false) {
         // split the path into its parts
         $pathParts = explode('/', $path, 2);
         
-        // get the module
+        // get the controller
         if ($pathParts[0] != '') {
-            $module = strtolower(str_replace('-', '_', $pathParts[0]));
+            $controller = strtolower(str_replace('-', '_', $pathParts[0]));
         } else {
-            $module = Settings::get('core', 'frontpage');
+            $controller = $default;
         }
         
         // get the arguments
@@ -86,24 +87,9 @@ class Path {
         }
         
         // now we have all what we need
-        $this->module = $module;
+        $this->controller = $controller;
         $this->args = $args;
         $this->argsList = $argsList;
-    }
-
-    /**
-     * Generates a URL from given module and arguments
-     * @param   string  $module  The module where the link goes to
-     * @param   array   $args    The arguments to use, optional
-     * @return  string
-     * @static
-     */
-    public static function build($module, $args = null) {
-        $url  = Settings::get('core', 'url');
-        $url .= '?p='.$module;
-        if (is_array($args))
-            $url .= '/'.implode('/', $args);
-        return $url;
     }
 
 }
