@@ -32,22 +32,19 @@ try {
     require_once 'includes/autoloader.php';
     require_once 'includes/functions.php';
 
-    // load settings
     Settings::init();
 
-    // connect to the database
     $db = Database::createDriver();
 
-    // load langauge
     Lang::init(Settings::get('core', 'lang'));
 
-    // set page title
     Template::setTitle(Settings::get('core', 'site_name'));
+    
+    $session = new Session();
+    $user = new User($session->userID);
 
-    // get module from params
     $path = new Path($_GET['p'], Settings::get('core', 'frontpage'));
 
-    // load module if exists
     $module = $path->controller;
     $moduleFile = WW_DIR_MODULES.'/'.$module.'.php';
     
@@ -56,6 +53,5 @@ try {
     
     include $moduleFile;
 } catch (Exception $error) {
-    echo '<strong>Error:</strong> '.$error->getMessage();
-    exit();
+    die('<strong>Error:</strong> '.$error->getMessage());
 }
