@@ -21,40 +21,5 @@
  * @license     ISC License (http://www.opensource.org/licenses/ISC)
  */
 
-/**
- * Webwork Core
- *
- * @author  Christian Neff <christian.neff@gmail.com>
- */
-
-try {
-    require_once 'includes/constants.php';
-    require_once 'includes/autoloader.php';
-    require_once 'includes/functions.php';
-
-    Settings::init();
-
-    $db = Database::createDriver();
-
-    Lang::init(Settings::get('core', 'lang'));
-
-    Template::setTitle(Settings::get('core', 'site_name'));
-    
-    $session = new Session();
-    $user = new User($session->userID);
-
-    $path = new Path($_GET['p'], Settings::get('core', 'frontpage'));
-    
-    if (file_exists(WW_DIR_INCLUDES.'/global.php'))
-        include WW_DIR_INCLUDES.'/global.php';
-
-    $module = $path->controller;
-    $moduleFile = WW_DIR_MODULES.'/'.$module.'.php';
-    
-    if (!file_exists($moduleFile))
-        showNotFoundError();
-    
-    include $moduleFile;
-} catch (Exception $error) {
-    die('<strong>Error:</strong> '.$error->getMessage());
-}
+Template::setGlobal('SESSION', $session);
+Template::setGlobal('USER', $user);
