@@ -197,15 +197,15 @@ class Template {
             $templateCode = Template::loadFile($match[1], $theme);
             return Template::parse($templateCode, $theme);
         };
-        $code = preg_replace_callback('/\{include ([a-zA-Z0-9_\.\/]+)\}/', $replaceInclude, $code);
+        $code = preg_replace_callback('#\{include ([\w\./]+)\}#i', $replaceInclude, $code);
 
         // replace conditional tags
-        $code = preg_replace('/\{(if|elseif|while|for|foreach) ([^\}]+)\}/', '<?php $1 ($2): ?>', $code);
-        $code = preg_replace('/\{else\}/', '<?php else: ?>', $code);
-        $code = preg_replace('/\{\/(if|while|for|foreach)\}/', '<?php end$1; ?>', $code);
+        $code = preg_replace('#\{(if|elseif|while|for|foreach) ([^\}\r\n]+)(?<!\s)\}#i', '<?php $1 ($2): ?>', $code);
+        $code = preg_replace('#\{else\}#i', '<?php else: ?>', $code);
+        $code = preg_replace('#\{/(if|while|for|foreach)\}#i', '<?php end$1; ?>', $code);
 
         // replace other tags like variables, constants, function calls, ...
-        $code = preg_replace('/\{([^\}]+)\}/', '<?php echo $1; ?>', $code);
+        $code = preg_replace('#\{(?!\s)([^\{\r\n]+)(?<!\s)\}#', '<?php echo $1; ?>', $code);
         
         return $code;
     }
