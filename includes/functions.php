@@ -24,15 +24,25 @@
 /**
  * Common functions
  *
- * @author  Christian Neff <christian.neff@gmail.com>
+ * @author   Christian Neff <christian.neff@gmail.com>
  */
 
 /**
  * Returns the translation of a string
- * @param   string  $string  The string to translate
- * @param   array   $vars    Variables ('%var%') to replace as array
- * @return  string
+ * @param    string   $string   The string to translate
+ * @param    array    $vars     Variables ('%var%') to replace as array
+ * @return   string
  */
 function t($string, $vars = null) {
     return Lang::get($string, $vars);
+}
+
+/**
+ * Displays a 'Page not found' message
+ * @return   void
+ */
+function showNotFoundError() {
+    $tpl = new Template('notfound_body', 'core');
+    $tpl->render();
+    exit();
 }

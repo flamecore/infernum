@@ -49,7 +49,7 @@ try {
     $moduleFile = WW_DIR_MODULES.'/'.$module.'.php';
     
     if (!file_exists($moduleFile))
-        throw new Exception('Module "'.$module.'" does not exist');
+        showNotFoundError();
     
     include $moduleFile;
 } catch (Exception $error) {
