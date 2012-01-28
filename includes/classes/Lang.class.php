@@ -24,7 +24,7 @@
 /**
  * Handling of different languages (with caching)
  *
- * @author  Martin Lantzsch <martin@linux-doku.de>
+ * @author   Christian Neff <christian.neff@gmail.com>
  */
 class Lang {
 
@@ -46,7 +46,6 @@ class Lang {
 
     /**
      * Initializes the language system and loads all strings (from database or from cache if available)
-     * @param    string   $lang   The name of the language pack where the strings come from
      * @return   void
      * @access   public
      * @static
@@ -56,10 +55,8 @@ class Lang {
         
         $userLang = self::getUserLang();
         if ($userLang !== false) {
-            // try to set language pack by language cookie value
             self::setLangPack($userLang);
         } else {
-            // no cookie set: use default language
             self::setLangPack();
         }
 
@@ -118,7 +115,8 @@ class Lang {
     }
     
     /**
-     * Returns the user's preferred language that is defined by the user language cookie
+     * Returns the user's preferred language that is defined by the user language cookie. If the cookie is not set, it
+     *   returns FALSE.
      * @return   string
      * @access   public
      * @static
@@ -141,11 +139,11 @@ class Lang {
 
     /**
      * Gets the translation of a string
-     * @param   string  $string  The string to translate
-     * @param   array   $vars    Variables ('%var%') to replace as array. The key is the name of the variable (without
-     *                             the percent signs).
-     * @return  string
-     * @access  public
+     * @param    string   $string   The string to translate
+     * @param    array    $vars     Variables ('%var%') to replace as array. The key is the name of the variable (without
+     *                                the percent signs).
+     * @return   string
+     * @access   public
      * @static
      */
     public static function get($string, $vars = null) {

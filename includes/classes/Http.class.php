@@ -67,17 +67,18 @@ class Http {
             return false;
         
         $expire = self::_parseExpireTime($expire);
-        $path   = Settings::get('core', 'cookie_path');
-        $domain = Settings::get('core', 'cookie_domain');
 
         if (is_array($value)) {
             foreach ($value as $elementKey => $elementValue)
-                self::setCookie($name.'['.$elementKey.']', $elementValue, $expire, $path, $domain);
+                self::setCookie($name.'['.$elementKey.']', $elementValue, $expire);
             
             return true;
         } else {
             $namePrefix = Settings::get('core', 'cookie_name_prefix');
             $name = $namePrefix.$name;
+            
+            $path   = Settings::get('core', 'cookie_path');
+            $domain = Settings::get('core', 'cookie_domain');
 
             return setcookie($name, $value, $expire, $path, $domain);
         }

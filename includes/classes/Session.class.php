@@ -24,7 +24,7 @@
 /**
  * Simple user session manager
  *
- * @author  Christian Neff <christian.neff@gmail.com>
+ * @author   Christian Neff <christian.neff@gmail.com>
  */
 class Session {
     
@@ -105,7 +105,9 @@ class Session {
      * @access   public
      */
     public function start() {
-        if ($this->_sessionID != '')
+        global $db;
+        
+        if ($this->sessionID != '')
             return false;
         
         // generate a session ID
@@ -132,9 +134,9 @@ class Session {
      */
     public function destroy($sessionID = null) {
         global $db;
-    
+        
         if (!isset($sessionID)) {
-            // no $sessionID given, assign ID of this session
+            // no $sessionID given, assign ID of current session
             $sessionID = $this->sessionID;
             
             // unset session info
@@ -151,7 +153,7 @@ class Session {
     }
     
     /**
-     * Refreshes the running (if the argument $sessionID is not set) or the given session
+     * Refreshes the currently running (if the argument $sessionID is not set) or the given session
      * @param    string   $sessionID   The session ID to refresh. Optional.
      * @return   bool
      * @access   public
@@ -182,7 +184,7 @@ class Session {
     }
     
     /**
-     * Assigns a user to the running (if the argument $sessionID is not set) or the given session
+     * Assigns a user to the currently running (if the argument $sessionID is not set) or the given session
      * @param    int      $userID      The ID of the user who belongs to the session
      * @param    string   $sessionID   The session ID to refresh, optional
      * @return   bool
