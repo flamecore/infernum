@@ -54,10 +54,11 @@ function showMessage($message, $type = 'info') {
 }
 
 /**
- * Displays a 'Page not found' message
+ * Sends a 404 Not Found error and displays a 'Page not found' message via the 'notfound_body' template
  * @return   void
  */
 function showNotFoundError() {
+    Http::setHeader('HTTP/1.1 404 Not Found');
     $tpl = new Template('notfound_body', 'core');
     $tpl->render();
     exit();
