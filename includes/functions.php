@@ -38,6 +38,22 @@ function t($string, $vars = null) {
 }
 
 /**
+ * Displays a message via the 'message_body' template
+ * @param    string   $message   The text of the message to show. In the template, this value can be retrieved via
+ *                                 the {$message} variable.
+ * @param    string   $type      The type of the message, should be either 'info', 'success', 'warning' or 'error'.
+ *                                 In the template, this value can be retrieved via the {$type} variable.
+ * @return   void
+ */
+function showMessage($message, $type = 'info') {
+    $tpl = new Template('message_body', 'core');
+    $tpl->set('message', $message);
+    $tpl->set('type', $type);
+    $tpl->render();
+    exit();
+}
+
+/**
  * Displays a 'Page not found' message
  * @return   void
  */
