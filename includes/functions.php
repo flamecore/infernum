@@ -38,6 +38,33 @@ function t($string, $vars = null) {
 }
 
 /**
+ * Generates a URL from a path and query data based on the application URL
+ * @param    string   $path    The path of the location to link
+ * @param    array    $query   Optional data that is added to the URL as query string.
+ *                               For more information, see {@link http://www.php.net/manual/en/function.http-build-query.php}
+ * @return   string
+ */
+function makeURL($path, $query = null) {
+    $rootURL = Settings::get('core', 'url');
+    
+    $result = $rootURL.$path;
+    if (isset($query) && is_array($query))
+        $result .= '?'.http_build_query($query);
+    
+    return $result;
+}
+
+/**
+ * Generates a URL from a page path based on the application URL
+ * @param    string   $pagePath   The path of the page to link
+ * @return   string
+ */
+function makePageURL($pagePath) {
+    $query = array('p' => $pagePath);
+    return makeURL('/', $query);
+}
+
+/**
  * Displays a message via the 'message_body' template
  * @param    string   $message   The text of the message to show. In the template, this value can be retrieved via
  *                                 the {$message} variable.
