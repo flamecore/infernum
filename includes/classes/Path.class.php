@@ -27,6 +27,13 @@
  * @author  Martin Lantzsch <martin@linux-doku.de>
  */
 class Path {
+    
+    /**
+     * The full path
+     * @var      string
+     * @access   readonly
+     */
+    private $fullPath;
 
     /**
      * The controller
@@ -67,6 +74,8 @@ class Path {
      * @access   public
      */
     public function __construct($path, $default = false) {
+        $this->fullPath = $path;
+        
         // split the path into its parts
         $pathParts = explode('/', $path, 2);
         
@@ -90,6 +99,26 @@ class Path {
         $this->controller = $controller;
         $this->args = $args;
         $this->argsList = $argsList;
+    }
+    
+    /**
+     * Checks if the path matches the given list of patterns
+     * @param    string   $patternList   List of fnmatch() patterns separated by semicolons (;)
+     * @return   bool
+     * @public
+     */
+    public function match($patternList) {
+        $patterns = explode(';', $patternList);
+        
+        foreach ($patterns as $pattern) {
+            if ($pattern[0] != '/')
+                continue;
+
+            if (fnmatch($pattern, '/'.$this->fullPath))
+                return true;
+        }
+        
+        return false;
     }
 
 }
