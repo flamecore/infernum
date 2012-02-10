@@ -29,6 +29,13 @@
 class Session {
     
     /**
+     * The lifetime of a session in seconds
+     * @var      int
+     * @access   public
+     */
+    public $lifeTime = 3600; // 60 minutes
+    
+    /**
      * The session ID of the currently opened session
      * @var      string
      * @access   readonly
@@ -40,14 +47,7 @@ class Session {
      * @var      int
      * @access   readonly
      */
-    private $userID = 0;
-    
-    /**
-     * The lifetime of a session in seconds
-     * @var      int
-     * @access   public
-     */
-    public $lifeTime = 3600; // 60 minutes
+    private $assignedUser = 0;
 
     /**
      * Getter for readonly properties
@@ -76,11 +76,11 @@ class Session {
             $sql = 'SELECT user FROM @PREFIX@sessions WHERE id = {0} AND expire > {1} LIMIT 1';
             $result = $db->query($sql, array($sessionID, date('Y-m-d H:i:s')));
             if ($result->numRows() == 1) {
-                $session = $result->fetchRow();
+                $session = $result->fetchAssoc();
                 
                 // open found session, set session info
                 $this->sessionID = $sessionID;
-                $this->userID = $session['user'];
+                $this->assignedUser = $session['user'];
 
                 // refresh the session
                 $this->refresh();
@@ -141,7 +141,7 @@ class Session {
             
             // unset session info
             unset($this->sessionID);
-            unset($this->userID);
+            unset($this->assignedUser);
             
             // delete cookie
             Http::deleteCookie('session');
@@ -198,7 +198,7 @@ class Session {
             $sessionID = $this->sessionID;
             
             // assign given $userID to $this->userID
-            $this->userID = $userID;
+            $this->assignedUser = $userID;
         }
         
         // update session in database

@@ -41,7 +41,7 @@ try {
     Template::setTitle(Settings::get('core', 'site_name'));
     
     $session = new Session();
-    $user = new User($session->userID);
+    $user = new User($session->assignedUser);
 
     $path = new Path($_GET['p'], Settings::get('core', 'frontpage'));
     
