@@ -48,6 +48,13 @@ class Session {
      * @access   readonly
      */
     private $assignedUser = 0;
+    
+    /**
+     * The stored session data
+     * @var      array
+     * @access   readonly
+     */
+    private $data = array();
 
     /**
      * Getter for readonly properties
@@ -73,14 +80,18 @@ class Session {
         $sessionID = Http::getCookie('session');
         if ($sessionID !== false) {
             // find unexpired session matching session ID and fetch assigned user's ID
-            $sql = 'SELECT user FROM @PREFIX@sessions WHERE id = {0} AND expire > {1} LIMIT 1';
+            $sql = 'SELECT user, data FROM @PREFIX@sessions WHERE id = {0} AND expire > {1} LIMIT 1';
             $result = $db->query($sql, array($sessionID, date('Y-m-d H:i:s')));
             if ($result->numRows() == 1) {
                 $session = $result->fetchAssoc();
                 
-                // open found session, set session info
+                // get session ID and assigned user
                 $this->sessionID = $sessionID;
                 $this->assignedUser = $session['user'];
+                
+                // get stored session data, if available
+                if ($session['data'] != '')
+                    $this->data = unserialize($session['data']);
 
                 // refresh the session
                 $this->refresh();
@@ -186,7 +197,7 @@ class Session {
     /**
      * Assigns a user to the currently running (if the argument $sessionID is not set) or the given session
      * @param    int      $userID      The ID of the user who belongs to the session
-     * @param    string   $sessionID   The session ID to refresh, optional
+     * @param    string   $sessionID   The session ID to refresh. Optional.
      * @return   bool
      * @access   public
      */
@@ -204,6 +215,30 @@ class Session {
         // update session in database
         $sql = 'UPDATE @PREFIX@sessions SET user = {0} WHERE id = {1} LIMIT 1';
         return $db->query($sql, array($userID, $sessionID));
+    }
+    
+    /**
+     * Stores data to the currently running (if the argument $sessionID is not set) or the given session
+     * @param    string   $key         The key of the data entry
+     * @param    mixed    $value       The value of the data entry
+     * @param    string   $sessionID   The session ID to refresh. Optional.
+     * @return   bool
+     * @access   public
+     */
+    public function store($key, $value, $sessionID = null) {
+        global $db;
+    
+        if (!isset($sessionID)) {
+            // no $sessionID given, assign ID of this session
+            $sessionID = $this->sessionID;
+            
+            // update session data locally
+            $this->data[$key] = $value;
+        }
+        
+        // update session data in database
+        $sql = 'UPDATE @PREFIX@sessions SET data = {0} WHERE id = {1} LIMIT 1';
+        return $db->query($sql, array($this->data, $sessionID));
     }
 
     /**

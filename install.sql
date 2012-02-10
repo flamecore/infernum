@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS `ww_lang_strings` (
 CREATE TABLE IF NOT EXISTS `ww_sessions` (
   `id` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `user` int(10) NOT NULL,
+  `data` text NOT NULL,
   `expire` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user` (`user`)
