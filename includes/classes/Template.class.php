@@ -240,18 +240,12 @@ class Template {
      * Adds a meta tag to the head tags
      * @param    string   $name      The name of the meta tag
      * @param    string   $content   The value of the meta tag
-     * @param    bool     $once      Determines if the element should only be added once. Defaults to TRUE.
      * @return   void
      * @access   public
      * @static
      */
-    public static function addMetaTag($name, $content, $once = true) {
-        $entry = '<meta name="'.$name.'" content="'.$content.'" />';
-        
-        if ($once && in_array($entry, self::$_headTags[0]))
-            return;
-        
-        self::$_headTags[0][] = $entry;
+    public static function addMetaTag($name, $content) {
+        self::$_headTags[0][] = '<meta name="'.$name.'" content="'.$content.'" />';
     }
 
     /**
@@ -259,53 +253,53 @@ class Template {
      * @param    string   $rel    The relation attribute
      * @param    string   $url    The URL to the file
      * @param    string   $type   The type attribute
-     * @param    bool     $once   Determines if the element should only be added once. Defaults to TRUE.
      * @return   void
      * @access   public
      * @static
      */
-    public static function addLinkTag($rel, $url, $type, $once = true) {
-        $entry = '<link rel="'.$rel.'" href="'.$url.'" type="'.$type.'" />';
+    public static function addLinkTag($rel, $url, $type) {
+        self::$_headTags[1][] = '<link rel="'.$rel.'" href="'.$url.'" type="'.$type.'" />';
+    }
+
+    /**
+     * Adds a stylesheet link to the head tags using the theme URL
+     * @param    string   $url     The URL to the file
+     * @param    string   $media   Only for this media types. Defaults to 'all'.
+     * @return   void
+     * @access   public
+     * @static
+     */
+    public static function addThemeCSS($path, $media = 'all') {
+        $rootURL = Settings::get('core', 'url');
+        $theme   = Settings::get('core', 'theme');
         
-        if ($once && in_array($entry, self::$_headTags[1]))
-            return;
+        // build URL
+        $url = $rootURL.'/themes/'.$theme.'/'.$path;
         
-        self::$_headTags[1][] = $entry;
+        self::$_headTags[2][] = '<link rel="stylesheet" href="'.$url.'" type="text/css" media="'.$media.'" />';
     }
 
     /**
      * Adds a stylesheet link to the head tags
      * @param    string   $url     The URL to the file
      * @param    string   $media   Only for this media types. Defaults to 'all'.
-     * @param    bool     $once    Determines if the element should only be added once. Defaults to TRUE.
      * @return   void
      * @access   public
      * @static
      */
-    public static function addStylesheet($url, $media = 'all', $once = true) {
-        $entry = '<link rel="stylesheet" href="'.$url.'" type="text/css" media="'.$media.'" />';
-        
-        if ($once && in_array($entry, self::$_headTags[2]))
-            return;
-        
-        self::$_headTags[2][] = $entry;
+    public static function addCSS($url, $media = 'all') {
+        self::$_headTags[3][] = '<link rel="stylesheet" href="'.$url.'" type="text/css" media="'.$media.'" />';
     }
 
     /**
      * Adds a JavaScript to the head tags
      * @param    string   $url    The URL to the file
-     * @param    bool     $once   Determines if the element should only be added once. Defaults to TRUE.
      * @return   void
      * @access   public
      * @static
      */
-    public static function addJavaScript($url, $once = true) {
-        $entry = '<script src="'.$url.'"></script>';
-        
-        if ($once && in_array($entry, self::$_headTags[3]))
-            return;
-        
-        self::$_headTags[3][] = $entry;
+    public static function addScript($url) {
+        self::$_headTags[4][] = '<script src="'.$url.'"></script>';
     }
 
     /**
