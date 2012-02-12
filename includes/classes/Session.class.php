@@ -87,7 +87,7 @@ class Session {
                 
                 // get session ID and assigned user
                 $this->sessionID = $sessionID;
-                $this->assignedUser = $session['user'];
+                $this->assignedUser = (int) $session['user'];
                 
                 // get stored session data, if available
                 if ($session['data'] != '')
@@ -180,6 +180,12 @@ class Session {
         // update session in database
         $sql = 'UPDATE @PREFIX@sessions SET expire = {0} WHERE id = {1} LIMIT 1';
         return $db->query($sql, array(date('Y-m-d H:i:s', time()+$this->lifeTime), $sessionID));
+        
+        // update the assigned user's last activity time
+        if ($this->assignedUser > 0) {
+            $sql = 'UPDATE @PREFIX@users SET lastactive = {0} WHERE id = {1} LIMIT 1';
+            return $db->query($sql, array(date('Y-m-d H:i:s'), $this->assignedUser));
+        }
     }
     
     /**

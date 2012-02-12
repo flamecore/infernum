@@ -49,8 +49,9 @@ CREATE TABLE IF NOT EXISTS `ww_users` (
   `password` varchar(40) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `email` varchar(40) NOT NULL,
   `group` int(10) unsigned NOT NULL,
+  `lastactive` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
-INSERT INTO `ww_users` (`id`, `username`, `password`, `email`, `group`) VALUES
-(1, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'example@example.com', 1);
+INSERT INTO `ww_users` (`id`, `username`, `password`, `email`, `group`, `lastactive`) VALUES
+(1, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'example@example.com', 1, '0000-00-00 00:00:00');
