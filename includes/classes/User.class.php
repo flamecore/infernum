@@ -61,11 +61,14 @@ class User {
             $byColumn = 'username';
         }
 
-        // fetch user data for further usage
+        // try to fetch user data for further usage
         $sql = 'SELECT * FROM @PREFIX@users WHERE '.$byColumn.' = {0} LIMIT 1';
         $result = $db->query($sql, array($user));
-        if ($result->numRows() == 1)
-            $this->info = $result->fetchRow();
+        if ($result->numRows() == 1) {
+            $this->info = $result->fetchAssoc();
+        } else {
+            throw new Exception('User '.$user.' ('.$byColumn.') does not exist');
+        }
     }
     
     /**
