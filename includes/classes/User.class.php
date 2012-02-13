@@ -30,15 +30,15 @@ class User {
     
     /**
      * The fetched user data
-     * @var     array
-     * @access  readonly
+     * @var      array
+     * @access   readonly
      */
     private $info;
 
     /**
      * Getter for readonly properties
-     * @return  mixed
-     * @access  public
+     * @return   mixed
+     * @access   public
      */
     public function __get($varName) {
         if ($varName[0] != '_')
@@ -47,9 +47,9 @@ class User {
     
     /**
      * Constructor
-     * @param   mixed   $user  The ID (int) or the name (string) of the user
-     * @return  void
-     * @access  public
+     * @param    mixed    $user   The ID (int) or the name (string) of the user
+     * @return   void
+     * @access   public
      */
     public function __construct($user) {
         global $db;
@@ -67,14 +67,33 @@ class User {
         if ($result->numRows() == 1)
             $this->info = $result->fetchRow();
     }
+    
+    /**
+     * Checks whether the user is online
+     * @param    int      $threshold   The threshold in seconds at which a user is considered as logged off. Defaults
+     *                                   to 600 seconds (= 10 minutes).
+     * @return   bool
+     * @access   public
+     */
+    public function isOnline($threshold = 600) {
+        $lastActiveTime = strtotime($this->info['lastactive']);
+        
+        // check if the last activity time is within the threshold
+        if (time() - $lastActiveTime <= $threshold) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * Updates the data of the current (if the argument $userID is not set) or the given user in the database
-     * @param   $keyOrData  The name of a single column (string) or pairs of names and values of multiple
-     *                        columns (array in the format [name => value, ...]) to be updated
-     * @param   $value      The new value of the column to be updated, only if $keyOrData is used for the column name
-     * @param   $userID     The ID of the user to be updated, optional
-     * @access  public
+     * @param    $keyOrData   The name of a single column (string) or pairs of names and values of multiple
+     *                          columns (array in the format [name => value, ...]) to be updated
+     * @param    $value       The new value of the column to be updated, only if $keyOrData is used for the column name
+     * @param    $userID      The ID of the user to be updated, optional
+     * @return   bool
+     * @access   public
      */
     public function updateData($keyOrData, $value = null, $userID = null) {
         global $db;
