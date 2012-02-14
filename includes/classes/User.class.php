@@ -33,7 +33,14 @@ class User {
      * @var      array
      * @access   readonly
      */
-    private $info;
+    private $info = array();
+    
+    /**
+     * The user's ID (0 = guest).
+     * @var      int
+     * @access   private
+     */
+    private $_userID = 0;
 
     /**
      * Getter for readonly properties
@@ -53,6 +60,10 @@ class User {
      */
     public function __construct($user) {
         global $db;
+        
+        // check if the user is a guest
+        if (empty($user))
+            return;
     
         // use which column to identify the user?
         if (is_int($user)) {
@@ -66,6 +77,7 @@ class User {
         $result = $db->query($sql, array($user));
         if ($result->numRows() == 1) {
             $this->info = $result->fetchAssoc();
+            $this->_userID = $this->info['id'];
         } else {
             throw new Exception('User '.$user.' ('.$byColumn.') does not exist');
         }
@@ -79,10 +91,13 @@ class User {
      * @access   public
      */
     public function isOnline($threshold = 600) {
-        $lastActiveTime = strtotime($this->info['lastactive']);
+        // guests ($_userID = 0) are always offline
+        if ($this->_userID == 0)
+            return false;
         
         // check if the last activity time is within the threshold
-        if (time() - $lastActiveTime <= $threshold) {
+        $lastActive = strtotime($this->info['lastactive']);
+        if (time() - $lastActive <= $threshold) {
             return true;
         } else {
             return false;
@@ -101,8 +116,15 @@ class User {
     public function updateData($keyOrData, $value = null, $userID = null) {
         global $db;
         
-        if (!isset($userID))
-            $userID = $this->info['id'];
+        if (!isset($userID)) {
+            // no $userID given, use current user's ID if available
+            if ($this->_userID > 0) {
+                $userID = $this->_userID;
+            } else {
+                trigger_error('Cannot update user data: Current user is a guest', E_USER_WARNING);
+                return false;
+            }
+        }
     
         if (is_array($keyOrData)) {
             // update multiple columns
