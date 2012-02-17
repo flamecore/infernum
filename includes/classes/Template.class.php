@@ -71,7 +71,7 @@ class Template {
      * @access   private
      * @static
      */
-    private static $_headTags = array();
+    private static $_headTags = array(array(), array(), array(), array());
 
     /**
      * Generates a new template object
@@ -263,7 +263,7 @@ class Template {
 
     /**
      * Adds a stylesheet link to the head tags using the theme URL
-     * @param    string   $url     The URL to the file
+     * @param    string   $path    The URL to the file
      * @param    string   $media   Only for this media types. Defaults to 'all'.
      * @return   void
      * @access   public
@@ -288,18 +288,18 @@ class Template {
      * @static
      */
     public static function addCSS($url, $media = 'all') {
-        self::$_headTags[3][] = '<link rel="stylesheet" href="'.$url.'" type="text/css" media="'.$media.'" />';
+        self::$_headTags[2][] = '<link rel="stylesheet" href="'.$url.'" type="text/css" media="'.$media.'" />';
     }
 
     /**
      * Adds a JavaScript to the head tags
-     * @param    string   $url    The URL to the file
+     * @param    string   $url   The URL to the file
      * @return   void
      * @access   public
      * @static
      */
     public static function addScript($url) {
-        self::$_headTags[4][] = '<script src="'.$url.'"></script>';
+        self::$_headTags[3][] = '<script src="'.$url.'"></script>';
     }
 
     /**
@@ -309,12 +309,7 @@ class Template {
      * @static
      */
     public static function getHeadTags() {
-        $tagsList = array();
-        
-        // walk through all head tags groups and add their tags to the tags list
-        foreach (self::$_headTags as $tagsGroup)
-            $tagsList += $tagsGroup;
-        
+        $tagsList = array_merge(self::$_headTags[0], self::$_headTags[1], self::$_headTags[2], self::$_headTags[3]);
         return $tagsList;
     }
 
