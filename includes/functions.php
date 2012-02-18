@@ -31,16 +31,10 @@
  * Returns the translation of a string
  * @param    string   $string   The string to translate
  * @param    array    $vars     Variables ('%var%') to replace as array
- * @param    bool     $raw      Return value as plain text (not HTML-encoded)? Defaults to FALSE.
  * @return   string
  */
-function t($string, $vars = null, $raw = false) {
-    $result = Lang::get($string, $vars);
-    
-    if (!$raw)
-        $result = htmlentities($result);
-    
-    return $result;
+function t($string, $vars = null) {
+    return Lang::get($string, $vars);
 }
 
 /**
