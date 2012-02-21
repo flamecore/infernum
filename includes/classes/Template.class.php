@@ -187,10 +187,10 @@ class Template {
         if (!isset($theme))
             $theme = Settings::get('core', 'theme');
         
-        // replace @constants@
+        // replace %constants%
         $rootURL = Settings::get('core', 'url');
-        $code = str_replace('@URL_ROOT@', $rootURL, $code);
-        $code = str_replace('@URL_THEME@', $rootURL.'/themes/'.$theme, $code);
+        $code = str_replace('%URL_ROOT%', $rootURL, $code);
+        $code = str_replace('%URL_THEME%', $rootURL.'/themes/'.$theme, $code);
         
         // replace {include] tags
         $replaceInclude = function ($match) use ($theme) {
