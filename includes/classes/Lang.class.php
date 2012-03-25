@@ -97,21 +97,38 @@ class Lang {
      */
     public static function setLangPack($lang = null) {
         global $db;
-
-        if (isset($lang)) {
-            // does given language pack exist?
-            $sql = 'SELECT id FROM @PREFIX@lang_packs WHERE id = {0} LIMIT 1';
+        
+        // fetch list of language packs
+        $cache = new Cache('langpacks');
+        if ($cache->active) {
+            // from cache
+            $langInfo = $cache->read();
+        } else {
+            // from database
+            $sql = 'SELECT id, locale FROM @PREFIX@lang_packs';
             $result = $db->query($sql, array($lang));
-            if ($result->numRows() == 1) {
-                // update current language
-                self::$_langPack = $lang;
-                return true;
-            }
+            while ($data = $result->fetchAssoc())
+                $langInfo[$data['id']] = explode(',', $data['locale']);
+            
+            // store to cache
+            $cache->store($langInfo);
         }
         
-        // fall back to default language
-        self::$_langPack = Settings::get('core', 'lang');
-        return false;
+        // does given language pack exist? if no, fall back to default language
+        if (!isset($lang) || !array_key_exists($lang, $langInfo))
+            $lang = Settings::get('core', 'lang');
+        
+        // update current language
+        self::$_langPack = $lang;
+        
+        // update locale setting
+        if (isset($langInfo[$lang]) && !empty($langInfo[$lang])) {
+            setlocale(LC_ALL, $langInfo[$lang]);
+        } else {
+            return false;
+        }
+        
+        return true;
     }
     
     /**
