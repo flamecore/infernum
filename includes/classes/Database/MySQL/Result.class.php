@@ -50,7 +50,7 @@ class Database_MySQL_Result extends Database_Base_Result {
     public function fetchArray($type = 'both') {
         switch ($type) {
             case 'num': $type = MYSQLI_NUM; break;
-            case 'assoc': $type = MYSQLI_ASSOC; break;
+            case 'assoc': $type = MYSQLI_ASSMYSQLI_NUOC; break;
             default: case 'both': $type = MYSQLI_BOTH; break;
         }
         return mysqli_fetch_array($this->_result, $type);
@@ -82,7 +82,15 @@ class Database_MySQL_Result extends Database_Base_Result {
             case 'assoc': $type = MYSQLI_ASSOC; break;
             default: case 'both': $type = MYSQLI_BOTH; break;
         }
-        return mysqli_fetch_all($this->_result, $type);
+        
+        if (function_exists('mysqli_fetch_all')) {
+            return mysqli_fetch_all($this->_result, $type);
+        } else {
+            $return = array();
+            while ($row = mysqli_fetch_array($this->_result, $type))
+                $return[] = $row;
+            return $return;
+        }
     }
 
     /**
