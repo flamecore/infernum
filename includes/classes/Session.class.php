@@ -75,9 +75,15 @@ class Session {
     public function __construct($lifeTime = 3600) {
         global $db;
         
+        // set life time
         $this->lifeTime = $lifeTime;
-    
+        
+        // clean up sessions table (delete expired sessions) before proceeding
+        $this->cleanup();
+        
+        // get session ID from user's session cookie
         $sessionID = Http::getCookie('session');
+        
         if ($sessionID !== false) {
             // find unexpired session matching session ID and fetch assigned user's ID
             $sql = 'SELECT user, data FROM @PREFIX@sessions WHERE id = {0} AND expire > {1} LIMIT 1';
@@ -99,15 +105,6 @@ class Session {
         } else {
             $this->start();
         }
-    }
-    
-    /**
-     * Destructor
-     * @return   void
-     * @access   public
-     */
-    public function __destruct() {
-        $this->cleanup();
     }
     
     /**
