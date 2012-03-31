@@ -163,7 +163,7 @@ class Session {
     /**
      * Refreshes the currently running (if the argument $sessionID is not set) or the given session
      * @param    string   $sessionID   The session ID to refresh. Optional.
-     * @return   bool
+     * @return   void
      * @access   public
      */
     public function refresh($sessionID = null) {
@@ -176,12 +176,12 @@ class Session {
         
         // update session in database
         $sql = 'UPDATE @PREFIX@sessions SET expire = {0} WHERE id = {1} LIMIT 1';
-        return $db->query($sql, array(date('Y-m-d H:i:s', time()+$this->lifeTime), $sessionID));
+        $db->query($sql, array(date('Y-m-d H:i:s', time()+$this->lifeTime), $sessionID));
         
         // update the assigned user's last activity time
         if ($this->assignedUser > 0) {
             $sql = 'UPDATE @PREFIX@users SET lastactive = {0} WHERE id = {1} LIMIT 1';
-            return $db->query($sql, array(date('Y-m-d H:i:s'), $this->assignedUser));
+            $db->query($sql, array(date('Y-m-d H:i:s'), $this->assignedUser));
         }
     }
     
