@@ -35,13 +35,13 @@ try {
     Settings::init();
 
     $db = Database::createDriver();
+    
+    $session = new Session();
+    $user = new User($session->assignedUser);
 
     Lang::init(Settings::get('core', 'lang'));
 
     Template::setTitle(Settings::get('core', 'site_name'));
-    
-    $session = new Session();
-    $user = new User($session->assignedUser);
 
     $path = new Path($_GET['p'], Settings::get('core', 'frontpage'));
     

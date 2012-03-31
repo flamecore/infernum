@@ -132,26 +132,34 @@ class Lang {
     }
     
     /**
-     * Returns the user's preferred language that is defined by the user language cookie. If the cookie is not set, it
-     *   returns FALSE.
+     * Returns the user's preferred language that is stored in the session data. If the setting is not defined, the
+     *   boolean value FALSE is returned.
      * @return   string
      * @access   public
      * @static
      */
     public static function getUserLang() {
-        return Http::getCookie('language');
+        global $session;
+        
+        if (isset($session->data['language'])) {
+            return $session->data['language'];
+        } else {
+            return false;
+        }
     }
 
     /**
-     * Sets the user language cookie that is used to define the user's preferred language. The cookie is automatically
-     *   detected and the language pack to use is set accordingly. 
+     * Sets the user's preferred language that is stored in the session data. The setting is automatically detected
+     *   and the language pack to use is set accordingly.
      * @param    string   $lang   The language to set
      * @return   bool
      * @access   public
      * @static
      */
     public static function setUserLang($lang) {
-        return Http::setCookie('language', $lang, '+365d');
+        global $session;
+        
+        return $session->store('language', $lang);
     }
 
     /**
