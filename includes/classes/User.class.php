@@ -33,10 +33,17 @@ class User {
      * @var      array
      * @access   readonly
      */
-    private $info = array();
+    private $userData = array();
     
     /**
-     * The user's ID (0 = guest).
+     * The UserGroup object containing data about user group
+     * @var      UserGroup
+     * @access   readonly
+     */
+    private $userGroup;
+    
+    /**
+     * The user's ID (0 = guest/anonymous)
      * @var      int
      * @access   private
      */
@@ -54,35 +61,59 @@ class User {
     
     /**
      * Constructor
-     * @param    mixed    $user   The ID (int) or the name (string) of the user
+     * @param    mixed    $user     The ID (int) or username (string) of the user (0 = guest/anonymous)
      * @return   void
      * @access   public
      */
     public function __construct($user) {
         global $db;
         
-        // check if the user is a guest
-        if (empty($user))
-            return;
-    
-        // use which column to identify the user?
-        if (is_int($user)) {
-            $byColumn = 'id';
+        // check if the user is a registered user
+        if (is_int($user) && $user > 0) {
+            // try to fetch user data by ID
+            $sql = 'SELECT * FROM @PREFIX@users WHERE id = {0} LIMIT 1';
+            $result = $db->query($sql, array($user));
+            if ($result->numRows() == 1) {
+                $userData = $result->fetchAssoc();
+            } else {
+                throw new Exception('User with ID '.$user.' does not exist');
+            }
+        } elseif (is_string($user) && !empty($user)) {
+            // try to fetch user data by username
+            $sql = 'SELECT * FROM @PREFIX@users WHERE username = {0} LIMIT 1';
+            $result = $db->query($sql, array($user));
+            if ($result->numRows() == 1) {
+                $userData = $result->fetchAssoc();
+            } else {
+                throw new Exception('User with username "'.$user.'" does not exist');
+            }
         } else {
-            $byColumn = 'username';
+            $userData = array(
+                'id'       => 0,
+                'username' => Settings::get('core', 'guest_username'),
+                'group'    => Settings::get('core', 'guest_group')
+            );
         }
 
-        // try to fetch user data for further usage
-        $sql = 'SELECT * FROM @PREFIX@users WHERE '.$byColumn.' = {0} LIMIT 1';
-        $result = $db->query($sql, array($user));
-        if ($result->numRows() == 1) {
-            $this->info = $result->fetchAssoc();
-            $this->_userID = $this->info['id'];
-        } else {
-            throw new Exception('User '.$user.' ('.$byColumn.') does not exist');
-        }
+        // assign properties
+        $this->_userID = $userData['id'];
+        $this->userData = $userData;
+        $this->userGroup = new UserGroup($userData['group']);
     }
     
+    /**
+     * Checks whether the user is a member or a guest
+     * @return   bool
+     * @access   public
+     */
+    public function isMember() {
+        if ($this->_userID > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Checks whether the user is online
      * @param    int      $threshold   The threshold in seconds at which a user is considered as logged off. Defaults
@@ -91,12 +122,12 @@ class User {
      * @access   public
      */
     public function isOnline($threshold = 600) {
-        // guests ($_userID = 0) are always offline
+        // guests ($_userID = 0) are always offline :)
         if ($this->_userID == 0)
             return false;
         
         // check if the last activity time is within the threshold
-        $lastActive = strtotime($this->info['lastactive']);
+        $lastActive = strtotime($this->userData['lastactive']);
         if (time() - $lastActive <= $threshold) {
             return true;
         } else {

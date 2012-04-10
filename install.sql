@@ -34,11 +34,11 @@ CREATE TABLE IF NOT EXISTS `ww_sessions` (
 
 CREATE TABLE IF NOT EXISTS `ww_usergroups` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `title` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
-INSERT INTO `ww_usergroups` (`id`, `title`) VALUES
+INSERT INTO `ww_usergroups` (`id`, `name`) VALUES
 (1, 'Guest'),
 (2, 'User'),
 (3, 'Administrator');
@@ -54,4 +54,4 @@ CREATE TABLE IF NOT EXISTS `ww_users` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 INSERT INTO `ww_users` (`id`, `username`, `password`, `email`, `group`, `lastactive`) VALUES
-(1, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'example@example.com', 1, '0000-00-00 00:00:00');
+(1, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'example@example.com', 3, '0000-00-00 00:00:00');

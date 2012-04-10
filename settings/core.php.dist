@@ -2,10 +2,13 @@
 $settings['core'] = array(
     'url' => 'http://localhost',
     'frontpage' => 'start',
+    'url_rewrite' => false,
     'theme' => 'default',
     'site_name' => 'Webwork',
     'lang' => 'en',
     'cookie_name_prefix' => 'ww_',
     'cookie_domain' => '',
-    'cookie_path' => '/'
+    'cookie_path' => '/',
+    'guest_username' => 'Anonymous',
+    'guest_group' => 1
 );
