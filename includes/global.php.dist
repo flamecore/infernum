@@ -21,5 +21,6 @@
  * @license     ISC License (http://www.opensource.org/licenses/ISC)
  */
 
-Template::setGlobal('_session', $session);
-Template::setGlobal('_user', $user);
+Template::setGlobal('SETTINGS', Settings::get());
+Template::setGlobal('SESSION', $session);
+Template::setGlobal('USER', $user);

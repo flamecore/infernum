@@ -11,6 +11,6 @@
     <body>
         <div id="wrapper">
             <div id="header">
-                <div class="title">{Settings::get('core', 'site_name')}</div>
+                <div class="title">{$SETTINGS['core']['site_name']}</div>
             </div>
             <div id="content">
