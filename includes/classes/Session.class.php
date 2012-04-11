@@ -241,7 +241,7 @@ class Session {
         
         // update session data in database
         $sql = 'UPDATE @PREFIX@sessions SET data = {0} WHERE id = {1} LIMIT 1';
-        return $db->query($sql, array($this->data, $sessionID));
+        return $db->query($sql, array(serialize($this->data), $sessionID));
     }
 
     /**
