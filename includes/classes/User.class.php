@@ -29,6 +29,13 @@
 class User {
     
     /**
+     * The user's ID (0 = guest/anonymous)
+     * @var      int
+     * @access   readonly
+     */
+    private $userID = 0;
+    
+    /**
      * The fetched user data
      * @var      array
      * @access   readonly
@@ -41,13 +48,6 @@ class User {
      * @access   readonly
      */
     private $userGroup;
-    
-    /**
-     * The user's ID (0 = guest/anonymous)
-     * @var      int
-     * @access   private
-     */
-    private $_userID = 0;
 
     /**
      * Getter for readonly properties
@@ -96,7 +96,7 @@ class User {
         }
 
         // assign properties
-        $this->_userID = $userData['id'];
+        $this->userID = (int) $userData['id'];
         $this->userData = $userData;
         $this->userGroup = new UserGroup($userData['group']);
     }
@@ -107,7 +107,7 @@ class User {
      * @access   public
      */
     public function isMember() {
-        if ($this->_userID > 0) {
+        if ($this->userID > 0) {
             return true;
         } else {
             return false;
@@ -123,7 +123,7 @@ class User {
      */
     public function isOnline($threshold = 600) {
         // guests ($_userID = 0) are always offline :)
-        if ($this->_userID == 0)
+        if ($this->userID == 0)
             return false;
         
         // check if the last activity time is within the threshold
@@ -149,8 +149,8 @@ class User {
         
         if (!isset($userID)) {
             // no $userID given, use current user's ID if available
-            if ($this->_userID > 0) {
-                $userID = $this->_userID;
+            if ($this->userID > 0) {
+                $userID = $this->userID;
             } else {
                 trigger_error('Cannot update user data: Current user is a guest', E_USER_WARNING);
                 return false;
