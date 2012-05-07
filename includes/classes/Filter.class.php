@@ -237,16 +237,17 @@ class Filter {
     }
 
     /**
-     * Formats a time/date (UNIX timestamp, MySQL timestamp, string) according to locale settings
-     * @param   mixed   $input   The time/date to be formatted
-     * @param   string  $format  The strftime() format to use. Defaults to '%x'.
+     * Formats the given time or date
+     * @param   string  $format  The date() format to use
+     * @param   mixed   $input   The time/date to be formatted. Can be DateTime object, UNIX timestamp, MySQL timestamp
+     *                             or date/time string. Defaults to the current time.
      * @return  string
      * @access  public
      * @static
      */
-    public static function formatTime($input, $format = '%x') {
-        if (empty($input)) {
-            // empty input string, use current time
+    public static function formatTime($format, $input = null) {
+        if (!isset($input)) {
+            // no input, use current time
             $time = time();
         } elseif ($input instanceof DateTime) {
             $time = $input->getTimestamp();
@@ -267,7 +268,8 @@ class Filter {
                 $time = time();
             }
         }
-        return strftime($format, $time);
+        
+        return date($format, $time);
     }
 
 }
