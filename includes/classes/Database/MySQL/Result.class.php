@@ -39,6 +39,21 @@ class Database_MySQL_Result extends Database_Base_Result {
     }
 
     /**
+     * Gets a single cell from the first row of the result set. Returns the value of the cell or NULL on failure.
+     * @param    int      $index   The index of the cell to fetch. Defaults to 0.
+     * @return   mixed
+     * @access   public
+     */
+    public function fetchCell($index = 0) {
+        $row = mysqli_fetch_row($this->_result);
+        if (isset($row[$index])) {
+            return $row[$index];
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Fetches a result row as an associative array, a numeric array, or both. Returns an array of strings that
      *   corresponds to the fetched row or NULL if there are no more rows in the resultset.
      * @param    string   $type   This optional parameter indicates what type of array should be produced from the current
