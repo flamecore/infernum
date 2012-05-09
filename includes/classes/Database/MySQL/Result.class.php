@@ -83,6 +83,19 @@ class Database_MySQL_Result extends Database_Base_Result {
     public function fetchAssoc() {
         return mysqli_fetch_assoc($this->_result);
     }
+    
+    /**
+     * Gets the values of a single column for each row of the result set. Returns the values of each cell as an array.
+     * @param    int      $index   The index of the cell to fetch. Defaults to 0.
+     * @return   array
+     * @access   public
+     */
+    public function fetchColumn($index = 0) {
+        $return = array();
+        while ($row = mysqli_fetch_row($this->_result))
+            $return[] = $row[$index];
+        return $return;
+    }
 
     /**
      * Fetches all result rows as an associative array, a numeric array or both. Returns an array of associative or numeric

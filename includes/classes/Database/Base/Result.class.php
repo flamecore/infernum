@@ -89,6 +89,15 @@ abstract class Database_Base_Result {
      * @abstract
      */
     abstract public function fetchAssoc();
+    
+    /**
+     * Gets the values of a single column for each row of the result set. Returns the values of each cell as an array.
+     * @param    int      $index   The index of the cell to fetch. Defaults to 0.
+     * @return   array
+     * @access   public
+     * @abstract
+     */
+    abstract public function fetchColumn($index = 0);
 
     /**
      * Fetches all result rows as an associative array, a numeric array or both. Returns an array of associative or numeric
