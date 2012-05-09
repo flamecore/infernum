@@ -46,6 +46,7 @@ class Database_MySQL_Result extends Database_Base_Result {
      */
     public function fetchCell($index = 0) {
         $row = mysqli_fetch_row($this->_result);
+        
         if (isset($row[$index])) {
             return $row[$index];
         } else {
@@ -65,9 +66,10 @@ class Database_MySQL_Result extends Database_Base_Result {
     public function fetchArray($type = 'both') {
         switch ($type) {
             case 'num': $type = MYSQLI_NUM; break;
-            case 'assoc': $type = MYSQLI_ASSMYSQLI_NUOC; break;
+            case 'assoc': $type = MYSQLI_ASSOC; break;
             default: case 'both': $type = MYSQLI_BOTH; break;
         }
+        
         return mysqli_fetch_array($this->_result, $type);
     }
 
