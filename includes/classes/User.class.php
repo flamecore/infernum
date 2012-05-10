@@ -136,25 +136,19 @@ class User {
     }
 
     /**
-     * Updates the data of the current (if the argument $userID is not set) or the given user in the database
+     * Updates the user data in the database
      * @param    $keyOrData   The name of a single column (string) or pairs of names and values of multiple
      *                          columns (array in the format [name => value, ...]) to be updated
      * @param    $value       The new value of the column to be updated, only if $keyOrData is used for the column name
-     * @param    $userID      The ID of the user to be updated, optional
      * @return   bool
      * @access   public
      */
-    public function updateData($keyOrData, $value = null, $userID = null) {
+    public function setUserData($keyOrData, $value = null) {
         global $db;
         
-        if (!isset($userID)) {
-            // no $userID given, use current user's ID if available
-            if ($this->userID > 0) {
-                $userID = $this->userID;
-            } else {
-                trigger_error('Cannot update user data: Current user is a guest', E_USER_WARNING);
-                return false;
-            }
+        if ($this->userID <= 0) {
+            throw new Exception('Cannot update user data: Current user is a guest.');
+            return false;
         }
     
         if (is_array($keyOrData)) {
@@ -163,12 +157,12 @@ class User {
             foreach ($keyOrData as $key => $value)
                 $dataset[] = $key.' = {'.$key.'}';
             $sql = 'UPDATE @PREFIX@user SET '.implode(', ', $dataset).' WHERE id = {_id} LIMIT 1';
-            $queryVars = $keyOrData + array('_id' => $userID);
+            $queryVars = $keyOrData + array('_id' => $this->userID);
             return $db->query($sql, $queryVars);
         } else {
             // update a single column
             $sql = 'UPDATE @PREFIX@user SET '.$keyOrData.' = {0} WHERE id = {1} LIMIT 1';
-            return $db->query($sql, array($value, $userID));
+            return $db->query($sql, array($value, $this->userID));
         }
     }
 
