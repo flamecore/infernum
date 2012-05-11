@@ -22,7 +22,7 @@
  */
 
 /**
- * Common functions
+ * Core functions library
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */

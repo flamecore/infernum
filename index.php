@@ -30,7 +30,7 @@
 try {
     require_once 'includes/constants.php';
     require_once 'includes/autoloader.php';
-    require_once 'includes/functions.php';
+    require_once 'includes/functions/core.php';
 
     Settings::init();
 
