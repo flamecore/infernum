@@ -35,13 +35,15 @@ CREATE TABLE IF NOT EXISTS `ww_sessions` (
 CREATE TABLE IF NOT EXISTS `ww_usergroups` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `accesslevel` tinyint(2) NOT NULL,
+  `permissions` varchar(200) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
-INSERT INTO `ww_usergroups` (`id`, `name`) VALUES
-(1, 'Guest'),
-(2, 'User'),
-(3, 'Administrator');
+INSERT INTO `ww_usergroups` (`id`, `name`, `accesslevel`, `permissions`) VALUES
+(1, 'Guest', 0, ''),
+(2, 'User', 1, ''),
+(3, 'Administrator', 2, '');
 
 CREATE TABLE IF NOT EXISTS `ww_users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,

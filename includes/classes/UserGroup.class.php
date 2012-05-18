@@ -29,18 +29,11 @@
 class UserGroup {
     
     /**
-     * The ID of the user group
-     * @var      int
+     * The user group data
+     * @var      array
      * @access   private
      */
-    private $_groupID = 0;
-    
-    /**
-     * The name of the user group
-     * @var      string
-     * @access   private
-     */
-    private $_groupName = '';
+    private $_groupData = array();
     
     /**
      * Constructor
@@ -55,9 +48,7 @@ class UserGroup {
         $sql = 'SELECT * FROM @PREFIX@usergroups WHERE id = {0} LIMIT 1';
         $result = $db->query($sql, array($groupID));
         if ($result->numRows() == 1) {
-            $data = $result->fetchAssoc();
-            $this->_groupID = $data['id'];
-            $this->_groupName = $data['name'];
+            $this->_groupData = $result->fetchAssoc();
         } else {
             throw new Exception('User group '.$groupID.' does not exist');
         }
@@ -69,7 +60,25 @@ class UserGroup {
      * @access   public
      */
     public function getName() {
-        return $this->_groupName;
+        return $this->_groupData['name'];
+    }
+    
+    /**
+     * Returns the access level of the group
+     * @return   int
+     * @access   public
+     */
+    public function getAccessLevel() {
+        return (int) $this->_groupData['accesslevel'];
+    }
+    
+    /**
+     * Returns the permissions of the group
+     * @return   array
+     * @access   public
+     */
+    public function getPermissions() {
+        return explode(',', $this->_groupData['permissions']);
     }
 
 }
