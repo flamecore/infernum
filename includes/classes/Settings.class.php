@@ -49,7 +49,7 @@ class Settings {
             self::$_settings = $cache->read();
         } else {
             // load settings from config files in settings dir
-            self::$_settings = self::_loadFromDir(WW_DIR_SETTINGS);
+            self::$_settings = self::_loadFromDir(WW_ENGINE_PATH.'/settings');
             
             // write to cache if enabled
             $cache->store(self::$_settings);
@@ -108,7 +108,7 @@ class Settings {
             $settings = self::$_settings[$section];
         
         $content = '$settings[\''.$section.'\'] = '.var_export($settings).';';
-        return file_put_contents(WW_DIR_SETTINGS.'/'.$section.'.php', $content);
+        return file_put_contents(WW_ENGINE_PATH.'/settings/'.$section.'.php', $content);
     }
 
     /**

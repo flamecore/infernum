@@ -68,20 +68,22 @@ class Cache {
      * @access  public
      */
     public function __construct($cacheFile, $lifeTime = 0, $serialize = true) {
+        if (!defined('WW_ENABLE_CACHING') || WW_ENABLE_CACHING == false)
+            return;
+
         // determine cache file name
-        $fileName = WW_DIR_CACHE.'/'.$cacheFile.'.cache';
+        $fileName = WW_ENGINE_PATH.'/temp/cache/'.$cacheFile.'.cache';
         $this->_fileName = $fileName;
         
-        // serializing on?
+        // is serializing on?
         $this->_serialize = $serialize;
         
-        // caching on, file exists and has not expired?
-        if (WW_ENABLE_CACHING == true && file_exists($fileName)) {
+        // check if file exists and has not yet expired
+        if (file_exists($fileName)) {
             $expired = $lifeTime > 0 && filemtime($fileName)+$lifeTime < time();
             if (!$expired) {
                 $this->active = true;
             } else {
-                // the cache file has expired, so delete it
                 unlink($fileName);
             }
         }

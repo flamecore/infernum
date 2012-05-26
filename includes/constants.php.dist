@@ -23,13 +23,3 @@
 
 define('WW_ENABLE_DEBUGMODE', true);
 define('WW_ENABLE_CACHING', false);
-
-define('WW_DIR_ROOT', dirname($_SERVER['SCRIPT_FILENAME']));
-define('WW_DIR_INCLUDES', WW_DIR_ROOT.'/includes');
-define('WW_DIR_CLASSES', WW_DIR_INCLUDES.'/classes');
-define('WW_DIR_MODULES', WW_DIR_ROOT.'/modules');
-define('WW_DIR_SETTINGS', WW_DIR_ROOT.'/settings');
-define('WW_DIR_TEMP', WW_DIR_ROOT.'/temp');
-define('WW_DIR_CACHE', WW_DIR_TEMP.'/cache');
-define('WW_DIR_ASSETS', WW_DIR_ROOT.'/assets');
-define('WW_DIR_THEMES', WW_DIR_ROOT.'/themes');

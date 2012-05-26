@@ -167,7 +167,7 @@ class Template {
         if (!isset($theme))
             $theme = Settings::get('core', 'theme');
         
-        $templateFile = WW_DIR_THEMES.'/'.$theme.'/templates'.'/'.$file.'.tpl';
+        $templateFile = WW_ENGINE_PATH.'/themes/'.$theme.'/templates'.'/'.$file.'.tpl';
         
         if (!file_exists($templateFile))
             throw new Exception('Template file "'.$templateFile.'" does not exist');
@@ -187,10 +187,10 @@ class Template {
         if (!isset($theme))
             $theme = Settings::get('core', 'theme');
         
-        // replace %constants%
+        // replace template constants
         $rootURL = Settings::get('core', 'url');
-        $code = str_replace('%URL_ROOT%', $rootURL, $code);
-        $code = str_replace('%URL_THEME%', $rootURL.'/themes/'.$theme, $code);
+        $code = str_replace('{%ROOT_URL%}', $rootURL, $code);
+        $code = str_replace('{%THEME_URL%}', $rootURL.'/themes/'.$theme, $code);
         
         // replace {include] tags
         $replaceInclude = function ($match) use ($theme) {

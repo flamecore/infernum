@@ -27,10 +27,12 @@
  * @author  Christian Neff <christian.neff@gmail.com>
  */
 
+define('WW_ENGINE_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
+
 try {
-    require_once 'includes/constants.php';
-    require_once 'includes/autoloader.php';
-    require_once 'includes/functions/core.php';
+    require_once WW_ENGINE_PATH.'/includes/constants.php';
+    require_once WW_ENGINE_PATH.'/includes/autoloader.php';
+    require_once WW_ENGINE_PATH.'/includes/functions/core.php';
 
     Settings::init();
 
@@ -45,11 +47,11 @@ try {
 
     $path = new Path($_GET['p'], Settings::get('core', 'frontpage'));
     
-    if (file_exists(WW_DIR_INCLUDES.'/global.php'))
-        include WW_DIR_INCLUDES.'/global.php';
+    if (file_exists(WW_ENGINE_PATH.'/includes/global.php'))
+        include WW_ENGINE_PATH.'/includes/global.php';
 
     $module = $path->controller;
-    $moduleFile = WW_DIR_MODULES.'/'.$module.'.php';
+    $moduleFile = WW_ENGINE_PATH.'/modules/'.$module.'.php';
     
     if (!file_exists($moduleFile))
         showNotFoundError();
