@@ -71,7 +71,7 @@ class Template {
      * @access   private
      * @static
      */
-    private static $_headTags = array(array(), array(), array(), array());
+    private static $_headTags = array();
 
     /**
      * Generates a new template object
@@ -245,7 +245,10 @@ class Template {
      * @static
      */
     public static function addMetaTag($name, $content) {
-        self::$_headTags[0][] = '<meta name="'.$name.'" content="'.$content.'" />';
+        self::$_headTags['meta'][] = array(
+            'name'    => $name,
+            'content' => $content
+        );
     }
 
     /**
@@ -258,7 +261,11 @@ class Template {
      * @static
      */
     public static function addLinkTag($rel, $url, $type) {
-        self::$_headTags[1][] = '<link rel="'.$rel.'" href="'.$url.'" type="'.$type.'" />';
+        self::$_headTags['link'][] = array(
+            'rel'  => $rel,
+            'href' => $url,
+            'type' => $type
+        );
     }
 
     /**
@@ -270,13 +277,12 @@ class Template {
      * @static
      */
     public static function addThemeCSS($path, $media = 'all') {
-        $rootURL = Settings::get('core', 'url');
-        $theme   = Settings::get('core', 'theme');
+        $theme = Settings::get('core', 'theme');
         
-        // build URL
-        $url = $rootURL.'/themes/'.$theme.'/'.$path;
-        
-        self::$_headTags[2][] = '<link rel="stylesheet" href="'.$url.'" type="text/css" media="'.$media.'" />';
+        self::$_headTags['css'][] = array(
+            'url'   => makeURL('/themes/'.$theme.'/css/'.$path),
+            'media' => $media
+        );
     }
 
     /**
@@ -288,29 +294,40 @@ class Template {
      * @static
      */
     public static function addCSS($url, $media = 'all') {
-        self::$_headTags[2][] = '<link rel="stylesheet" href="'.$url.'" type="text/css" media="'.$media.'" />';
+        self::$_headTags['css'][] = array(
+            'url'   => $url,
+            'media' => $media
+        );
     }
 
     /**
      * Adds a JavaScript to the head tags
-     * @param    string   $url   The URL to the file
+     * @param    string   $url    The URL to the file
+     * @param    string   $type   The content type of the script. Defaults to 'text/javascript'.
      * @return   void
      * @access   public
      * @static
      */
-    public static function addScript($url) {
-        self::$_headTags[3][] = '<script src="'.$url.'"></script>';
+    public static function addScript($url, $type = 'text/javascript') {
+        self::$_headTags['script'][] = array(
+            'url'  => $url,
+            'type' => $type
+        );
     }
 
     /**
-     * Lists all registered head tags sorted by group
+     * Lists all registered head tags of a given group
+     * @param    string   $group   The group of head tags to return
      * @return   array
      * @access   public
      * @static
      */
-    public static function getHeadTags() {
-        $tagsList = array_merge(self::$_headTags[0], self::$_headTags[1], self::$_headTags[2], self::$_headTags[3]);
-        return $tagsList;
+    public static function getHeadTags($group) {
+        if (isset(self::$_headTags[$group])) {
+            return self::$_headTags[$group];
+        } else {
+            return array();
+        }
     }
 
 }
