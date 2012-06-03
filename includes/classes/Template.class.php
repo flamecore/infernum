@@ -36,13 +36,6 @@ class Template {
     private $_filePath;
 
     /**
-     * The name of the theme where the template file is loaded from
-     * @var      string
-     * @access   private
-     */
-    private $_theme;
-
-    /**
      * All assigned template variables
      * @var      array
      * @access   private
@@ -75,20 +68,22 @@ class Template {
 
     /**
      * Generates a new template object
-     * @param    string   $file     The name of the template to load (without '.tpl')
-     * @param    string   $module   The name of the module where the template file is loaded from
-     * @param    string   $theme    The name of the theme where the template file is loaded from. Optional.
+     * @param    string   $file     The file path of the template to load (without '.tpl.php')
+     * @param    string   $module   The name of the module where the template file is loaded from. No module means that
+     *                                the template is loaded from the global templates directory of the theme.
+     * @param    string   $theme    The name of the theme where the template file is loaded from (optional)
      * @return   void
      * @access   public
      */
-    public function __construct($file, $module, $theme = null) {
-        $this->_filePath = $module.'/'.$file;
+    public function __construct($file, $module = null, $theme = null) {
+        if (!isset($theme))
+            $theme = Settings::get('core', 'theme');
         
-        if (isset($theme)) {
-            $this->_theme = $theme;
-        } else {
-            $this->_theme = Settings::get('core', 'theme');
-        }
+        $this->_filePath = self::locate($file, $module, $theme);
+        
+        // Set some common variables
+        $this->set('SITE_URL', makeURL());
+        $this->set('THEME_URL', makeURL('/themes/'.$theme));
     }
 
     /**
@@ -116,38 +111,25 @@ class Template {
 
     /**
      * Renders the loaded template
-     * @param    bool     $output   Output generated template? Defaults to TRUE.
+     * @param    bool     $output   Output the generated template? Defaults to TRUE.
      * @return   string
      * @access   public
      */
     public function render($output = true) {
-        $cacheName = 'tpl_'.md5($this->_theme.$this->_filePath);
-        $cache = new Cache($cacheName, 0, false);
-        if ($cache->active) {
-            // get template from cache
-            $template = $cache->read();
-        } else {
-            // load the template file
-            $templateCode = self::loadFile($this->_filePath, $this->_theme);
+        // Create a renderer function to isolate the template
+        $renderer = function() {
+            // Import the defined variables
+            extract(func_get_arg(1));
             
-            // parse the template code
-            $template = self::parse($templateCode, $this->_theme);
-            
-            // store template to cache if enabled
-            $cache->store($template);
-        }
+            // Include the template file and capture its output
+            ob_start();
+            include func_get_arg(0);
+            return ob_get_clean();
+        };
         
-        // create the renderer function
-        $render = @create_function('', 'extract(func_get_arg(0)); ob_start(); ?>'.$template.'<?php return ob_get_clean();');
+        // Render the template with defined variables
+        $content = $renderer($this->_filePath, self::$_globalVars + $this->_variables);
         
-        if (!$render)
-            throw new Exception('Syntax error in template code');
-        
-        // render the template
-        $variables = self::$_globalVars + $this->_variables;
-        $content = $render($variables);
-        
-        // output/return the template
         if ($output) {
             echo $content;
         } else {
@@ -157,57 +139,27 @@ class Template {
     
     /**
      * Loads a template file from the given theme
-     * @param    string   $file    The file path of the template to load (without '.tpl')
-     * @param    string   $theme   The name of the theme where the template file is loaded from. Optional.
+     * @param    string   $file     The file path of the template to load (without '.tpl.php')
+     * @param    string   $module   The name of the module where the template file is loaded from. No module means that
+     *                                the template is loaded from the global templates directory of the theme.
+     * @param    string   $theme    The name of the theme where the template file is loaded from (optional)
      * @return   string
      * @access   public
      * @static 
      */
-    public static function loadFile($file, $theme = null) {
+    public static function locate($file, $module = null, $theme = null) {
         if (!isset($theme))
             $theme = Settings::get('core', 'theme');
         
-        $templateFile = WW_ENGINE_PATH.'/themes/'.$theme.'/templates'.'/'.$file.'.tpl';
+        if (isset($module))
+            $file = $module.'/'.$file;
         
-        if (!file_exists($templateFile))
-            throw new Exception('Template file "'.$templateFile.'" does not exist');
+        $filePath = WW_ENGINE_PATH.'/themes/'.$theme.'/templates/'.$file.'.tpl.php';
         
-        return file_get_contents($templateFile);
-    }
-    
-    /**
-     * Transforms template code to real PHP code
-     * @param    string   $code    The template code to transform
-     * @param    string   $theme   The name of the theme where the template file is loaded from. Optional.
-     * @return   string
-     * @access   public
-     * @static 
-     */
-    public static function parse($code, $theme = null) {
-        if (!isset($theme))
-            $theme = Settings::get('core', 'theme');
+        if (!file_exists($filePath))
+            throw new Exception('Template file "'.$filePath.'" does not exist');
         
-        // replace template constants
-        $rootURL = Settings::get('core', 'url');
-        $code = str_replace('{%ROOT_URL%}', $rootURL, $code);
-        $code = str_replace('{%THEME_URL%}', $rootURL.'/themes/'.$theme, $code);
-        
-        // replace {include] tags
-        $replaceInclude = function ($match) use ($theme) {
-            $templateCode = Template::loadFile($match[1], $theme);
-            return Template::parse($templateCode, $theme);
-        };
-        $code = preg_replace_callback('#\{include ([\w\./]+)\}#i', $replaceInclude, $code);
-
-        // replace conditional tags
-        $code = preg_replace('#\{(if|elseif|while|for|foreach) ([^\}\r\n]+)(?<!\s)\}#i', '<?php $1 ($2): ?>', $code);
-        $code = preg_replace('#\{else\}#i', '<?php else: ?>', $code);
-        $code = preg_replace('#\{/(if|while|for|foreach)\}#i', '<?php end$1; ?>', $code);
-
-        // replace other tags like variables, constants, function calls, ...
-        $code = preg_replace('#\{(?!\s)([^\{\r\n]+)(?<!\s)\}#', '<?php echo $1; ?>', $code);
-        
-        return $code;
+        return $filePath;
     }
 
     /**

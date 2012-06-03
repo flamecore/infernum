@@ -44,10 +44,10 @@ function t($string, $vars = null) {
  *                               For more information, see {@link http://www.php.net/manual/en/function.http-build-query.php}
  * @return   string
  */
-function makeURL($path, $query = null) {
-    $rootURL = Settings::get('core', 'url');
+function makeURL($path = '', $query = null) {
+    $siteURL = Settings::get('core', 'url');
     
-    $result = $rootURL.$path;
+    $result = $siteURL.$path;
     if (isset($query) && is_array($query))
         $result .= '?'.http_build_query($query);
     
@@ -86,10 +86,11 @@ function makePageURL($pagePath, $query = null) {
  * @return   void
  */
 function showMessage($message, $type = 'info') {
-    $tpl = new Template('message_body', 'core');
+    $tpl = new Template('message_body');
     $tpl->set('message', $message);
     $tpl->set('type', $type);
     $tpl->render();
+    
     exit();
 }
 
@@ -99,7 +100,9 @@ function showMessage($message, $type = 'info') {
  */
 function showNotFoundError() {
     Http::setHeader('HTTP/1.1 404 Not Found');
-    $tpl = new Template('notfound_body', 'core');
+    
+    $tpl = new Template('notfound_body');
     $tpl->render();
+    
     exit();
 }
