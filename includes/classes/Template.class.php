@@ -151,10 +151,11 @@ class Template {
         if (!isset($theme))
             $theme = Settings::get('core', 'theme');
         
-        if (isset($module))
-            $file = $module.'/'.$file;
-        
-        $filePath = WW_ENGINE_PATH.'/themes/'.$theme.'/templates/'.$file.'.tpl.php';
+        if (isset($module)) {
+            $filePath = WW_ENGINE_PATH.'/modules/'.$module.'/templates/'.$theme.'/'.$file.'.tpl.php';
+        } else {
+            $filePath = WW_ENGINE_PATH.'/themes/'.$theme.'/templates/'.$file.'.tpl.php';
+        }
         
         if (!file_exists($filePath))
             throw new Exception('Template file "'.$filePath.'" does not exist');

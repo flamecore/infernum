@@ -52,12 +52,12 @@ try {
     
     @include WW_ENGINE_PATH.'/includes/global.php';
     
-    $moduleFile = WW_ENGINE_PATH.'/modules/'.$module.'.php';
-    
-    if (!file_exists($moduleFile))
+    $moduleFile = WW_ENGINE_PATH.'/modules/'.$module.'/controller.php';
+    if (file_exists($moduleFile)) {
+        include $moduleFile;
+    } else {
         showNotFoundError();
-    
-    include $moduleFile;
+    }
 } catch (Exception $error) {
     die('<strong>Error:</strong> '.$error->getMessage());
 }
