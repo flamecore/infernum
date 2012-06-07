@@ -68,7 +68,7 @@ class Cache {
      * @access  public
      */
     public function __construct($cacheFile, $lifeTime = 0, $serialize = true) {
-        if (!defined('WW_ENABLE_CACHING') || WW_ENABLE_CACHING == false)
+        if (!defined('WW_ENABLE_CACHING') || !WW_ENABLE_CACHING)
             return;
 
         // determine cache file name

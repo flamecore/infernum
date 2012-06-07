@@ -24,7 +24,8 @@
 /**
  * Class for reading and editing the configuration
  *
- * @author  Christian Neff <christian.neff@gmail.com>
+ * @author   Christian Neff <christian.neff@gmail.com>
+ * @author   Sebastian Wagner <szebi@gmx.at>
  */
 class Settings {
 
@@ -67,7 +68,7 @@ class Settings {
     public static function get($section = null, $setting = null) {
         if (isset($section)) {
             if (!isset(self::$_settings[$section]))
-                throw new Exception('Settings section "'.$section.'" does not exist');
+                throw new Exception('Settings section "'.$section.'" does not exist.');
             
             if (isset($setting)) {
                 if (!isset(self::$_settings[$section][$setting]))
@@ -117,7 +118,6 @@ class Settings {
      * @return   array
      * @access   private
      * @static
-     * @author   Sebastian Wagner <szebi@gmx.at>
      */
     private static function _loadFromDir($dir) {
         $settings = array();

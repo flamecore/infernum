@@ -42,7 +42,7 @@ try {
     $session = new Session();
     $user = new User($session->assignedUser);
 
-    Lang::init(Settings::get('core', 'lang'));
+    Lang::init();
 
     Template::setTitle(Settings::get('core', 'site_name'));
 
