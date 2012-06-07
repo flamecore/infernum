@@ -30,10 +30,11 @@
 define('WW_ENGINE_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
 
 try {
-    require_once WW_ENGINE_PATH.'/includes/constants.php';
+    @include_once WW_ENGINE_PATH.'/includes/config.php';
+
     require_once WW_ENGINE_PATH.'/includes/autoloader.php';
     require_once WW_ENGINE_PATH.'/includes/functions/core.php';
-
+    
     Settings::init();
 
     $db = Database::createDriver();
@@ -46,11 +47,11 @@ try {
     Template::setTitle(Settings::get('core', 'site_name'));
 
     $path = new Path($_GET['p'], Settings::get('core', 'frontpage'));
-    
-    if (file_exists(WW_ENGINE_PATH.'/includes/global.php'))
-        include WW_ENGINE_PATH.'/includes/global.php';
 
     $module = $path->controller;
+    
+    @include WW_ENGINE_PATH.'/includes/global.php';
+    
     $moduleFile = WW_ENGINE_PATH.'/modules/'.$module.'.php';
     
     if (!file_exists($moduleFile))
