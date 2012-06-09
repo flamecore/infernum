@@ -32,6 +32,23 @@ define('WW_ENGINE_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
 try {
     @include_once WW_ENGINE_PATH.'/includes/config.php';
 
+    if (defined('WW_ENABLE_MULTISITE') && WW_ENABLE_MULTISITE) {
+        // This is a multi-site installation, so we need to know the current domain name
+        $domain = $_SERVER['SERVER_NAME'];
+        
+        // Check if there is a site for the current domain, fall back to default site otherwise
+        if (is_dir(WW_ENGINE_PATH.'/sites/'.$domain)) {
+            $activeSite = $domain;
+        } else {
+            $activeSite = defined('WW_DEFAULT_SITE') ? WW_DEFAULT_SITE : 'default';
+        }
+    } else {
+        // This is a single-site installation, hence we use the default site
+        $activeSite = 'default';
+    }
+    
+    define('WW_SITE_PATH', WW_ENGINE_PATH.'/sites/'.$activeSite);
+
     require_once WW_ENGINE_PATH.'/includes/autoloader.php';
     require_once WW_ENGINE_PATH.'/includes/functions/core.php';
     
@@ -50,9 +67,9 @@ try {
 
     $module = $path->controller;
     
-    @include WW_ENGINE_PATH.'/includes/global.php';
+    @include WW_SITE_PATH.'/includes/global.php';
     
-    $moduleFile = WW_ENGINE_PATH.'/modules/'.$module.'/controller.php';
+    $moduleFile = WW_SITE_PATH.'/modules/'.$module.'/controller.php';
     if (file_exists($moduleFile)) {
         include $moduleFile;
     } else {

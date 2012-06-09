@@ -50,7 +50,7 @@ class Settings {
             self::$_settings = $cache->read();
         } else {
             // load settings from config files in settings dir
-            self::$_settings = self::_loadFromDir(WW_ENGINE_PATH.'/settings');
+            self::$_settings = self::_loadFromDir(WW_SITE_PATH.'/settings');
             
             // write to cache if enabled
             $cache->store(self::$_settings);
