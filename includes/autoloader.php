@@ -26,18 +26,51 @@
  *
  * @author  Christian Neff <christian.neff@gmail.com>
  */
-
-function autoload($className) {
-    $classFile = str_replace('_', '/', $className);
+class Autoloader {
     
-    $classPath = WW_ENGINE_PATH.'/includes/classes/'.$classFile.'.class.php';
-    if (file_exists($classPath)) {
-        require_once $classPath;
-        return true;
+    /**
+     * The list of registered class directories
+     * @var      array
+     * @access   private
+     * @static
+     */
+    private static $_classDirs = array();
+
+    /**
+     * The class loader
+     * @param    string   $className   The name of the class to load
+     * @return   bool
+     * @static
+     */
+    public static function load($className) {
+        $classFileName = str_replace('_', '/', $className);
+
+        foreach (self::$_classDirs as $classDir) {
+            $classFile = $classDir.'/'.$classFileName.'.class.php';
+            if (file_exists($classFile)) {
+                require_once $classFile;
+                return true;
+            }
+        }
+
+        return false;
     }
     
-    return false;
+    /**
+     * Adds a class directory to the list
+     * @param    string   $path   The path of the class directory to add
+     * @return   void
+     * @static
+     */
+    public static function addClassPath($path) {
+        self::$_classDirs[] = $path;
+    }
+    
 }
 
-// register autoloader
-spl_autoload_register('autoload');
+// Register the autoloader
+spl_autoload_register(array('Autoloader', 'load'));
+
+// Add basic class paths
+Autoloader::addClassPath(WW_ENGINE_PATH.'/includes/classes');
+Autoloader::addClassPath(WW_SITE_PATH.'/includes/classes');
