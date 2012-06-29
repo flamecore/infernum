@@ -54,13 +54,22 @@ class Database {
         if (!isset($prefix))
             $prefix = Settings::get('database', 'prefix');
         
-        $drivers = glob(WW_ENGINE_PATH.'/includes/classes/Database/*', GLOB_ONLYDIR);
-        $drivers = array_map('basename', $drivers);
-        if ($driver == '' || !in_array($driver, $drivers))
+        if ($driver == '' || !in_array($driver, self::getAvailableDrivers()))
             throw new Exception('Database driver "'.$driver.'" not found or invalid');
         
         $driverClass = 'Database_'.$driver.'_Driver';
         return new $driverClass($host, $user, $password, $database, $prefix);
+    }
+    
+    /**
+     * Returns a list of available drivers.
+     * @return   array
+     * @access   public
+     * @static
+     */
+    public static function getAvailableDrivers() {
+        $drivers = glob(WW_ENGINE_PATH.'/includes/classes/Database/*', GLOB_ONLYDIR);
+        return array_map('basename', $drivers);
     }
     
 }
