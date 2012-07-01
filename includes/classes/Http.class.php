@@ -132,6 +132,36 @@ class Http {
     public static function redirect($url, $respCode = 302) {
         return self::setHeader('Location', $url, true, $respCode);
     }
+    
+    /**
+     * Parses the 'Accept-Language' header sent by the client. Returns an array in the form [locale => q-factor] on success
+     *   or FALSE if no or an invalid header was sent.
+     * @return   array
+     * @access   public
+     * @static
+     */
+    public static function getAcceptLanguage() {
+        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+            $langs = array();
+
+            // Break up the string into pieces (languages and q-factors)
+            $pattern = '/(?P<locale>[a-z]{1,8}(-[a-z]{1,8})?)\s*(;\s*q\s*=\s*(?P<q>1|0\.[0-9]+))?/i';
+            $matched = preg_match_all($pattern, $_SERVER['HTTP_ACCEPT_LANGUAGE'], $items, PREG_SET_ORDER);
+
+            if ($matched != false) {
+                // Create list of accepted languages with their q-factor (omitted q-factor = 1)
+                foreach ($items as $item)
+                    $langs[$item['locale']] = !empty($item['q']) ? $item['q'] : 1;
+
+                // Sort the list based on q-factor
+                arsort($langs, SORT_NUMERIC);
+                
+                return $langs;
+            }
+        }
+        
+        return false;
+    }
 
     /**
      * Parses a given expire time
