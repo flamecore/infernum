@@ -1,28 +1,5 @@
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
-CREATE TABLE IF NOT EXISTS `ww_lang_packs` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `isocode` varchar(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `direction` varchar(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `locale` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `date_format` varchar(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `date_format_long` varchar(40) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
-INSERT INTO `ww_lang_packs` (`id`, `isocode`, `name`, `direction`, `locale`, `date_format`, `date_format_long`) VALUES
-(1, 'en', 'English', 'ltr', 'en_US.UTF-8,en_US,eng,English', 'Y-m-d', 'D, d M Y');
-
-CREATE TABLE IF NOT EXISTS `ww_lang_strings` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `langpack` int(10) unsigned NOT NULL,
-  `string` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `translated` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `pack` (`langpack`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
 CREATE TABLE IF NOT EXISTS `ww_sessions` (
   `id` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `user` int(10) NOT NULL,
@@ -57,3 +34,23 @@ CREATE TABLE IF NOT EXISTS `ww_users` (
 
 INSERT INTO `ww_users` (`id`, `username`, `password`, `email`, `group`, `lastactive`) VALUES
 (1, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'example@example.com', 3, '0000-00-00 00:00:00');
+
+CREATE TABLE IF NOT EXISTS `ww_languages` (
+  `id` varchar(5) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `direction` varchar(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `locales` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO `ww_languages` (`id`, `name`, `direction`, `locales`) VALUES
+('en', 'English', 'ltr', 'en_US.UTF-8,en_US,eng,English');
+
+CREATE TABLE IF NOT EXISTS `ww_translations` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `language` varchar(5) NOT NULL,
+  `string` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `translation` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pack` (`language`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;

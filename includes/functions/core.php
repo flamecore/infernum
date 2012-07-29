@@ -34,7 +34,21 @@
  * @return   string
  */
 function t($string, $vars = null) {
-    return Lang::get($string, $vars);
+    global $t;
+
+    return $t->get($string, $vars);
+}
+
+/**
+ * Outputs the translation of a string
+ * @param    string   $string   The string to translate
+ * @param    array    $vars     Variables ('%var%') to replace as array
+ * @return   void
+ */
+function te($string, $vars = null) {
+    global $t;
+
+    echo $t->get($string, $vars);
 }
 
 /**

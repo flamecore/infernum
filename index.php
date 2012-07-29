@@ -59,7 +59,46 @@ try {
     $session = new Session();
     $user = new User($session->assignedUser);
 
-    Lang::init();
+    // Fetch list of language packs
+    $langCache = new Cache('languages');
+    if ($langCache->active) {
+        $languages = $langCache->read();
+    } else {
+        $sql = 'SELECT * FROM @PREFIX@languages';
+        $result = $db->query($sql);
+
+        while ($data = $result->fetchAssoc()) {
+            $languages[$data['id']] = array(
+                'name'      => $data['name'],
+                'direction' => $data['direction'],
+                'locales'   => explode(',', $data['locales'])
+            );
+        }
+
+        $langCache->store($languages);
+    }
+
+    // Detect the user's preferred language
+    if (isset($session->data['language'])) {
+        // There was found a language setting in the user's session
+        $language = $session->data['language'];
+    } elseif ($browserLangs = Http::getAcceptLanguage()) {
+        // We can use the browser language: Try to find the best match
+        foreach (array_keys($browserLangs) as $lang) {
+            if (isset($languages[$lang])) {
+                $language = $lang;
+                break;
+            }
+        }
+    }
+
+    // If no preferred language was detected, fall back to the default language
+    if (!isset($language))
+        $language = Settings::get('core', 'lang');
+
+    setlocale(LC_ALL, $languages[$language]['locales']);
+    
+    $t = new Translations($language);
 
     Template::setTitle(Settings::get('core', 'site_name'));
 
