@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `ww_usergroups` (
   `accesslevel` tinyint(2) NOT NULL,
   `permissions` varchar(200) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=4;
 
 INSERT INTO `ww_usergroups` (`id`, `name`, `accesslevel`, `permissions`) VALUES
 (1, 'Guest', 0, ''),
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `ww_users` (
   `group` int(10) unsigned NOT NULL,
   `lastactive` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=2;
 
 INSERT INTO `ww_users` (`id`, `username`, `password`, `email`, `group`, `lastactive`) VALUES
 (1, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'example@example.com', 3, '0000-00-00 00:00:00');
@@ -53,4 +53,4 @@ CREATE TABLE IF NOT EXISTS `ww_translations` (
   `translation` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `pack` (`language`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=2;

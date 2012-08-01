@@ -50,7 +50,7 @@ try {
     define('WW_SITE_PATH', WW_ENGINE_PATH.'/sites/'.$activeSite);
 
     require_once WW_ENGINE_PATH.'/includes/autoloader.php';
-    require_once WW_ENGINE_PATH.'/includes/functions/core.php';
+    require_once WW_ENGINE_PATH.'/includes/functions.php';
     
     Settings::init();
 
