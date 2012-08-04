@@ -44,17 +44,14 @@ class Settings {
      * @static
      */
     public static function init() {
-        $cache = new Cache('settings');
-        if ($cache->active) {
-            // load settings from cache
-            self::$_settings = $cache->read();
-        } else {
-            // load settings from config files in settings dir
-            self::$_settings = self::_loadFromDir(WW_SITE_PATH.'/settings');
-            
-            // write to cache if enabled
-            $cache->store(self::$_settings);
+        $settings = Cache::read('settings');
+        if (!isset($settings)) {
+            // Load settings from config files in settings dir
+            $settings = self::_loadFromDir(WW_SITE_PATH.'/settings');
+            Cache::store('settings', $settings);
         }
+        
+        self::$_settings = $settings;
     }
 
     /**

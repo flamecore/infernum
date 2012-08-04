@@ -22,110 +22,67 @@
  */
 
 /**
- * Class for evaluating cache files
+ * Class for reading and storing cache files
  *
- * @author  Christian Neff <christian.neff@gmail.com>
+ * @author   Christian Neff <christian.neff@gmail.com>
  */
 class Cache {
 
     /**
-     * Does the cache file exist and is active?
-     * @var     bool
-     * @access  readonly
+     * Reads all data from the cache file. Returns the stored data on success. If the cache has expired, if caching is
+     *   disabled or on failure, it returns NULL.
+     * @param    string   $fileName   The name of the cache file
+     * @return   mixed
+     * @access   public
+     * @static
      */
-    private $active = false;
-
-    /**
-     * The name of the cache file
-     * @var     string
-     * @access  private
-     */
-    private $_fileName;
-
-    /**
-     * Serialize the cache data?
-     * @var     bool
-     * @access  private
-     */
-    private $_serialize = true;
-
-    /**
-     * Getter for readonly properties
-     * @return  mixed
-     * @access  public
-     */
-    public function __get($varName) {
-        if ($varName[0] != '_')
-            return $this->$varName;
-    }
-
-    /**
-     * The class constructor
-     * @param   string  $cacheFile  The name of the cache file to load
-     * @param   int     $lifeTime   Lifetime of the cache in seconds, 0 means infinite. Defaults to 0.
-     * @param   bool    $serialize  Serialize the cache data? Defaults to TRUE.
-     * @return  void
-     * @access  public
-     */
-    public function __construct($cacheFile, $lifeTime = 0, $serialize = true) {
+    public static function read($fileName) {
         if (!defined('WW_ENABLE_CACHING') || !WW_ENABLE_CACHING)
             return;
 
-        // determine cache file name
-        $fileName = WW_ENGINE_PATH.'/temp/cache/'.$cacheFile.'.cache';
-        $this->_fileName = $fileName;
+        $filePath = WW_ENGINE_PATH.'/temp/cache/'.$fileName.'.cache';
         
-        // is serializing on?
-        $this->_serialize = $serialize;
+        if (!file_exists($filePath))
+            return;
         
-        // check if file exists and has not yet expired
-        if (file_exists($fileName)) {
-            $expired = $lifeTime > 0 && filemtime($fileName)+$lifeTime < time();
-            if (!$expired) {
-                $this->active = true;
-            } else {
-                unlink($fileName);
-            }
-        }
-    }
+        $fileContent = file_get_contents($filePath);
+        list($modifiedTime, $data) = explode(',', $fileContent, 2);
 
-    /**
-     * Reads all data from the cache file
-     * @return  mixed
-     * @access  public
-     */
-    public function read() {
-        // active? return false if not
-        if (!$this->active)
-            return false;
+        // Check if the file is fresh (has not yet expired)
+        if ($lifeTime > 0 && $modifiedTime + $lifeTime < time())
+            return;
         
-        // read the cache file
-        $data = file_get_contents($this->_fileName);
-        
-        // unserialize data if serialization is enabled
-        if ($this->_serialize)
-            $data = unserialize($data);
-        
-        return $data;
+        return unserialize($data);
     }
-
+    
     /**
-     * Writes the given data to the cache file
-     * @param   mixed   $data  The data to store to the cache file
-     * @return  bool
-     * @access  public
+     * Writes the given data to the cache file. Returns the number of bytes that were written to the file or FALSE
+     *   on failure.
+     * @param    string   $fileName   The name of the cache file
+     * @param    mixed    $data       The data to store to the cache file
+     * @return   int
+     * @access   public
+     * @static
      */
-    public function store($data) {
-        // active? return false if not
-        if (!$this->active)
-            return false;
-        
-        // serialize data if serialization is enabled
-        if ($this->_serialize)
-            $data = serialize($data);
-        
-        // store to cache file
-        return file_put_contents($this->_fileName, $data);
+    public static function store($fileName, $data) {
+        if (!defined('WW_ENABLE_CACHING') || !WW_ENABLE_CACHING)
+            return;
+
+        $filePath = WW_ENGINE_PATH.'/temp/cache/'.$fileName.'.cache';
+        $fileContent = time().','.serialize($data);
+        return file_put_contents($filePath, $fileContent);
+    }
+    
+    /**
+     * Deletes a given cache file. Returns TRUE on success and FALSE on failure.
+     * @param    string   $fileName   The name of the cache file
+     * @return   bool
+     * @access   public
+     * @static
+     */
+    public static function flush($fileName) {
+        $filePath = WW_ENGINE_PATH.'/temp/cache/'.$fileName.'.cache';
+        return unlink($filePath);
     }
     
 }

@@ -60,10 +60,8 @@ try {
     $user = new User($session->assignedUser);
 
     // Fetch list of language packs
-    $langCache = new Cache('languages');
-    if ($langCache->active) {
-        $languages = $langCache->read();
-    } else {
+    $languages = Cache::read('languages');
+    if (!isset($languages)) {
         $sql = 'SELECT * FROM @PREFIX@languages';
         $result = $db->query($sql);
 
@@ -75,7 +73,7 @@ try {
             );
         }
 
-        $langCache->store($languages);
+        Cache::store('languages', $languages);
     }
 
     // Detect the user's preferred language
