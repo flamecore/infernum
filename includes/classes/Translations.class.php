@@ -42,13 +42,11 @@ class Translations {
      * @access   public
      */
     public function __construct($language) {
-        global $db;
-
         // Load all strings of the selected language pack
         $strings = Cache::read('translations-'.$language);
         if (!isset($strings)) {
             $sql = 'SELECT string, translation FROM @PREFIX@translations WHERE language = {0}';
-            $result = $db->query($sql, array($language));
+            $result = System::$db->query($sql, array($language));
             
             while ($entry = $result->fetchAssoc())
                 $strings[$entry['string']] = $entry['translation'];

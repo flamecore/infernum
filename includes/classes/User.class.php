@@ -66,13 +66,11 @@ class User {
      * @access   public
      */
     public function __construct($user) {
-        global $db;
-        
         // check if the user is a registered user
         if (is_int($user) && $user > 0) {
             // try to fetch user data by ID
             $sql = 'SELECT * FROM @PREFIX@users WHERE id = {0} LIMIT 1';
-            $result = $db->query($sql, array($user));
+            $result = System::$db->query($sql, array($user));
             if ($result->numRows() == 1) {
                 $userData = $result->fetchAssoc();
             } else {
@@ -81,7 +79,7 @@ class User {
         } elseif (is_string($user) && !empty($user)) {
             // try to fetch user data by username
             $sql = 'SELECT * FROM @PREFIX@users WHERE username = {0} LIMIT 1';
-            $result = $db->query($sql, array($user));
+            $result = System::$db->query($sql, array($user));
             if ($result->numRows() == 1) {
                 $userData = $result->fetchAssoc();
             } else {
@@ -90,8 +88,8 @@ class User {
         } else {
             $userData = array(
                 'id'       => 0,
-                'username' => Settings::get('core', 'guest_username'),
-                'group'    => Settings::get('core', 'guest_group')
+                'username' => System::$settings['core']['guest_username'],
+                'group'    => System::$settings['core']['guest_group']
             );
         }
 
@@ -144,8 +142,6 @@ class User {
      * @access   public
      */
     public function setUserData($keyOrData, $value = null) {
-        global $db;
-        
         if ($this->userID <= 0) {
             throw new Exception('Cannot update user data: Current user is a guest.');
             return false;
@@ -158,11 +154,11 @@ class User {
                 $dataset[] = $key.' = {'.$key.'}';
             $sql = 'UPDATE @PREFIX@user SET '.implode(', ', $dataset).' WHERE id = {_id} LIMIT 1';
             $queryVars = $keyOrData + array('_id' => $this->userID);
-            return $db->query($sql, $queryVars);
+            return System::$db->query($sql, $queryVars);
         } else {
             // update a single column
             $sql = 'UPDATE @PREFIX@user SET '.$keyOrData.' = {0} WHERE id = {1} LIMIT 1';
-            return $db->query($sql, array($value, $this->userID));
+            return System::$db->query($sql, array($value, $this->userID));
         }
     }
 

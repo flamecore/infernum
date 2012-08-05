@@ -59,7 +59,7 @@ function te($string, $vars = null) {
  * @return   string
  */
 function makeURL($path = '', $query = null) {
-    $siteURL = Settings::get('core', 'url');
+    $siteURL = System::$settings['core']['url'];
     
     $result = $siteURL.$path;
     if (isset($query) && is_array($query))
@@ -76,9 +76,9 @@ function makeURL($path = '', $query = null) {
  * @return   string
  */
 function makePageURL($pagePath, $query = null) {
-    $rootURL = Settings::get('core', 'url');
+    $rootURL = System::$settings['core']['url'];
     
-    if (Settings::get('core', 'url_rewrite')) {
+    if (System::$settings['core']['url_rewrite']) {
         $result = $rootURL.'/'.$pagePath;
         if (isset($query) && is_array($query))
             $result .= '?'.http_build_query($query);

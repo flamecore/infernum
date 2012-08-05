@@ -73,8 +73,6 @@ class Session {
      * @access   public
      */
     public function __construct($lifeTime = 3600) {
-        global $db;
-        
         // set life time
         $this->lifeTime = $lifeTime;
         
@@ -87,7 +85,7 @@ class Session {
         if ($sessionID !== false) {
             // find unexpired session matching session ID and fetch assigned user's ID
             $sql = 'SELECT user, data FROM @PREFIX@sessions WHERE id = {0} AND expire > {1} LIMIT 1';
-            $result = $db->query($sql, array($sessionID, date('Y-m-d H:i:s')));
+            $result = System::$db->query($sql, array($sessionID, date('Y-m-d H:i:s')));
             if ($result->numRows() == 1) {
                 $session = $result->fetchAssoc();
                 
@@ -113,8 +111,6 @@ class Session {
      * @access   public
      */
     public function start() {
-        global $db;
-        
         if ($this->sessionID != '')
             return false;
         
@@ -126,7 +122,7 @@ class Session {
 
         // register the session in the database
         $sql = 'INSERT INTO @PREFIX@sessions (id, expire) VALUES({0}, {1})';
-        $db->query($sql, array($sessionID, date('Y-m-d H:i:s', time()+$this->lifeTime)));
+        System::$db->query($sql, array($sessionID, date('Y-m-d H:i:s', time()+$this->lifeTime)));
 
         // the session is now started, set session info
         $this->sessionID = $sessionID;
@@ -141,8 +137,6 @@ class Session {
      * @access   public
      */
     public function destroy($sessionID = null) {
-        global $db;
-        
         if (!isset($sessionID)) {
             // no $sessionID given, assign ID of current session
             $sessionID = $this->sessionID;
@@ -157,7 +151,7 @@ class Session {
         
         // delete session from database
         $sql = 'DELETE FROM @PREFIX@sessions WHERE id = {0}';
-        return $db->query($sql, array($sessionID));
+        return System::$db->query($sql, array($sessionID));
     }
     
     /**
@@ -167,8 +161,6 @@ class Session {
      * @access   public
      */
     public function refresh($sessionID = null) {
-        global $db;
-    
         if (!isset($sessionID)) {
             // no $sessionID given, assign ID of this session
             $sessionID = $this->sessionID;
@@ -176,12 +168,12 @@ class Session {
         
         // update session in database
         $sql = 'UPDATE @PREFIX@sessions SET expire = {0} WHERE id = {1} LIMIT 1';
-        $db->query($sql, array(date('Y-m-d H:i:s', time()+$this->lifeTime), $sessionID));
+        System::$db->query($sql, array(date('Y-m-d H:i:s', time()+$this->lifeTime), $sessionID));
         
         // update the assigned user's last activity time
         if ($this->assignedUser > 0) {
             $sql = 'UPDATE @PREFIX@users SET lastactive = {0} WHERE id = {1} LIMIT 1';
-            $db->query($sql, array(date('Y-m-d H:i:s'), $this->assignedUser));
+            System::$db->query($sql, array(date('Y-m-d H:i:s'), $this->assignedUser));
         }
     }
     
@@ -191,10 +183,8 @@ class Session {
      * @access   public
      */
     public function cleanup() {
-        global $db;
-    
         $sql = 'DELETE FROM @PREFIX@sessions WHERE expire <= {0}';
-        return $db->query($sql, array(date('Y-m-d H:i:s')));
+        return System::$db->query($sql, array(date('Y-m-d H:i:s')));
     }
     
     /**
@@ -205,8 +195,6 @@ class Session {
      * @access   public
      */
     public function assignUser($userID, $sessionID = null) {
-        global $db;
-    
         if (!isset($sessionID)) {
             // no $sessionID given, assign ID of this session
             $sessionID = $this->sessionID;
@@ -217,7 +205,7 @@ class Session {
         
         // update session in database
         $sql = 'UPDATE @PREFIX@sessions SET user = {0} WHERE id = {1} LIMIT 1';
-        return $db->query($sql, array($userID, $sessionID));
+        return System::$db->query($sql, array($userID, $sessionID));
     }
     
     /**
@@ -229,8 +217,6 @@ class Session {
      * @access   public
      */
     public function store($key, $value, $sessionID = null) {
-        global $db;
-    
         if (!isset($sessionID)) {
             // no $sessionID given, assign ID of this session
             $sessionID = $this->sessionID;
@@ -241,7 +227,7 @@ class Session {
         
         // update session data in database
         $sql = 'UPDATE @PREFIX@sessions SET data = {0} WHERE id = {1} LIMIT 1';
-        return $db->query($sql, array(serialize($this->data), $sessionID));
+        return System::$db->query($sql, array(serialize($this->data), $sessionID));
     }
 
     /**

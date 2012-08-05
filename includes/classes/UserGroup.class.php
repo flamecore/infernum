@@ -42,11 +42,9 @@ class UserGroup {
      * @access   public
      */
     public function __construct($groupID) {
-        global $db;
-
         // try to fetch user group data for further usage
         $sql = 'SELECT * FROM @PREFIX@usergroups WHERE id = {0} LIMIT 1';
-        $result = $db->query($sql, array($groupID));
+        $result = System::$db->query($sql, array($groupID));
         if ($result->numRows() == 1) {
             $this->_groupData = $result->fetchAssoc();
         } else {

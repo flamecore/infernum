@@ -40,20 +40,7 @@ class Database {
      * @access   public
      * @static
      */
-    public static function createDriver($driver = null, $host = null, $user = null, $password = null, $database = null, $prefix = null) {
-        if (!isset($driver))
-            $driver = Settings::get('database', 'driver');
-        if (!isset($host))
-            $host = Settings::get('database', 'host');
-        if (!isset($user))
-            $user = Settings::get('database', 'user');
-        if (!isset($password))
-            $password = Settings::get('database', 'password');
-        if (!isset($database))
-            $database = Settings::get('database', 'database');
-        if (!isset($prefix))
-            $prefix = Settings::get('database', 'prefix');
-        
+    public static function loadDriver($driver, $host, $user, $password, $database, $prefix) {
         if ($driver == '' || !in_array($driver, self::getAvailableDrivers()))
             throw new Exception('Database driver "'.$driver.'" not found or invalid');
         

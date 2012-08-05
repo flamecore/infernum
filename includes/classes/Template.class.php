@@ -77,7 +77,7 @@ class Template {
      */
     public function __construct($file, $module = null, $theme = null) {
         if (!isset($theme))
-            $theme = Settings::get('core', 'theme');
+            $theme = System::$settings['core']['theme'];
         
         $this->_filePath = self::locate($file, $module, $theme);
         
@@ -149,7 +149,7 @@ class Template {
      */
     public static function locate($file, $module = null, $theme = null) {
         if (!isset($theme))
-            $theme = Settings::get('core', 'theme');
+            $theme = System::$settings['core']['theme'];
         
         if (isset($module)) {
             $filePath = WW_SITE_PATH.'/modules/'.$module.'/templates/'.$theme.'/'.$file.'.tpl.php';
@@ -230,7 +230,7 @@ class Template {
      * @static
      */
     public static function addThemeCSS($path, $media = 'all') {
-        $theme = Settings::get('core', 'theme');
+        $theme = System::$settings['core']['theme'];
         
         self::$_headTags['css'][] = array(
             'url'   => makeURL('/themes/'.$theme.'/css/'.$path),

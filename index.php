@@ -29,32 +29,32 @@
 
 define('WW_ENGINE_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
 
-try {
-    @include_once WW_ENGINE_PATH.'/includes/config.php';
+include_once WW_ENGINE_PATH.'/includes/config.php';
 
-    if (defined('WW_ENABLE_MULTISITE') && WW_ENABLE_MULTISITE) {
-        // This is a multi-site installation, so we need to know the current domain name
-        $domain = $_SERVER['SERVER_NAME'];
-        
-        // Check if there is a site for the current domain, fall back to default site otherwise
-        if (is_dir(WW_ENGINE_PATH.'/sites/'.$domain)) {
-            $activeSite = $domain;
-        } else {
-            $activeSite = defined('WW_DEFAULT_SITE') ? WW_DEFAULT_SITE : 'default';
-        }
+if ($config['enable_multisite']) {
+    // This is a multi-site installation, so we need to know the current domain name
+    $domain = $_SERVER['SERVER_NAME'];
+
+    // Check if there is a site for the current domain, fall back to default site otherwise
+    if (is_dir(WW_ENGINE_PATH.'/sites/'.$domain)) {
+        $activeSite = $domain;
     } else {
-        // This is a single-site installation, hence we use the default site
-        $activeSite = 'default';
+        $activeSite = isset($config['default_site']) ? $config['default_site'] : 'default';
     }
-    
-    define('WW_SITE_PATH', WW_ENGINE_PATH.'/sites/'.$activeSite);
+} else {
+    // This is a single-site installation, hence we use the default site
+    $activeSite = 'default';
+}
 
+define('WW_SITE_PATH', WW_ENGINE_PATH.'/sites/'.$activeSite);
+
+@include_once WW_SITE_PATH.'/includes/config.php';
+
+try {
     require_once WW_ENGINE_PATH.'/includes/autoloader.php';
     require_once WW_ENGINE_PATH.'/includes/functions.php';
     
-    Settings::init();
-
-    $db = Database::createDriver();
+    System::startup();
     
     $session = new Session();
     $user = new User($session->assignedUser);
@@ -63,7 +63,7 @@ try {
     $languages = Cache::read('languages');
     if (!isset($languages)) {
         $sql = 'SELECT * FROM @PREFIX@languages';
-        $result = $db->query($sql);
+        $result = System::$db->query($sql);
 
         while ($data = $result->fetchAssoc()) {
             $languages[$data['id']] = array(
@@ -92,15 +92,15 @@ try {
 
     // If no preferred language was detected, fall back to the default language
     if (!isset($language))
-        $language = Settings::get('core', 'lang');
+        $language = System::$settings['core']['lang'];
 
     setlocale(LC_ALL, $languages[$language]['locales']);
     
     $t = new Translations($language);
 
-    Template::setTitle(Settings::get('core', 'site_name'));
+    Template::setTitle(System::$settings['core']['site_name']);
 
-    $path = new Path($_GET['p'], Settings::get('core', 'frontpage'));
+    $path = new Path($_GET['p'], System::$settings['core']['frontpage']);
 
     $module = $path->controller;
     
