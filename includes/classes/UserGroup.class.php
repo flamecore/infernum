@@ -24,7 +24,7 @@
 /**
  * Class for managing user groups
  *
- * @author Christian Neff <christian.neff@gmail.com>
+ * @author   Christian Neff <christian.neff@gmail.com>
  */
 class UserGroup {
     
@@ -42,13 +42,13 @@ class UserGroup {
      * @access   public
      */
     public function __construct($groupID) {
-        // try to fetch user group data for further usage
+        // Try to fetch user group data for further usage
         $sql = 'SELECT * FROM @PREFIX@usergroups WHERE id = {0} LIMIT 1';
         $result = System::$db->query($sql, array($groupID));
         if ($result->numRows() == 1) {
             $this->_groupData = $result->fetchAssoc();
         } else {
-            throw new Exception('User group '.$groupID.' does not exist');
+            throw new Exception('User group '.$groupID.' does not exist.');
         }
     }
     

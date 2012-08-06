@@ -24,108 +24,61 @@
 /**
  * Class for managing users
  *
- * @author Christian Neff <christian.neff@gmail.com>
+ * @author   Christian Neff <christian.neff@gmail.com>
  */
 class User {
     
     /**
-     * The user's ID (0 = guest/anonymous)
+     * The user's ID
      * @var      int
-     * @access   readonly
-     */
-    private $userID = 0;
-    
-    /**
-     * The fetched user data
-     * @var      array
-     * @access   readonly
-     */
-    private $userData = array();
-    
-    /**
-     * The UserGroup object containing data about user group
-     * @var      UserGroup
-     * @access   readonly
-     */
-    private $userGroup;
-
-    /**
-     * Getter for readonly properties
-     * @return   mixed
      * @access   public
      */
-    public function __get($varName) {
-        if ($varName[0] != '_')
-            return $this->$varName;
-    }
+    public $id;
+    
+    /**
+     * The data of the user
+     * @var      array
+     * @access   public
+     */
+    public $data = array();
     
     /**
      * Constructor
-     * @param    mixed    $user     The ID (int) or username (string) of the user (0 = guest/anonymous)
+     * @param    mixed    $identifier   A unique value that identifies the user using the selector
+     * @param    string   $selector     The field via which the user is selected
      * @return   void
      * @access   public
      */
-    public function __construct($user) {
-        // check if the user is a registered user
-        if (is_int($user) && $user > 0) {
-            // try to fetch user data by ID
-            $sql = 'SELECT * FROM @PREFIX@users WHERE id = {0} LIMIT 1';
-            $result = System::$db->query($sql, array($user));
+    public function __construct($identifier, $selector = 'id') {
+        // Check if the user is a registered user
+        if (!empty($identifier)) {
+            // Try to fetch user data by ID
+            $sql = 'SELECT * FROM @PREFIX@users WHERE `'.$selector.'` = {0} LIMIT 1';
+            $result = System::$db->query($sql, array($identifier));
+            
             if ($result->numRows() == 1) {
                 $userData = $result->fetchAssoc();
-            } else {
-                throw new Exception('User with ID '.$user.' does not exist');
-            }
-        } elseif (is_string($user) && !empty($user)) {
-            // try to fetch user data by username
-            $sql = 'SELECT * FROM @PREFIX@users WHERE username = {0} LIMIT 1';
-            $result = System::$db->query($sql, array($user));
-            if ($result->numRows() == 1) {
-                $userData = $result->fetchAssoc();
-            } else {
-                throw new Exception('User with username "'.$user.'" does not exist');
-            }
-        } else {
-            $userData = array(
-                'id'       => 0,
-                'username' => System::$settings['core']['guest_username'],
-                'group'    => System::$settings['core']['guest_group']
-            );
-        }
 
-        // assign properties
-        $this->userID = (int) $userData['id'];
-        $this->userData = $userData;
-        $this->userGroup = new UserGroup($userData['group']);
-    }
-    
-    /**
-     * Checks whether the user is a member or a guest
-     * @return   bool
-     * @access   public
-     */
-    public function isMember() {
-        if ($this->userID > 0) {
-            return true;
+                $this->id = (int) $userData['id'];
+                $this->data = $userData;
+            } else {
+                throw new Exception('User does not exist. ('.$selector.' = '.$identifier.')');
+            }
         } else {
-            return false;
+            throw new Exception('Invalid user identifier given.');
         }
     }
 
     /**
-     * Checks whether the user is online
+     * Checks if the user is online
      * @param    int      $threshold   The threshold in seconds at which a user is considered as logged off. Defaults
      *                                   to 600 seconds (= 10 minutes).
      * @return   bool
      * @access   public
      */
     public function isOnline($threshold = 600) {
-        // guests ($_userID = 0) are always offline :)
-        if ($this->userID == 0)
-            return false;
-        
-        // check if the last activity time is within the threshold
-        $lastActive = strtotime($this->userData['lastactive']);
+        // Check if the last activity time is within the threshold
+        $lastActive = strtotime($this->data['lastactive']);
         if (time() - $lastActive <= $threshold) {
             return true;
         } else {
@@ -135,30 +88,26 @@ class User {
 
     /**
      * Updates the user data in the database
-     * @param    $keyOrData   The name of a single column (string) or pairs of names and values of multiple
-     *                          columns (array in the format [name => value, ...]) to be updated
-     * @param    $value       The new value of the column to be updated, only if $keyOrData is used for the column name
+     * @param    mixed    $keyOrData   The name of a single column (string) or pairs of names and values of multiple
+     *                                   columns (array in the format [name => value, ...]) to be updated
+     * @param    mixed    $value       The new value of the column to be updated (only if parameter $keyOrData is used
+     *                                   for the column name)
      * @return   bool
      * @access   public
      */
     public function setUserData($keyOrData, $value = null) {
-        if ($this->userID <= 0) {
-            throw new Exception('Cannot update user data: Current user is a guest.');
-            return false;
-        }
-    
         if (is_array($keyOrData)) {
             // update multiple columns
             $dataset = array();
             foreach ($keyOrData as $key => $value)
                 $dataset[] = $key.' = {'.$key.'}';
             $sql = 'UPDATE @PREFIX@user SET '.implode(', ', $dataset).' WHERE id = {_id} LIMIT 1';
-            $queryVars = $keyOrData + array('_id' => $this->userID);
+            $queryVars = $keyOrData + array('_id' => $this->id);
             return System::$db->query($sql, $queryVars);
         } else {
             // update a single column
             $sql = 'UPDATE @PREFIX@user SET '.$keyOrData.' = {0} WHERE id = {1} LIMIT 1';
-            return System::$db->query($sql, array($value, $this->userID));
+            return System::$db->query($sql, array($value, $this->id));
         }
     }
 

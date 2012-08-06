@@ -56,8 +56,7 @@ try {
     
     System::startup();
     
-    $session = new Session();
-    $user = new User($session->assignedUser);
+    Session::init();
 
     // Fetch list of language packs
     $languages = Cache::read('languages');
@@ -77,9 +76,9 @@ try {
     }
 
     // Detect the user's preferred language
-    if (isset($session->data['language'])) {
+    if (isset(Session::$data['language'])) {
         // There was found a language setting in the user's session
-        $language = $session->data['language'];
+        $language = Session::$data['language'];
     } elseif ($browserLangs = Http::getAcceptLanguage()) {
         // We can use the browser language: Try to find the best match
         foreach (array_keys($browserLangs) as $lang) {
