@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Webwork
  * Copyright (C) 2011 IceFlame.net
@@ -53,9 +54,9 @@ define('WW_SITE_PATH', WW_ENGINE_PATH.'/sites/'.$activeSite);
 try {
     require_once WW_ENGINE_PATH.'/includes/autoloader.php';
     require_once WW_ENGINE_PATH.'/includes/functions.php';
-    
+
     System::startup();
-    
+
     Session::init();
 
     // Fetch list of language packs
@@ -81,9 +82,9 @@ try {
         $language = Session::$data['language'];
     } elseif ($browserLangs = Http::getAcceptLanguage()) {
         // We can use the browser language: Try to find the best match
-        foreach (array_keys($browserLangs) as $lang) {
-            if (isset($languages[$lang])) {
-                $language = $lang;
+        foreach (array_keys($browserLangs) as $browserLang) {
+            if (isset($languages[$browserLang])) {
+                $language = $browserLang;
                 break;
             }
         }
@@ -94,23 +95,21 @@ try {
         $language = System::$settings['core']['lang'];
 
     setlocale(LC_ALL, $languages[$language]['locales']);
-    
+
     $t = new Translations($language);
 
     Template::setTitle(System::$settings['core']['site_name']);
 
-    $path = new Path($_GET['p'], System::$settings['core']['frontpage']);
-
-    $module = $path->controller;
-    
     @include WW_SITE_PATH.'/includes/global.php';
-    
-    $moduleFile = WW_SITE_PATH.'/modules/'.$module.'/controller.php';
-    if (file_exists($moduleFile)) {
-        include $moduleFile;
-    } else {
-        showNotFoundError();
-    }
+
+    // Split the path into its parts. Use frontpage path if no path is specified.
+    $path = isset($_GET['p']) && $_GET['p'] != '' ? $_GET['p'] : System::$settings['core']['frontpage'];
+    @list($module, $arguments) = explode('/', $path, 2);
+
+    $module = str_replace('-', '_', $module);
+    $module = strtolower($module);
+
+    System::loadModule($module, $arguments);
 } catch (Exception $error) {
     die('<strong>Error:</strong> '.$error->getMessage());
 }

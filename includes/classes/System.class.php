@@ -126,5 +126,23 @@ class System {
         $content = '$settings[\''.$section.'\'] = '.var_export($settings).';';
         return file_put_contents(WW_SITE_PATH.'/settings/'.$section.'.php', $content);
     }
+    
+    /**
+     * Loads a module controller
+     * @param    string   $module      The name of the module
+     * @param    string   $arguments   The arguments to use
+     * @return   void
+     * @access   public
+     * @static
+     */
+    public static function loadModule($module, $arguments) {
+        $moduleFile = WW_SITE_PATH.'/modules/'.$module.'/controller.php';
+
+        if (!file_exists($moduleFile)) {
+            showNotFoundError();
+        }
+
+        include $moduleFile;
+    }
 
 }
