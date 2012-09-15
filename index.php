@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Webwork
  * Copyright (C) 2011 IceFlame.net
@@ -111,5 +110,8 @@ try {
 
     System::loadModule($module, $arguments);
 } catch (Exception $error) {
-    die('<strong>Error:</strong> '.$error->getMessage());
+    $tpl = new Template('error');
+    if ($config['enable_debugmode'])
+        $tpl->set('debug', $error->getMessage());
+    $tpl->render();
 }
