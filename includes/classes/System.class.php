@@ -136,6 +136,8 @@ class System {
      * @static
      */
     public static function loadModule($module, $arguments) {
+        $argsList = explode('/', $arguments);
+
         $moduleFile = WW_SITE_PATH.'/modules/'.$module.'/controller.php';
 
         if (!file_exists($moduleFile)) {
@@ -144,5 +146,5 @@ class System {
 
         include $moduleFile;
     }
-
+    
 }
