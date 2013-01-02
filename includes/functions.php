@@ -120,3 +120,24 @@ function showNotFoundError() {
     
     exit();
 }
+
+/**
+ * Checks if the path matches the given list of patterns
+ * @param    string   $patternList   List of fnmatch() patterns separated by semicolons (;)
+ * @return   bool
+ */
+function isCurrentPath($patternList) {
+    global $path;
+
+    $patterns = explode(';', $patternList);
+
+    foreach ($patterns as $pattern) {
+        if ($pattern[0] != '/')
+            continue;
+
+        if (fnmatch($pattern, '/'.$path))
+            return true;
+    }
+
+    return false;
+}
