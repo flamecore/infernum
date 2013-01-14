@@ -150,9 +150,9 @@ class Session {
             // No $sessionID given, assign ID of current session
             $sessionID = self::$id;
             
-            unset(self::$id);
-            unset(self::$user);
-            unset(self::$userGroup);
+            self::$id = '';
+            self::$user = null;
+            self::$userGroup = null;
             
             Http::deleteCookie('session');
         }
