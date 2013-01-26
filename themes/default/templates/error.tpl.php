@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title><?php echo Template::getTitle() ?></title>
+        <title><?php echo System::$settings['core']['site_name'] ?></title>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
         <style type="text/css">
             body {
@@ -39,7 +39,7 @@
     </head>
     <body>
         <div id="content">
-            <h1><?php echo Template::getTitle() ?> &ndash; Error</h1>
+            <h1><?php echo System::$settings['core']['site_name'] ?> &ndash; Error</h1>
             <p>We are sorry, an unexpected system error occurred.</p>
             <?php if (isset($debug)): ?><p><strong>Debug Info:</strong> <?php echo $debug ?></p><?php endif; ?>
         </div>
