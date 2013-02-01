@@ -70,15 +70,11 @@ class Session {
     
     /**
      * Initializes the session system
-     * @param    int      $lifetime   The lifetime of a session in seconds. Defaults to 3600.
      * @return   void
      * @access   public
      * @static
      */
-    public static function init($lifetime = null) {
-        if (isset($lifetime))
-            self::$lifetime = $lifetime;
-        
+    public static function init() {
         // Clean up sessions table from expired sessions before proceeding
         self::cleanup();
         
@@ -125,13 +121,13 @@ class Session {
         if (self::$id != '')
             return false;
         
-        // generate a session ID
+        // Generate a session ID
         self::$id = self::_generateID();
 
-        // set the session cookie
+        // Set the session cookie
         Http::setCookie('session', self::$id, time()+self::$lifetime);
 
-        // register the session in the database
+        // Register the session in the database
         $sql = 'INSERT INTO @PREFIX@sessions (id, expire) VALUES({0}, {1})';
         System::$db->query($sql, array(self::$id, date('Y-m-d H:i:s', time()+self::$lifetime)));
         
@@ -187,25 +183,19 @@ class Session {
     }
     
     /**
-     * Assigns a user to the currently running (if the argument $sessionID is not set) or the given session
-     * @param    int      $userID      The ID of the user who belongs to the session
-     * @param    string   $sessionID   The ID of the affected session (optional)
+     * Assigns a user to the currently running session
+     * @param    int      $userID     The ID of the user who belongs to the session
      * @return   bool
      * @access   public
      * @static
      */
-    public static function assignUser($userID, $sessionID = null) {
-        if (!isset($sessionID)) {
-            // No $sessionID given, assign ID of this session
-            $sessionID = self::$id;
-            
-            self::$user = new User($userID);
-            self::$userGroup = new UserGroup(self::$user->data['group']);
-        }
-        
-        // update session in database
+    public static function assignUser($userID) {
+        // Update session info in database
         $sql = 'UPDATE @PREFIX@sessions SET user = {0} WHERE id = {1} LIMIT 1';
-        return System::$db->query($sql, array($userID, $sessionID));
+        return System::$db->query($sql, array($userID, self::$id));
+        
+        self::$user = new User($userID);
+        self::$userGroup = new UserGroup(self::$user->data['group']);
     }
     
     /**
