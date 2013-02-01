@@ -2,6 +2,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 CREATE TABLE IF NOT EXISTS `ww_sessions` (
   `id` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `lifetime` int(8) NOT NULL,
   `user` int(10) NOT NULL,
   `data` text NOT NULL,
   `expire` datetime NOT NULL,

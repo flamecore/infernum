@@ -81,7 +81,7 @@ class Session {
         // Check if the user has a session cookie
         if ($sessionID = Http::getCookie('session')) {
             // Cookie found: Search database for session with given ID
-            $sql = 'SELECT user, data FROM @PREFIX@sessions WHERE id = {0} AND expire > {1} LIMIT 1';
+            $sql = 'SELECT lifetime, user, data FROM @PREFIX@sessions WHERE id = {0} AND expire > {1} LIMIT 1';
             $result = System::$db->query($sql, array($sessionID, date('Y-m-d H:i:s')));
             
             // Did we find the session so we can reuse it?
@@ -90,6 +90,8 @@ class Session {
                 self::$id = $sessionID;
                 
                 $sessionInfo = $result->fetchAssoc();
+                
+                self::$lifetime = $sessionInfo['lifetime'];
                 
                 if ($sessionInfo['user'] > 0) {
                     self::$user = new User($sessionInfo['user']);
@@ -244,6 +246,24 @@ class Session {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Sets the lifetime of the session
+     * @param    int      $time   The new session lifetime in seconds. Defaults to 3600.
+     * @return   void
+     * @access   public
+     * @static
+     */
+    public static function setLifetime($time = 3600) {
+        self::$lifetime = $time;
+        
+        // Set lifetime in database
+        $sql = 'UPDATE @PREFIX@sessions SET lifetime = {0} WHERE id = {1} LIMIT 1';
+        System::$db->query($sql, array(self::$lifetime, self::$id));
+        
+        // Update lifetime of session cookie
+        Http::setCookie('session', self::$id, time()+self::$lifetime);
     }
 
     /**
