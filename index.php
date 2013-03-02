@@ -31,13 +31,13 @@ define('WW_ENGINE_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
 
 include_once WW_ENGINE_PATH.'/includes/config.php';
 
-if ($config['enable_multisite']) {
+if ($config['enable_multisite'] && isset($config['sites'])) {
     // This is a multi-site installation, so we need to know the current domain name
     $domain = $_SERVER['SERVER_NAME'];
 
     // Check if there is a site for the current domain, fall back to default site otherwise
-    if (is_dir(WW_ENGINE_PATH.'/sites/'.$domain)) {
-        $activeSite = $domain;
+    if (isset($config['sites'][$domain])) {
+        $activeSite = $config['sites'][$domain];
     } else {
         $activeSite = isset($config['default_site']) ? $config['default_site'] : 'default';
     }
@@ -46,13 +46,11 @@ if ($config['enable_multisite']) {
     $activeSite = 'default';
 }
 
-define('WW_SITE_PATH', WW_ENGINE_PATH.'/sites/'.$activeSite);
-
-@include_once WW_SITE_PATH.'/includes/config.php';
+define('WW_SITE_PATH', WW_ENGINE_PATH.'/websites/'.$activeSite);
 
 try {
     require_once WW_ENGINE_PATH.'/includes/autoloader.php';
-    require_once WW_ENGINE_PATH.'/includes/functions.php';
+    require_once WW_ENGINE_PATH.'/libraries/functions.php';
 
     System::startup();
 

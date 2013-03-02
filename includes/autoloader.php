@@ -72,5 +72,5 @@ class Autoloader {
 spl_autoload_register(array('Autoloader', 'load'));
 
 // Add basic class paths
-Autoloader::addClassPath(WW_ENGINE_PATH.'/includes/classes');
-Autoloader::addClassPath(WW_SITE_PATH.'/includes/classes');
+Autoloader::addClassPath(WW_ENGINE_PATH.'/libraries/classes');
+Autoloader::addClassPath(WW_SITE_PATH.'/libraries/classes');

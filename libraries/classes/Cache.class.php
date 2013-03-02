@@ -40,7 +40,7 @@ class Cache {
         if (!defined('WW_ENABLE_CACHING') || !WW_ENABLE_CACHING)
             return;
 
-        $filePath = WW_ENGINE_PATH.'/temp/cache/'.$fileName.'.cache';
+        $filePath = WW_ENGINE_PATH.'/cache/'.$fileName.'.cache';
         
         if (!file_exists($filePath))
             return;
@@ -68,7 +68,7 @@ class Cache {
         if (!defined('WW_ENABLE_CACHING') || !WW_ENABLE_CACHING)
             return;
 
-        $filePath = WW_ENGINE_PATH.'/temp/cache/'.$fileName.'.cache';
+        $filePath = WW_ENGINE_PATH.'/cache/'.$fileName.'.cache';
         $fileContent = time().','.serialize($data);
         return file_put_contents($filePath, $fileContent);
     }
@@ -81,7 +81,7 @@ class Cache {
      * @static
      */
     public static function flush($fileName) {
-        $filePath = WW_ENGINE_PATH.'/temp/cache/'.$fileName.'.cache';
+        $filePath = WW_ENGINE_PATH.'/cache/'.$fileName.'.cache';
         return unlink($filePath);
     }
     

@@ -55,7 +55,7 @@ class Database {
      * @static
      */
     public static function getAvailableDrivers() {
-        $drivers = glob(WW_ENGINE_PATH.'/includes/classes/Database/*', GLOB_ONLYDIR);
+        $drivers = glob(WW_ENGINE_PATH.'/libraries/classes/Database/*', GLOB_ONLYDIR);
         return array_map('basename', $drivers);
     }
     
