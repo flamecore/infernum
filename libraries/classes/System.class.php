@@ -147,4 +147,13 @@ class System {
         include $moduleFile;
     }
     
+    public static function loadModuleFromPath($path) {
+        @list($module, $arguments) = explode('/', $path, 2);
+
+        $module = str_replace('-', '_', $module);
+        $module = strtolower($module);
+
+        self::loadModule($module, $arguments);
+    }
+    
 }
