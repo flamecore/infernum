@@ -1,0 +1,20 @@
+<?php
+$settings['database'] = array(
+    // Database driver to use
+    'driver' => 'MySQL',
+    
+    // Database server host
+    'host' => 'localhost',
+    
+    // Username of database server user
+    'user' => 'root',
+    
+    // Password of database server user
+    'password' => '',
+    
+    // Name of database
+    'database' => 'webwork',
+    
+    // Database table prefix
+    'prefix' => 'ww_',
+);
