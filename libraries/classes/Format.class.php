@@ -29,6 +29,39 @@
 class Format {
     
     /**
+     * Shortens a text string to the given length. The truncated text part is replaced by an ellipsis.
+     * @param    string   $string       The text string to shorten 
+     * @param    int      $length       Determines how many characters to shorten to
+     * @param    string   $ellipsis     Text string that replaces the truncated text part. Its length is included in the
+     *                                    shortening length setting.
+     * @param    bool     $breakWords   Determines whether or not to break words when truncating.
+     *                                    FALSE truncates the text exactly at a word boundary.
+     * @param    bool     $middle       Determines whether the truncation happens in the middle of the string. Note that
+     *                                    if this setting is TRUE, then word boundaries are ignored.
+     *                                    FALSE truncates the text at the end of the string. 
+     * @return   string
+     * @access   public
+     */
+    public static function shorten($string, $length = 80, $ellipsis = '...', $breakWords = false, $middle = false) {
+        if ($length == 0)
+            return '';
+
+        if (isset($string[$length])) {
+            $length -= min($length, strlen($ellipsis));
+
+            if (!$breakWords && !$middle)
+                $string = preg_replace('/\s+?(\S+)?$/', '', substr($string, 0, $length + 1));
+
+            if (!$middle)
+                return substr($string, 0, $length).$ellipsis;
+
+            return substr($string, 0, $length / 2).$ellipsis.substr($string, - $length / 2);
+        }
+
+        return $string;
+    }
+    
+    /**
      * Formats a number with grouped thousands
      * @param    float    $number           The number to be formatted
      * @param    int      $decimals         Sets the number of decimal points
