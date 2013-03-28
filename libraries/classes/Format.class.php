@@ -41,6 +41,7 @@ class Format {
      *                                    FALSE truncates the text at the end of the string. 
      * @return   string
      * @access   public
+     * @static
      */
     public static function shorten($string, $length = 80, $ellipsis = '...', $breakWords = false, $middle = false) {
         if ($length == 0)

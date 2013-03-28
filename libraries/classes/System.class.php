@@ -147,6 +147,13 @@ class System {
         include $moduleFile;
     }
     
+    /**
+     * Loads a module controller by given path
+     * @param    string   $path   The path of the module page
+     * @return   void
+     * @access   public
+     * @static
+     */
     public static function loadModuleFromPath($path) {
         @list($module, $arguments) = explode('/', $path, 2);
 
