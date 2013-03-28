@@ -46,13 +46,16 @@ if ($config['enable_multisite'] && isset($config['sites'])) {
     $activeSite = 'default';
 }
 
-define('WW_SITE_PATH', WW_ENGINE_PATH.'/websites/'.$activeSite);
+define('WW_SITE_NAME', $activeSite);
+define('WW_SITE_PATH', WW_ENGINE_PATH.'/websites/'.WW_SITE_NAME);
 
 try {
     require_once WW_ENGINE_PATH.'/includes/autoloader.php';
     require_once WW_ENGINE_PATH.'/libraries/functions.php';
 
     System::startup();
+
+    define('WW_ROOT_URL', System::$settings['core']['url']);
 
     Session::init();
 
