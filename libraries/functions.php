@@ -59,9 +59,7 @@ function te($string, $vars = null) {
  * @return   string
  */
 function makeURL($path = '', $query = null) {
-    $siteURL = System::$settings['core']['url'];
-    
-    $result = $siteURL.$path;
+    $result = WW_ROOT_URL.$path;
     if (isset($query) && is_array($query))
         $result .= '?'.http_build_query($query);
     
@@ -76,14 +74,12 @@ function makeURL($path = '', $query = null) {
  * @return   string
  */
 function makePageURL($pagePath, $query = null) {
-    $rootURL = System::$settings['core']['url'];
-    
     if (System::$settings['core']['url_rewrite']) {
-        $result = $rootURL.'/'.$pagePath;
+        $result = WW_ROOT_URL.'/'.$pagePath;
         if (isset($query) && is_array($query))
             $result .= '?'.http_build_query($query);
     } else {
-        $result = $rootURL.'/?p='.$pagePath;
+        $result = WW_ROOT_URL.'/?p='.$pagePath;
         if (isset($query) && is_array($query))
             $result .= '&'.http_build_query($query);
     }
