@@ -163,4 +163,20 @@ class System {
         self::loadModule($module, $arguments);
     }
     
+    public static function library($name) {
+        $libraryDirs = array(
+            WW_ENGINE_PATH.'/libraries/functions',
+            WW_SITE_PATH.'/libraries/functions'
+        );
+        
+        foreach ($libraryDirs as $libraryDir) {
+            $libraryFile = $libraryDir.'/'.$name.'.php';
+            if (file_exists($libraryFile)) {
+                return $libraryFile;
+            }
+        }
+        
+        throw new Exception('Library "'.$name.'" not found.');
+    }
+    
 }
