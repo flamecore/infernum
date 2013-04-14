@@ -62,8 +62,7 @@ try {
     // Fetch list of language packs
     $languages = Cache::read('languages');
     if (!isset($languages)) {
-        $sql = 'SELECT * FROM @PREFIX@languages';
-        $result = System::$db->query($sql);
+        $result = System::$db->select('@PREFIX@languages');
 
         while ($data = $result->fetchAssoc()) {
             $languages[$data['id']] = array(

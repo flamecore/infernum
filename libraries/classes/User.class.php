@@ -98,19 +98,14 @@ class User {
     public function setUserData($keyOrData, $value = null) {
         if (is_array($keyOrData)) {
             // Update multiple columns
-            $dataset = array();
-            foreach ($keyOrData as $key => $value)
-                $dataset[] = '`'.$key.'` = {'.$key.'}';
-            
-            $sql = 'UPDATE @PREFIX@users SET '.implode(', ', $dataset).' WHERE id = {_id} LIMIT 1';
-            $queryVars = $keyOrData + array('_id' => $this->id);
-            
-            return System::$db->query($sql, $queryVars);
-        } else {
+            return System::$db->update('@PREFIX@users', $keyOrData, 'WHERE id = {0}', array($this->id));
+        } elseif (is_string($keyOrData) && isset($value)) {
             // Update a single column
-            $sql = 'UPDATE @PREFIX@users SET `'.$keyOrData.'` = {0} WHERE id = {1} LIMIT 1';
-            return System::$db->query($sql, array($value, $this->id));
+            $data = array($keyOrData => $value);
+            return System::$db->update('@PREFIX@users', $data, 'WHERE id = {0}', array($this->id));
         }
+        
+        return false;
     }
 
 }
