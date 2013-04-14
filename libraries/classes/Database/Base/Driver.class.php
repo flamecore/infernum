@@ -29,7 +29,7 @@
 /**
  * This class allows you to execute operations in a database
  *
- * @author  Christian Neff <christian.neff@gmail.com>
+ * @author   Christian Neff <christian.neff@gmail.com>
  */
 abstract class Database_Base_Driver {
 
@@ -134,7 +134,47 @@ abstract class Database_Base_Driver {
      * @access   public
      * @abstract
      */
-    abstract function query($query, $vars = null);
+    abstract public function query($query, $vars = null);
+    
+    /**
+     * Performs a SELECT query. Returns a Database_Base_Result object on success.
+     * @param    string   $table     The database table to query
+     * @param    string   $columns   The selected columns. Defaults to '*'.
+     * @param    array    $params    One or more of the following parameters: (optional)
+     *                                 * where    The WHERE clause
+     *                                 * vars     An array of values replacing the variables (if neccessary)
+     *                                 * limit    The result row LIMIT
+     *                                 * order    The ORDER BY parameter
+     *                                 * group    The GROUP BY parameter
+     * @return   Database_Base_Result
+     * @access   public
+     * @abstract
+     */
+    abstract public function select($table, $columns = '*', $params = array());
+    
+    /**
+     * Performs an INSERT query. Returns TRUE on success.
+     * @param    string   $table   The database table to fill
+     * @param    array    $data    The data to insert in the form [column => value]
+     * @return   bool
+     * @access   public
+     * @abstract
+     */
+    abstract public function insert($table, $data);
+    
+    /**
+     * Performs an UPDATE query. Returns TRUE on success.
+     * @param    string   $table    The database table to query
+     * @param    array    $data     The new data in the form [column => value]
+     * @param    array    $params   One or more of the following parameters: (optional)
+     *                                * where    The WHERE clause
+     *                                * vars     An array of values replacing the variables (if neccessary)
+     *                                * limit    The result row LIMIT
+     * @return   bool
+     * @access   public
+     * @abstract
+     */
+    abstract public function update($table, $data, $params = array());
 
     /**
      * Parses and executes a SQL dump file

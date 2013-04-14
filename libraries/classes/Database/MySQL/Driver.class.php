@@ -24,7 +24,7 @@
 /**
  * This class allows you to execute operations in a MySQL database
  *
- * @author  Christian Neff <christian.neff@gmail.com>
+ * @author   Christian Neff <christian.neff@gmail.com>
  */
 class Database_MySQL_Driver extends Database_Base_Driver {
 
@@ -71,6 +71,79 @@ class Database_MySQL_Driver extends Database_Base_Driver {
         }
         
         throw new Exception('Database query failed: '.$this->getError());
+    }
+    
+    /**
+     * Performs a SELECT query. Returns a Database_Base_Result object on success.
+     * @param    string   $table     The database table to query
+     * @param    string   $columns   The selected columns. Defaults to '*'.
+     * @param    array    $params    One or more of the following parameters: (optional)
+     *                                 * where    The WHERE clause
+     *                                 * vars     An array of values replacing the variables (if neccessary)
+     *                                 * limit    The result row LIMIT
+     *                                 * order    The ORDER BY parameter
+     *                                 * group    The GROUP BY parameter
+     * @return   Database_Base_Result
+     * @access   public
+     */
+    public function select($table, $columns = '*', $params = array()) {
+        $sql = 'SELECT '.$columns.' FROM `'.$table.'`';
+
+        if (isset($params['where']))
+            $sql .= ' WHERE '.$params['where'];
+        if (isset($params['limit']))
+            $sql .= ' LIMIT '.$params['limit'];
+        if (isset($params['group']))
+            $sql .= ' GROUP BY '.$params['group'];
+        if (isset($params['order']))
+            $sql .= ' ORDER BY '.$params['order'];
+
+        return $this->query($sql, isset($params['vars']) ? $params['vars'] : null);
+    }
+    
+    /**
+     * Performs an INSERT query. Returns TRUE on success.
+     * @param    string   $table   The database table to fill
+     * @param    array    $data    The data to insert in the form [column => value]
+     * @return   bool
+     * @access   public
+     */
+    public function insert($table, $data) {
+        foreach ($data as $column => $value) {
+            $columns[] = '`'.$column.'`';
+            $values[]  = $this->_prepareValue($value);
+        }
+
+        $sql = 'INSERT INTO `'.$table.'` ('.implode(', ', $columns).') VALUES('.implode(', ', $values).')';
+        
+        return $this->query($sql);
+    }
+    
+    /**
+     * Performs an UPDATE query. Returns TRUE on success.
+     * @param    string   $table    The database table to query
+     * @param    array    $data     The new data in the form [column => value]
+     * @param    array    $params   One or more of the following parameters: (optional)
+     *                                * where    The WHERE clause
+     *                                * vars     An array of values replacing the variables (if neccessary)
+     *                                * limit    The result row LIMIT
+     * @return   bool
+     * @access   public
+     */
+    public function update($table, $data, $params = array()) {
+        foreach ($data as $key => $value) {
+            $value = $this->_prepareValue($value);
+            $dataset[] = '`'.$key.'` = '.$value;
+        }
+
+        $sql = 'UPDATE `'.$table.'` SET '.implode(', ', $dataset);
+
+        if (isset($params['where']))
+            $sql .= ' WHERE '.$params['where'];
+        if (isset($params['limit']))
+            $sql .= ' LIMIT '.$params['limit'];
+
+        return $this->query($sql, isset($params['vars']) ? $params['vars'] : null);
     }
 
     /**
