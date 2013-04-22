@@ -27,7 +27,7 @@
  * @author  Christian Neff <christian.neff@gmail.com>
  */
 
-define('WW_ENGINE_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
+define('WW_ENGINE_PATH', __DIR__);
 
 include_once WW_ENGINE_PATH.'/includes/config.php';
 
