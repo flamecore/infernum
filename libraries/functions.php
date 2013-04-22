@@ -58,7 +58,7 @@ function te($string, $vars = null) {
  *                               For more information, see {@link http://www.php.net/manual/en/function.http-build-query.php}
  * @return   string
  */
-function makeURL($path = '', $query = null) {
+function u($path = '', $query = null) {
     $result = WW_ROOT_URL.$path;
     if (isset($query) && is_array($query))
         $result .= '?'.http_build_query($query);
@@ -73,7 +73,7 @@ function makeURL($path = '', $query = null) {
  *                                  For more information, see {@link http://www.php.net/manual/en/function.http-build-query.php}
  * @return   string
  */
-function makePageURL($pagePath, $query = null) {
+function page($pagePath, $query = null) {
     if (System::$settings['core']['url_rewrite']) {
         $result = WW_ROOT_URL.'/'.$pagePath;
         if (isset($query) && is_array($query))

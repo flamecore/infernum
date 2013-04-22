@@ -82,8 +82,8 @@ class Template {
         $this->_filePath = self::locate($file, $module, $theme);
         
         // Set some common variables
-        $this->set('SITE_URL', makeURL());
-        $this->set('THEME_URL', makeURL('/themes/'.$theme));
+        $this->set('SITE_URL', u());
+        $this->set('THEME_URL', u('/themes/'.$theme));
     }
 
     /**
@@ -233,7 +233,7 @@ class Template {
         $theme = System::$settings['core']['theme'];
         
         self::$_headTags['css'][] = array(
-            'url'   => makeURL('/themes/'.$theme.'/css/'.$path),
+            'url'   => u('/themes/'.$theme.'/css/'.$path),
             'media' => $media
         );
     }
