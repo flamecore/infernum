@@ -98,11 +98,17 @@ class User {
     public function setUserData($keyOrData, $value = null) {
         if (is_array($keyOrData)) {
             // Update multiple columns
-            return System::$db->update('@PREFIX@users', $keyOrData, 'WHERE id = {0}', array($this->id));
+            return System::$db->update('@PREFIX@users', $keyOrData, array(
+                'where' => 'id = {0}',
+                'vars' => array($this->id)
+            ));
         } elseif (is_string($keyOrData) && isset($value)) {
             // Update a single column
             $data = array($keyOrData => $value);
-            return System::$db->update('@PREFIX@users', $data, 'WHERE id = {0}', array($this->id));
+            return System::$db->update('@PREFIX@users', $data, array(
+                'where' => 'id = {0}',
+                'vars' => array($this->id)
+            ));
         }
         
         return false;
