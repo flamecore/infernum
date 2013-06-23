@@ -163,6 +163,13 @@ class System {
         self::loadModule($module, $arguments);
     }
     
+    /**
+     * Locates the path to a function library
+     * @param    string   $name   The name of the library
+     * @return   string
+     * @access   public
+     * @static
+     */
     public static function library($name) {
         $libraryDirs = array(
             WW_ENGINE_PATH.'/libraries/functions',

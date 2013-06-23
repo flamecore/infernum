@@ -24,7 +24,7 @@
 /**
  * Wrapper for several HTTP features
  *
- * @author  Christian Neff <christian.neff@gmail.com>
+ * @author   Christian Neff <christian.neff@gmail.com>
  */
 class Http {
 
