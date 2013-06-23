@@ -52,50 +52,13 @@ define('WW_SITE_PATH', WW_ENGINE_PATH.'/websites/'.WW_SITE_NAME);
 try {
     require_once WW_ENGINE_PATH.'/includes/autoloader.php';
     require_once WW_ENGINE_PATH.'/libraries/functions.php';
-
+    
     System::startup();
 
     define('WW_ROOT_URL', System::$settings['core']['url']);
-
+    
     Session::init();
-
-    // Fetch list of language packs
-    $languages = Cache::read('languages');
-    if (!isset($languages)) {
-        $result = System::$db->select('@PREFIX@languages');
-
-        while ($data = $result->fetchAssoc()) {
-            $languages[$data['id']] = array(
-                'name'      => $data['name'],
-                'direction' => $data['direction'],
-                'locales'   => explode(',', $data['locales'])
-            );
-        }
-
-        Cache::store('languages', $languages);
-    }
-
-    // Detect the user's preferred language
-    if (isset(Session::$data['language'])) {
-        // There was found a language setting in the user's session
-        $language = Session::$data['language'];
-    } elseif ($browserLangs = Http::getAcceptLanguage()) {
-        // We can use the browser language: Try to find the best match
-        foreach (array_keys($browserLangs) as $browserLang) {
-            if (isset($languages[$browserLang])) {
-                $language = $browserLang;
-                break;
-            }
-        }
-    }
-
-    // If no preferred language was detected, fall back to the default language
-    if (!isset($language))
-        $language = System::$settings['core']['lang'];
-
-    setlocale(LC_ALL, $languages[$language]['locales']);
-
-    $t = new Translations($language);
+	International::init();
 
     Template::setTitle(System::$settings['core']['site_name']);
 

@@ -34,9 +34,7 @@
  * @return   string
  */
 function t($string, $vars = null) {
-    global $t;
-
-    return $t->get($string, $vars);
+    return International::$t->get($string, $vars);
 }
 
 /**
@@ -46,9 +44,7 @@ function t($string, $vars = null) {
  * @return   void
  */
 function te($string, $vars = null) {
-    global $t;
-
-    echo $t->get($string, $vars);
+    echo International::$t->get($string, $vars);
 }
 
 /**
