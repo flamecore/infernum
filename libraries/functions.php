@@ -101,13 +101,28 @@ function showMessage($message, $type = 'info') {
 }
 
 /**
- * Sends a 404 Not Found error and displays a 'Page not found' message via the 'notfound_body' template
+ * Sends an HTTP error and displays a message via template
+ * @param    int    $code   The HTTP error code. Possible values are:
+ *                            * 404      Sends '404 Not Found' error, displays '404_body' template (default)
+ *                            * 403      Sends '403 Forbidden' error, displays '403_body' template
  * @return   void
  */
-function showNotFoundError() {
-    Http::setHeader('HTTP/1.1 404 Not Found');
+function showError($code = 404) {
+    switch ($code) {
+        case 404:
+        default:
+            $errorstring = '404 Not Found';
+            $errortpl = '404_body';
+            break;
+        case 403:
+            $errorstring = '403 Forbidden';
+            $errortpl = '403_body';
+            break;
+    }
     
-    $tpl = new Template('notfound_body');
+    Http::setHeader('HTTP/1.1 '.$errorstring);
+    
+    $tpl = new Template($errortpl);
     $tpl->render();
     
     exit();

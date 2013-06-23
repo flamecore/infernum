@@ -1,7 +1,7 @@
 <?php include Template::locate('header') ?>
 
-<h1>Page not found</h1>
+<h1>Access denied</h1>
 
-<p>This page does not exist!</p>
+<p>You don't have permission to accesss this page.</p>
 
 <?php include Template::locate('footer') ?>

@@ -141,7 +141,7 @@ class System {
         $moduleFile = WW_SITE_PATH.'/modules/'.$module.'/controller.php';
 
         if (!file_exists($moduleFile)) {
-            showNotFoundError();
+            showError();
         }
 
         include $moduleFile;
