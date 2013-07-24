@@ -173,7 +173,8 @@ class System {
     public static function library($name) {
         $libraryDirs = array(
             WW_ENGINE_PATH.'/libraries/functions',
-            WW_SITE_PATH.'/libraries/functions'
+            WW_SITE_PATH.'/libraries/functions',
+            WW_SHARED_PATH.'/libraries/functions'
         );
         
         foreach ($libraryDirs as $libraryDir) {
