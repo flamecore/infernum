@@ -26,52 +26,81 @@
  *
  * @author  Christian Neff <christian.neff@gmail.com>
  */
-class Autoloader {
+class WebworkLoader {
     
     /**
-     * The list of registered class directories
-     * @var      array
+     * Path of the currently loaded module
+     * @var      string
      * @access   private
      * @static
      */
-    private static $_classDirs = array();
-
+    private static $modulePath;
+    
     /**
-     * The class loader
-     * @param    string   $className   The name of the class to load
-     * @return   bool
+     * Returns a list of possible source paths
+     * @return   array
+     * @access   public
      * @static
      */
-    public static function load($className) {
-        $classFileName = str_replace('_', '/', $className);
+    public static function getSources() {
+        $sources = array(WW_ENGINE_PATH);
+        
+        if (isset(self::$modulePath))
+            array_push($sources, self::$modulePath);
+        
+        array_push($sources, WW_SITE_PATH, WW_SHARED_PATH);
+        
+        return $sources;
+    }
 
-        foreach (self::$_classDirs as $classDir) {
-            $classFile = $classDir.'/'.$classFileName.'.class.php';
-            if (file_exists($classFile)) {
-                require_once $classFile;
-                return true;
-            }
-        }
+    /**
+     * Autoloader
+     * @param    string   $name   Name of the class to load
+     * @return   bool
+     * @access   public
+     * @static
+     */
+    public static function loadClass($name) {
+        $name = str_replace('_', '/', $name);
+        $classfile = self::find($name, 'libraries/classes/*.class.php');
+        
+        if ($classfile)
+            require_once $classfile;
 
         return false;
     }
     
     /**
-     * Adds a class directory to the list
-     * @param    string   $path   The path of the class directory to add
-     * @return   void
+     * Searches for a script in all source paths and returns the filepath
+     * @param    string   $name   Name of the script
+     * @param    string   $path   Path pattern of the file (appended to source path)
+     * @return   string
+     * @access   public
      * @static
      */
-    public static function addClassPath($path) {
-        self::$_classDirs[] = $path;
+    public static function find($name, $path) {
+        foreach (self::getSources() as $source) {
+            $file = str_replace('*', $name, $source.'/'.$path);
+			
+            if (file_exists($file))
+                return $file;
+        }
+		
+		return false;
+    }
+
+    /**
+     * Sets the module path
+     * @param    string   $path   The module path
+     * @return   void
+     * @access   public
+     * @static
+     */
+    public static function setModulePath($path) {
+        self::$modulePath = $path;
     }
     
 }
 
 // Register the autoloader
-spl_autoload_register(array('Autoloader', 'load'));
-
-// Add basic class paths
-Autoloader::addClassPath(WW_ENGINE_PATH.'/libraries/classes');
-Autoloader::addClassPath(WW_SITE_PATH.'/libraries/classes');
-Autoloader::addClassPath(WW_SHARED_PATH.'/libraries/classes');
+spl_autoload_register(array('WebworkLoader', 'loadClass'));

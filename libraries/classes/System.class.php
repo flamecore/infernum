@@ -171,20 +171,13 @@ class System {
      * @static
      */
     public static function library($name) {
-        $libraryDirs = array(
-            WW_ENGINE_PATH.'/libraries/functions',
-            WW_SITE_PATH.'/libraries/functions',
-            WW_SHARED_PATH.'/libraries/functions'
-        );
+        $libraryfile = self::find($name, 'libraries/*.php');
         
-        foreach ($libraryDirs as $libraryDir) {
-            $libraryFile = $libraryDir.'/'.$name.'.php';
-            if (file_exists($libraryFile)) {
-                return $libraryFile;
-            }
+        if ($libraryfile) {
+            return $libraryfile;
+        } else {
+            throw new Exception('Library "'.$name.'" not found.');
         }
-        
-        throw new Exception('Library "'.$name.'" not found.');
     }
     
 }
