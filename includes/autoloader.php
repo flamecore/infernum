@@ -71,20 +71,34 @@ class WebworkLoader {
     }
     
     /**
-     * Searches for a script in all source paths and returns the filepath
-     * @param    string   $name   Name of the script
-     * @param    string   $path   Path pattern of the file (appended to source path)
-     * @return   string
+     * Searches all source paths for a script with given name. By default the function returns the filepath (string) of
+     *   the script that is found at first. If the parameter $findall is set to TRUE the function returns an array of
+     *   all found scripts (not just the first one).
+     * @param    string   $name      Name of the script
+     * @param    string   $path      Path pattern of the file (appended to source path)
+     * @param    string   $findall   Search for all scripts inclusively. Defaults to FALSE.
+     * @return   mixed
      * @access   public
      * @static
      */
-    public static function find($name, $path) {
+    public static function find($name, $path, $findall = false) {
+        if ($findall)
+            $results = array();
+        
         foreach (self::getSources() as $source) {
             $file = str_replace('*', $name, $source.'/'.$path);
 			
-            if (file_exists($file))
-                return $file;
+            if (file_exists($file)) {
+                if (!$findall) {
+                    return $file;
+                } else {
+                    $results[] = $file;
+                }
+            }
         }
+        
+        if ($findall && !empty($results))
+            return $results;
 		
 		return false;
     }
