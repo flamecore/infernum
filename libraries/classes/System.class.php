@@ -138,12 +138,15 @@ class System {
     public static function loadModule($module, $arguments) {
         $argsList = explode('/', $arguments);
 
-        $moduleFile = WW_SITE_PATH.'/modules/'.$module.'/controller.php';
+        $modulePath = WW_SITE_PATH.'/modules/'.$module;
+        $moduleFile = $modulePath.'/controller.php';
 
         if (!file_exists($moduleFile)) {
             showError();
         }
 
+        WebworkLoader::setModulePath($modulePath);
+        
         include $moduleFile;
     }
     
@@ -162,7 +165,7 @@ class System {
 
         self::loadModule($module, $arguments);
     }
-    
+
     /**
      * Locates the path to a function library
      * @param    string   $name   The name of the library
