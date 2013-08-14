@@ -28,6 +28,31 @@
  */
 
 /**
+ * Loads function libraries with a given name from multiple sources (module dir, site dir, shared dir)
+ * @param    string   $name        The name of the library
+ * @param    bool     $exclusive   Stop searching for more libraries when the first one is found. Defaults to FALSE.
+ * @return   void
+ */
+function library($name, $exclusive = false) {
+    if ($exclusive) {
+        $file = WebworkLoader::find($name, 'libraries/*.php');
+        if ($file) {
+            include_once $file;
+            return;
+        }
+    } else {
+        $files = WebworkLoader::find($name, 'libraries/*.php', true);
+        if ($files) {
+            foreach ($files as $file)
+                include_once $file;
+            return;
+        }
+    }
+
+    throw new Exception('Library "'.$name.'" not found.');
+}
+
+/**
  * Returns the translation of a string
  * @param    string   $string   The string to translate
  * @param    array    $vars     Variables ('%var%') to replace as array

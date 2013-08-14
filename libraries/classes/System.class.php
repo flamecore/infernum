@@ -165,32 +165,5 @@ class System {
 
         self::loadModule($module, $arguments);
     }
-
-    /**
-     * Loads function libraries with a given name from multiple sources (module dir, site dir, shared dir)
-     * @param    string   $name        The name of the library
-     * @param    bool     $exclusive   Stop searching for more libraries when the first one is found. Defaults to FALSE.
-     * @return   void
-     * @access   public
-     * @static
-     */
-    public static function library($name, $exclusive = false) {
-        if ($exclusive) {
-            $file = self::find($name, 'libraries/*.php');
-            if ($file) {
-                include_once $file;
-                return;
-            }
-        } else {
-            $files = self::find($name, 'libraries/*.php', true);
-            if ($files) {
-                foreach ($files as $file)
-                    include_once $file;
-                return;
-            }
-        }
-
-        throw new Exception('Library "'.$name.'" not found.');
-    }
     
 }
