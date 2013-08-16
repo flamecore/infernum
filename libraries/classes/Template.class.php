@@ -158,7 +158,8 @@ class Template {
         }
         
         if (!file_exists($filePath))
-            throw new Exception('Template file "'.$filePath.'" does not exist.');
+            throw new WebworkException('Template file "'.$filePath.'" does not exist.',
+                                       'template.not_found', E_USER_ERROR);
         
         return $filePath;
     }

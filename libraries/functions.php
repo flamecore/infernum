@@ -49,7 +49,7 @@ function library($name, $exclusive = false) {
         }
     }
 
-    throw new Exception('Library "'.$name.'" not found.');
+    throw new WebworkException('Library "'.$name.'" not found.', 'system.library_not_found', E_USER_ERROR);
 }
 
 /**

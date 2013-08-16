@@ -71,7 +71,8 @@ class System {
         
         // Make sure that the required settings are available and shut down the system otherwise
         if (!isset(self::$settings['core']) || !isset(self::$settings['database']))
-            throw new Exception('Required settings "core" and/or "database" not found!');
+            throw new WebworkException('Required settings "core" and/or "database" not found!',
+                                       'system.settings_not_available', E_USER_ERROR);
         
         // Now we can load our database driver
         $driver = self::$settings['database']['driver'];
