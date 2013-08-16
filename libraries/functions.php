@@ -109,6 +109,26 @@ function page($pagePath, $query = null) {
 }
 
 /**
+ * Generates a URL to a theme file
+ * @param    string   $filename   The name of the file (appended to path)
+ * @param    string   $module     Use module theme path instead of global theme path
+ * @param    string   $theme      Use this specified theme
+ * @return   string
+ */
+function theme($filename, $module = null, $theme = null) {
+	if (!isset($theme))
+		$theme = System::$settings['core']['theme'];
+	
+	if (isset($module)) {
+		$path = WW_ROOT_URL.'/sites/'.WW_SITE_NAME.'/modules/'.$module;
+	} else {
+		$path = WW_ROOT_URL;
+	}
+	
+    return "{$path}/themes/{$theme}/{$filename}";
+}
+
+/**
  * Displays a message via the 'message_body' template
  * @param    string   $message   The text of the message to show. In the template, this value can be retrieved via
  *                                 the {$message} variable.
