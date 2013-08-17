@@ -152,7 +152,7 @@ class Template {
             $theme = System::$settings['core']['theme'];
         
         if (isset($module)) {
-            $filePath = WW_SITE_PATH.'/modules/'.$module.'/templates/'.$theme.'/'.$file.'.tpl.php';
+            $filePath = WW_SITE_PATH.'/modules/'.$module.'/themes/'.$theme.'/templates/'.$file.'.tpl.php';
         } else {
             $filePath = WW_ENGINE_PATH.'/themes/'.$theme.'/templates/'.$file.'.tpl.php';
         }
