@@ -40,7 +40,7 @@ class Filter {
     public static function isBool($var, $strict = false) {
         $optionsArg = $strict ? FILTER_NULL_ON_FAILURE : 0;
         
-        return filter_var($var, FITLER_VALIDATE_BOOLEAN, $optionsArg);
+        return filter_var($var, FILTER_VALIDATE_BOOLEAN, $optionsArg);
     }
 
     /**
@@ -55,6 +55,7 @@ class Filter {
      * @static
      */
     public static function isInt($var, $minRange = null, $maxRange = null, $flags = 0) {
+        $options = array();
         if (isset($minRange))
             $options['min_range'] = $minRange;
         if (isset($maxRange))
@@ -79,6 +80,7 @@ class Filter {
      * @static
      */
     public static function isFloat($var, $decimal = null, $flags = 0) {
+        $options = array();
         if (isset($decimal))
             $options['decimal'] = $decimal;
         
