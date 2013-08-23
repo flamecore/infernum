@@ -101,11 +101,11 @@ class System {
         if (!is_string($dir) || !is_dir($dir))
             return;
         
-        // include all configuration files, we need no sorting
+        // Load all configuration files, we need no sorting
         foreach (glob($dir.'/*.php', GLOB_NOSORT) as $file)
             require_once($file);
         
-        // load configuration files from all subdirectories
+        // Load configuration files from all subdirectories
         foreach (glob($dir.'/*', GLOB_ONLYDIR) as $subdir)
             array_push($settings, self::loadSettings($subdir));
         

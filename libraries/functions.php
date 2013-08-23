@@ -73,10 +73,10 @@ function te($string, $vars = null) {
 }
 
 /**
- * Generates a URL from a path and query data based on the application URL
- * @param    string   $path    The path of the location to link
+ * Generates a URL to a relative path based on the application URL
+ * @param    string   $path    The relative path of the location
  * @param    array    $query   Optional data that is added to the URL as query string.
- *                               For more information, see {@link http://www.php.net/manual/en/function.http-build-query.php}
+ *                               For more information see {@link http://www.php.net/http_build_query}
  * @return   string
  */
 function u($path = '', $query = null) {
@@ -88,10 +88,10 @@ function u($path = '', $query = null) {
 }
 
 /**
- * Generates a URL from a page path based on the application URL
- * @param    string   $pagePath   The path of the page to link
+ * Generates a URL to a module page by path
+ * @param    string   $pagePath   The path of the module page
  * @param    array    $query      Optional data that is added to the URL as query string.
- *                                  For more information, see {@link http://www.php.net/manual/en/function.http-build-query.php}
+ *                                  For more information see {@link http://www.php.net/http_build_query}
  * @return   string
  */
 function page($pagePath, $query = null) {

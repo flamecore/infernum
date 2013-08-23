@@ -24,7 +24,7 @@
 /**
  * Result set returned by a MySQL query
  *
- * @author  Christian Neff <christian.neff@gmail.com>
+ * @author   Christian Neff <christian.neff@gmail.com>
  */
 class Database_MySQL_Result extends Database_Base_Result {
 

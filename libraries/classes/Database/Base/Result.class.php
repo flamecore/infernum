@@ -29,7 +29,7 @@
 /**
  * Result set returned by a database query
  *
- * @author  Christian Neff <christian.neff@gmail.com>
+ * @author   Christian Neff <christian.neff@gmail.com>
  */
 abstract class Database_Base_Result {
     

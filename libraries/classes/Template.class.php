@@ -24,7 +24,8 @@
 /**
  * Template parser class
  *
- * @author  Martin Lantzsch <martin@linux-doku.de>
+ * @author   Christian Neff <christian.neff@gmail.com>
+ * @author   Martin Lantzsch <martin@linux-doku.de>
  */
 class Template {
 
