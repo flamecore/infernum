@@ -34,7 +34,7 @@ class Template {
      * @var      string
      * @access   private
      */
-    private $_filePath;
+    private $_filename;
 
     /**
      * All assigned template variables
@@ -80,11 +80,10 @@ class Template {
         if (!isset($theme))
             $theme = System::$settings['core']['theme'];
         
-        $this->_filePath = self::locate($file, $module, $theme);
+        $this->_filename = self::locate($file, $module, $theme);
         
         // Set some common variables
         $this->set('SITE_URL', u());
-        $this->set('THEME_URL', u('/themes/'.$theme));
     }
 
     /**
@@ -117,19 +116,20 @@ class Template {
      * @access   public
      */
     public function render($output = true) {
-        // Create a renderer function to isolate the template
-        $renderer = function() {
+        // Create a sandbox function to isolate the template
+        $template = function() {
             // Import the defined variables
             extract(func_get_arg(1));
             
-            // Include the template file and capture its output
+            // Load the template file and capture its output
             ob_start();
             include func_get_arg(0);
             return ob_get_clean();
         };
         
         // Render the template with defined variables
-        $content = $renderer($this->_filePath, self::$_globalVars + $this->_variables);
+        $variables = array_merge(self::$_globalVars, $this->_variables);
+        $content = $template($this->_filename, $variables);
         
         if ($output) {
             echo $content;
@@ -224,23 +224,6 @@ class Template {
     }
 
     /**
-     * Adds a stylesheet link to the head tags using the theme URL
-     * @param    string   $path    The URL to the file
-     * @param    string   $media   Only for this media types. Defaults to 'all'.
-     * @return   void
-     * @access   public
-     * @static
-     */
-    public static function addThemeCSS($path, $media = 'all') {
-        $theme = System::$settings['core']['theme'];
-        
-        self::$_headTags['css'][] = array(
-            'url'   => u('/themes/'.$theme.'/css/'.$path),
-            'media' => $media
-        );
-    }
-
-    /**
      * Adds a stylesheet link to the head tags
      * @param    string   $url     The URL to the file
      * @param    string   $media   Only for this media types. Defaults to 'all'.
@@ -263,7 +246,7 @@ class Template {
      * @access   public
      * @static
      */
-    public static function addScript($url, $type = 'text/javascript') {
+    public static function addScript($url, $type = 'application/javascript') {
         self::$_headTags['script'][] = array(
             'url'  => $url,
             'type' => $type
