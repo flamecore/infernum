@@ -53,6 +53,51 @@ function library($name, $exclusive = false) {
 }
 
 /**
+ * Stores data to a cache file and reads from it. Returns the stored data on success or NULL on failure.
+ * @param    string     $name       The name of the cache file
+ * @param    callable   $callback   The callback function that returns the data to store
+ * @return   mixed
+ */
+function cached($name, $callback) {
+    global $config;
+    
+    if (!is_callable($callback))
+        return null;
+
+    if (isset($config['enable_caching']) && $config['enable_caching']) {
+        // Caching is enabled, so we use a file
+        $filename = WW_ENGINE_PATH.'/cache/'.$name.'.cache';
+
+        // Check if the file exists
+        if (file_exists($filename)) {
+            $file_content = file_get_contents($filename);
+            list($modified, $raw_data) = explode(',', $file_content, 2);
+
+            // Check if the file has expired. If so, there is no data we could use.
+            $lifetime = isset($config['cache_lifetime']) ? $config['cache_lifetime'] : 86400;
+            if ($lifetime > 0 && $modified + $lifetime < time())
+                $raw_data = null;
+        }
+
+        if (isset($raw_data)) {
+            // We were able to retrieve data from the file
+            return unserialize($raw_data);
+        } else {
+            // No data from file, so we use the data callback and store the given value
+            $data = $callback();
+            
+            $file_content = time().','.serialize($data);
+            file_put_contents($filename, $file_content);
+            
+            return $data;
+        }
+    } else {
+        // Caching is disabled, so we use the data callback
+        return $callback();
+    }
+}
+
+/**
  * Returns the translation of a string
  * @param    string   $string   The string to translate
  * @param    array    $vars     Variables ('%var%') to replace as array

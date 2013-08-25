@@ -61,13 +61,9 @@ class System {
      */
     public static function startup() {
         // At first we have to load the settings
-        $settings = Cache::read('settings');
-        if (!isset($settings)) {
-            $settings = self::loadSettings(WW_SITE_PATH.'/settings');
-            Cache::store('settings', $settings);
-        }
-        
-        self::$settings = $settings;
+        self::$settings = cached('settings', function() {
+            return System::loadSettings(WW_SITE_PATH.'/settings');
+        });
         
         // Make sure that the required settings are available and shut down the system otherwise
         if (!isset(self::$settings['core']) || !isset(self::$settings['database']))

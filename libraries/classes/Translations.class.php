@@ -43,18 +43,16 @@ class Translations {
      */
     public function __construct($language) {
         // Load all strings of the selected language pack
-        $strings = Cache::read('translations-'.$language);
-        if (!isset($strings)) {
+        $this->_strings = cached('translations-'.$language, function() use ($language) {
             $sql = 'SELECT string, translation FROM @PREFIX@translations WHERE language = {0}';
             $result = System::$db->query($sql, array($language));
             
+            $strings = array();
             while ($entry = $result->fetchAssoc())
                 $strings[$entry['string']] = $entry['translation'];
 
-            Cache::store('translations-'.$language, $strings);
-        }
-        
-        $this->_strings = $strings;
+            return $strings;
+        });
     }
 
     /**

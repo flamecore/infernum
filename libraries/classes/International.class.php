@@ -92,10 +92,10 @@ class International {
      * @static
      */
 	public static function getAvailableLanguages() {
-        $languages = Cache::read('languages');
-        if (!isset($languages)) {
+        return cached('languages', function() {
             $result = System::$db->select('@PREFIX@languages');
 
+            $languages = array();
             while ($data = $result->fetchAssoc()) {
                 $languages[$data['id']] = array(
                     'name'      => $data['name'],
@@ -104,10 +104,8 @@ class International {
                 );
             }
 
-            Cache::store('languages', $languages);
-        }
-        
-        return $languages;
+            return $languages;
+        });
 	}
     
 }
