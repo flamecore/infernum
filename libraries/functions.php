@@ -59,12 +59,12 @@ function library($name, $exclusive = false) {
  * @return   mixed
  */
 function cached($name, $callback) {
-    global $config;
+    global $CONFIG;
     
     if (!is_callable($callback))
         return null;
 
-    if (isset($config['enable_caching']) && $config['enable_caching']) {
+    if (isset($CONFIG['enable_caching']) && $CONFIG['enable_caching']) {
         // Caching is enabled, so we use a file
         $filename = WW_ENGINE_PATH.'/cache/'.$name.'.cache';
 
@@ -74,7 +74,7 @@ function cached($name, $callback) {
             list($modified, $raw_data) = explode(',', $file_content, 2);
 
             // Check if the file has expired. If so, there is no data we could use.
-            $lifetime = isset($config['cache_lifetime']) ? $config['cache_lifetime'] : 86400;
+            $lifetime = isset($CONFIG['cache_lifetime']) ? $CONFIG['cache_lifetime'] : 86400;
             if ($lifetime > 0 && $modified + $lifetime < time())
                 $raw_data = null;
         }

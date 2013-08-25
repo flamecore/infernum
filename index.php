@@ -31,15 +31,15 @@ define('WW_ENGINE_PATH', __DIR__);
 
 include_once WW_ENGINE_PATH.'/includes/config.php';
 
-if ($config['enable_multisite'] && isset($config['sites'])) {
+if ($CONFIG['enable_multisite'] && isset($CONFIG['sites'])) {
     // This is a multi-site installation, so we need to know the current domain name
     $domain = $_SERVER['SERVER_NAME'];
 
     // Check if there is a site for the current domain, fall back to default site otherwise
-    if (isset($config['sites'][$domain])) {
-        $activeSite = $config['sites'][$domain];
+    if (isset($CONFIG['sites'][$domain])) {
+        $activeSite = $CONFIG['sites'][$domain];
     } else {
-        $activeSite = isset($config['default_site']) ? $config['default_site'] : 'default';
+        $activeSite = isset($CONFIG['default_site']) ? $CONFIG['default_site'] : 'default';
     }
 } else {
     // This is a single-site installation, hence we use the default site
@@ -71,7 +71,7 @@ try {
     System::loadModuleFromPath($path);
 } catch (Exception $error) {
     $tpl = new Template('error');
-    if ($config['enable_debugmode'])
+    if ($CONFIG['enable_debugmode'])
         $tpl->set('debug', $error->getMessage());
     $tpl->render();
 }

@@ -1,4 +1,4 @@
 <?php
-$config['enable_debugmode'] = false;
-$config['enable_caching'] = false;
-$config['enable_multisite'] = false;
+$CONFIG['enable_debugmode'] = false;
+$CONFIG['enable_caching'] = false;
+$CONFIG['enable_multisite'] = false;
