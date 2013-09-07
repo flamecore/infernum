@@ -42,8 +42,7 @@ class Database {
      */
     public static function loadDriver($driver, $host, $user, $password, $database, $prefix) {
         if ($driver == '' || !in_array($driver, self::getAvailableDrivers()))
-            throw new WebworkException('Database driver "'.$driver.'" not found or invalid',
-                                       'database.driver_not_found', E_USER_ERROR);
+            ww_error('Database driver "'.$driver.'" not found or invalid', 'database.driver_not_found');
         
         $driverClass = 'Database_'.$driver.'_Driver';
         return new $driverClass($host, $user, $password, $database, $prefix);

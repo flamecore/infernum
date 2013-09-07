@@ -37,8 +37,7 @@ class Database_MySQL_Driver extends Database_Base_Driver {
         $this->_link = @mysqli_connect($this->_host, $this->_user, $this->_password, $this->_database);
         
         if (mysqli_connect_errno())
-            throw new WebworkException('Failed connecting to the database: '.mysqli_connect_error(),
-                                       'database.mysql.connection_failed', E_USER_ERROR);
+            ww_error('Failed connecting to the database: '.mysqli_connect_error(), 'database.mysql.connection_failed');
     }
 
     /**
@@ -71,8 +70,7 @@ class Database_MySQL_Driver extends Database_Base_Driver {
             return true;
         }
         
-        throw new WebworkException('Database query failed: '.$this->getError(),
-                                   'database.mysql.query_failed', E_USER_ERROR);
+        ww_error('Database query failed: '.$this->getError(), 'database.mysql.query_failed');
     }
     
     /**

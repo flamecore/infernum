@@ -48,8 +48,7 @@ class UserGroup {
         if ($result->numRows() == 1) {
             $this->_groupData = $result->fetchAssoc();
         } else {
-            throw new WebworkException('User group '.$groupID.' does not exist.',
-                                       'usergroup.not_found', E_USER_ERROR);
+            ww_error('User group '.$groupID.' does not exist.', 'usergroup.not_found');
         }
     }
     

@@ -62,11 +62,10 @@ class User {
                 $this->id = (int) $userData['id'];
                 $this->data = $userData;
             } else {
-                throw new WebworkException('User does not exist. ('.$selector.' = '.$identifier.')',
-                                           'user.not_found', E_USER_ERROR);
+                ww_error('User does not exist. ('.$selector.' = '.$identifier.')', 'user.not_found');
             }
         } else {
-            throw new WebworkException('Invalid user identifier given.', 'user.invalid_identifier', E_USER_ERROR);
+            ww_error('Invalid user identifier given.', 'user.invalid_identifier');
         }
     }
 
