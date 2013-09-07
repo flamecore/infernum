@@ -61,7 +61,7 @@ class System {
      */
     public static function startup() {
         // At first we have to load the settings
-        self::$settings = cached('settings', function() {
+        self::$settings = get_cached('settings', function() {
             return System::loadSettings(WW_SITE_PATH.'/settings');
         });
         
@@ -138,9 +138,8 @@ class System {
         $modulePath = WW_SITE_PATH.'/modules/'.$module;
         $moduleFile = $modulePath.'/controller.php';
 
-        if (!file_exists($moduleFile)) {
-            showError();
-        }
+        if (!file_exists($moduleFile))
+            error();
 
         WebworkLoader::setModulePath($modulePath);
         

@@ -58,7 +58,7 @@ function library($name, $exclusive = false) {
  * @param    callable   $callback   The callback function that returns the data to store
  * @return   mixed
  */
-function cached($name, $callback) {
+function get_cached($name, $callback) {
     global $CONFIG;
     
     if (!is_callable($callback))
@@ -181,7 +181,7 @@ function theme($filename, $module = null, $theme = null) {
  *                                 In the template, this value can be retrieved via the {$type} variable.
  * @return   void
  */
-function showMessage($message, $type = 'info') {
+function message($message, $type = 'info') {
     $tpl = new Template('message_body');
     $tpl->set('message', $message);
     $tpl->set('type', $type);
@@ -197,7 +197,7 @@ function showMessage($message, $type = 'info') {
  *                            * 403      Sends '403 Forbidden' error, displays '403_body' template
  * @return   void
  */
-function showError($code = 404) {
+function error($code = 404) {
     switch ($code) {
         case 404:
         default:
@@ -223,7 +223,7 @@ function showError($code = 404) {
  * @param    string   $patternList   List of fnmatch() patterns separated by semicolons (;)
  * @return   bool
  */
-function isCurrentPath($patternList) {
+function is_current_path($patternList) {
     global $path;
 
     $patterns = explode(';', $patternList);

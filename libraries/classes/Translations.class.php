@@ -43,7 +43,7 @@ class Translations {
      */
     public function __construct($language) {
         // Load all strings of the selected language pack
-        $this->_strings = cached('translations-'.$language, function() use ($language) {
+        $this->_strings = get_cached('translations-'.$language, function() use ($language) {
             $sql = 'SELECT string, translation FROM @PREFIX@translations WHERE language = {0}';
             $result = System::$db->query($sql, array($language));
             
