@@ -119,8 +119,10 @@ class System {
         if (!isset($settings))
             $settings = self::$settings[$section];
         
-        $content = '$settings[\''.$section.'\'] = '.var_export($settings).';';
-        return file_put_contents(WW_SITE_PATH.'/settings/'.$section.'.php', $content);
+        $export = var_export($settings);
+        $contents = "\$settings['{$section}'] = {$export};";
+        
+        return file_put_contents(WW_SITE_PATH.'/settings/'.$section.'.php', $contents);
     }
     
     /**
@@ -138,7 +140,7 @@ class System {
         $moduleFile = $modulePath.'/controller.php';
 
         if (!file_exists($moduleFile))
-            error();
+            error(404);
 
         WebworkLoader::setModulePath($modulePath);
         

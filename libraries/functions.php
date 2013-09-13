@@ -176,7 +176,7 @@ function theme($filename, $module = null, $theme = null) {
 		$theme = System::$settings['core']['theme'];
 	
 	if (isset($module)) {
-		$path = WW_ROOT_URL.'/sites/'.WW_SITE_NAME.'/modules/'.$module;
+		$path = WW_ROOT_URL.'/websites/'.WW_SITE_NAME.'/modules/'.$module;
 	} else {
 		$path = WW_ROOT_URL;
 	}
@@ -204,24 +204,23 @@ function message($message, $type = 'info') {
 /**
  * Sends an HTTP error and displays a message via template
  * @param    int    $code   The HTTP error code. Possible values are:
- *                            * 404      Sends '404 Not Found' error, displays '404_body' template (default)
+ *                            * 404      Sends '404 Not Found' error, displays '404_body' template
  *                            * 403      Sends '403 Forbidden' error, displays '403_body' template
  * @return   void
  */
-function error($code = 404) {
+function error($code) {
     switch ($code) {
         case 404:
-        default:
-            $errorstring = '404 Not Found';
+            $errorstr = '404 Not Found';
             $errortpl = '404_body';
             break;
         case 403:
-            $errorstring = '403 Forbidden';
+            $errorstr = '403 Forbidden';
             $errortpl = '403_body';
             break;
     }
     
-    Http::setHeader('HTTP/1.1 '.$errorstring);
+    Http::setHeader('HTTP/1.1 '.$errorstr);
     
     $tpl = new Template($errortpl);
     $tpl->render();
