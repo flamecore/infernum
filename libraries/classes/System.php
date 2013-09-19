@@ -82,6 +82,16 @@ class System {
         // All systems are started now and running smoothly
         self::$_initialized = true;
     }
+	
+    /**
+     * Checks if the sytem has been started
+     * @return   bool
+     * @access   public
+     * @static
+     */
+    public static function isStarted() {
+        return self::$_initialized;
+    }
 
     /**
      * Reads all settings from the given directory, works recursively through all subdirectories
