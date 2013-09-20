@@ -72,12 +72,19 @@ function library($name, $exclusive = false) {
 function get_cached($name, $callback) {
     global $CONFIG;
     
-    if (!is_callable($callback))
+    if (!is_callable($callback)) {
+        trigger_error('Invalid callback given for cache instance "'.$name.'"', E_USER_WARNING);
         return null;
+    }
+    
+    $cache_path = WW_ENGINE_PATH.'/cache/'.WW_SITE_NAME;
+    
+    if (!is_dir($cache_path))
+        mkdir($cache_path);
 
     if (isset($CONFIG['enable_caching']) && $CONFIG['enable_caching']) {
         // Caching is enabled, so we use a file
-        $filename = WW_ENGINE_PATH.'/cache/'.$name.'.cache';
+        $filename = "{$cache_path}/{$name}.cache";
 
         // Check if the file exists
         if (file_exists($filename)) {
