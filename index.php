@@ -24,37 +24,12 @@
 /**
  * Webwork Core
  *
- * @author  Christian Neff <christian.neff@gmail.com>
+ * @author   Christian Neff <christian.neff@gmail.com>
  */
 
-define('WW_ENGINE_PATH', __DIR__);
-
-include_once WW_ENGINE_PATH.'/includes/config.php';
-
-if ($CONFIG['enable_multisite'] && isset($CONFIG['sites'])) {
-    // This is a multi-site installation, so we need to know the current domain name
-    $domain = $_SERVER['SERVER_NAME'];
-
-    // Check if there is a site for the current domain, fall back to default site otherwise
-    if (isset($CONFIG['sites'][$domain])) {
-        $activeSite = $CONFIG['sites'][$domain];
-    } else {
-        $activeSite = isset($CONFIG['default_site']) ? $CONFIG['default_site'] : 'default';
-    }
-} else {
-    // This is a single-site installation, hence we use the default site
-    $activeSite = 'default';
-}
-
-define('WW_SITE_NAME', $activeSite);
-define('WW_SITE_PATH', WW_ENGINE_PATH.'/websites/'.WW_SITE_NAME);
-define('WW_SHARED_PATH', WW_ENGINE_PATH.'/websites/shared');
+require './includes/bootstrap.php';
 
 try {
-    require_once WW_ENGINE_PATH.'/includes/autoloader.php';
-    require_once WW_ENGINE_PATH.'/includes/exception.php';
-    require_once WW_ENGINE_PATH.'/libraries/functions.php';
-    
     System::startup();
 
     define('WW_ROOT_URL', System::$settings['core']['url']);
