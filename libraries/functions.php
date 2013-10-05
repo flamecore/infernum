@@ -39,6 +39,20 @@ function ww_error($message, $type) {
 }
 
 /**
+ * Returns a configuration value
+ * @param    string   $confkey   The configuration key
+ * @param    mixed    $default   Custom default value (optional)
+ * @return   mixed
+ */
+function ww_config($confkey, $default = false) {
+    if (isset($GLOBALS['CONFIG'][$confkey])) {
+        return $GLOBALS['CONFIG'][$confkey];
+    } else {
+        return $default;
+    }
+}
+
+/**
  * Stores data to a cache file and reads from it. Returns the stored data on success or NULL on failure.
  * @param    string     $name       The name of the cache file
  * @param    callable   $callback   The callback function that returns the data to store
