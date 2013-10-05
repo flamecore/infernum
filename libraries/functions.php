@@ -39,31 +39,6 @@ function ww_error($message, $type) {
 }
 
 /**
- * Loads function libraries with a given name from multiple sources (module dir, site dir, shared dir)
- * @param    string   $name        The name of the library
- * @param    bool     $exclusive   Stop searching for more libraries when the first one is found. Defaults to FALSE.
- * @return   void
- */
-function library($name, $exclusive = false) {
-    if ($exclusive) {
-        $file = WebworkLoader::find($name, 'libraries/*.php');
-        if ($file) {
-            include_once $file;
-            return;
-        }
-    } else {
-        $files = WebworkLoader::find($name, 'libraries/*.php', true);
-        if ($files) {
-            foreach ($files as $file)
-                include_once $file;
-            return;
-        }
-    }
-
-    throw new WebworkException('Library "'.$name.'" not found.', 'system.library_not_found', E_USER_ERROR);
-}
-
-/**
  * Stores data to a cache file and reads from it. Returns the stored data on success or NULL on failure.
  * @param    string     $name       The name of the cache file
  * @param    callable   $callback   The callback function that returns the data to store
