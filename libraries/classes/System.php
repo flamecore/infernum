@@ -62,12 +62,12 @@ class System {
     public static function startup() {
         // At first we have to load the settings
         self::$settings = get_cached('settings', function() {
-            return System::loadSettings(WW_SITE_PATH.'/settings');
+            return parse_settings(WW_SITE_PATH.'/settings.ini');
         });
         
         // Make sure that the required settings are available and shut down the system otherwise
-        if (!isset(self::$settings['core']) || !isset(self::$settings['database']))
-            ww_error('Required settings "core" and/or "database" not found!', 'system.settings_not_available');
+        if (!isset(self::$settings['main']) || !isset(self::$settings['database']))
+            trigger_error('Required settings "main" and/or "database" not available', E_USER_ERROR);
         
         // Now we can load our database driver
         $driver = self::$settings['database']['driver'];
@@ -93,48 +93,6 @@ class System {
         return self::$_initialized;
     }
 
-    /**
-     * Reads all settings from the given directory, works recursively through all subdirectories
-     * @param    string   $dir   The absolute path to the directory to scan
-     * @return   array
-     * @access   public
-     * @static
-     */
-    public static function loadSettings($dir) {
-        $settings = array();
-        
-        if (!is_string($dir) || !is_dir($dir))
-            return;
-        
-        // Load all configuration files, we need no sorting
-        foreach (glob($dir.'/*.php', GLOB_NOSORT) as $file)
-            require_once($file);
-        
-        // Load configuration files from all subdirectories
-        foreach (glob($dir.'/*', GLOB_ONLYDIR) as $subdir)
-            array_push($settings, self::loadSettings($subdir));
-        
-        return $settings;
-    }
-
-    /**
-     * Writes the given settings to a specified settings file
-     * @param    string   $section    The name of the settings section (the file, name without '.php')
-     * @param    array    $settings   The settings to write. If omitted, the current settings will be written.
-     * @return   bool
-     * @access   public
-     * @static
-     */
-    public static function writeSettings($section, $settings = null) {
-        if (!isset($settings))
-            $settings = self::$settings[$section];
-        
-        $export = var_export($settings);
-        $contents = "\$settings['{$section}'] = {$export};";
-        
-        return file_put_contents(WW_SITE_PATH.'/settings/'.$section.'.php', $contents);
-    }
-    
     /**
      * Loads a module controller
      * @param    string   $module      The name of the module

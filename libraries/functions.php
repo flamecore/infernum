@@ -53,6 +53,55 @@ function ww_config($confkey, $default = false) {
 }
 
 /**
+ * Parses a Webwork settings file. Returns a multidimensional array, with the section names and settings included.
+ * @param    string   $filename   The filename of the INI file being parsed.
+ * @return   array
+ */
+function parse_settings($filename) {
+    $section = 'main'; $settings = array();
+	
+	$fn_error = function ($message) use ($filename, &$section) {
+		trigger_error($filename.' ['.$section.']: '.$message, E_USER_ERROR);
+	};
+    
+    $lines = file($filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if (preg_match('/^(;|#)/', $line)) {
+            // Comment
+            continue;
+        } elseif (preg_match('/^(\w+)\s*=\s*(.+)$/', $line, $part)) {
+            // Directive declaration
+            list(, $key, $val) = $part;
+            $result = json_decode('{"val":'.$val.'}', true);
+            if (isset($result)) {
+                $settings[$section][$key] = $result['val'];
+            } else {
+                $errno = json_last_error();
+                if ($errno == JSON_ERROR_DEPTH) {
+                    $fn_error('Maximum JSON stack depth exceeded');
+                } elseif ($errno == JSON_ERROR_STATE_MISMATCH) {
+                    $fn_error('Underflow or the modes mismatch');
+                } elseif ($errno == JSON_ERROR_SYNTAX) {
+                    $fn_error('Malformed value');
+                } else {
+                    $fn_error('Unknown error in value');
+                }
+            }
+        } elseif (preg_match('/^\[(\w+)\]$/', $line, $part)) {
+            // Section declaration
+            $section = $part[1];
+            $settings[$section] = array();
+        } else {
+            // Anything else
+            $fn_error('Invalid command');
+        }
+    }
+    
+    return $settings;
+}
+
+/**
  * Stores data to a cache file and reads from it. Returns the stored data on success or NULL on failure.
  * @param    string     $name       The name of the cache file
  * @param    callable   $callback   The callback function that returns the data to store
@@ -147,7 +196,7 @@ function u($path = '', $query = null) {
  * @return   string
  */
 function page($pagePath, $query = null) {
-    if (System::$settings['core']['url_rewrite']) {
+    if (System::$settings['main']['url_rewrite']) {
         $result = WW_ROOT_URL.'/'.$pagePath;
         if (isset($query) && is_array($query))
             $result .= '?'.http_build_query($query);
@@ -169,7 +218,7 @@ function page($pagePath, $query = null) {
  */
 function theme($filename, $module = null, $theme = null) {
 	if (!isset($theme))
-		$theme = System::$settings['core']['theme'];
+		$theme = System::$settings['main']['theme'];
 	
 	if (isset($module)) {
 		$path = WW_ROOT_URL.'/websites/'.WW_SITE_NAME.'/modules/'.$module;

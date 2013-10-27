@@ -78,7 +78,7 @@ class International {
 
         // If no preferred language was detected, fall back to the default language
         if (!isset(self::$language))
-            self::$language = System::$settings['core']['lang'];
+            self::$language = System::$settings['main']['lang'];
 
         setlocale(LC_ALL, self::$languages[self::$language]['locales']);
 

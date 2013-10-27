@@ -1,0 +1,37 @@
+[main]
+; URL of Webwork root
+url = "http://localhost/Webwork"
+; Path which represents the frontpage
+frontpage = "start"
+; Use URL rewriting for page paths
+url_rewrite = true
+; Theme from /themes folder
+theme = "default"
+; Name of the website
+site_name = "Webwork"
+; Default language 
+lang = "en"
+; Name prefix for cookies
+cookie_name_prefix = "ww_"
+; Domain that cookies are available to
+cookie_domain = ""
+; Path on the server in which cookies will be available on
+cookie_path = "/"
+; Username for anonymous users
+guest_username = "Anonymous"
+; Assign anonymous users to this usergroup
+guest_group = 1
+
+[database]
+; Database driver to use
+driver = "MySQL"
+; Database server host
+host = "localhost"
+; Username of database server user
+user = "root"
+; Password of database server user
+password = ""
+; Name of database
+database = "webwork"
+; Database table prefix
+prefix = "ww_"
