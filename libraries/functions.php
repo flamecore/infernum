@@ -53,6 +53,23 @@ function ww_config($confkey, $default = false) {
 }
 
 /**
+ * Returns the value of a setting
+ * @param    string   $address   The settings address in the form "<section>[:<keyname>]"
+ * @param    mixed    $default   Custom default value (optional)
+ * @return   mixed
+ */
+function ww_setting($address, $default = false) {
+    if (preg_match('/^(\w+)(:(\w+))$/', $address, $addrpart)) {
+        $section = $addrpart[1];
+        $keyname = isset($addrpart[2]) ? $addrpart[3] : null;
+    } else {
+        trigger_error('Invalid settings address "'.$address.'" given');
+    }
+
+    return System::setting($section, $keyname, $default);
+}
+
+/**
  * Parses a Webwork settings file. Returns a multidimensional array, with the section names and settings included.
  * @param    string   $filename   The filename of the INI file being parsed.
  * @return   array
