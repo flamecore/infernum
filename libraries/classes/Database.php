@@ -41,10 +41,14 @@ class Database {
      * @static
      */
     public static function loadDriver($driver, $host, $user, $password, $database, $prefix) {
-        if ($driver == '' || !in_array($driver, self::getAvailableDrivers()))
-            ww_error('Database driver "'.$driver.'" not found or invalid', 'database.driver_not_found');
+        if (!is_string($driver) || empty($driver))
+            trigger_error('Database driver name invalid', E_USER_ERROR);
         
         $driverClass = "Database_{$driver}_Driver";
+        
+        if (!class_exists($driverClass))
+            trigger_error('Database driver "'.$driver.'" not available', E_USER_ERROR);
+        
         return new $driverClass($host, $user, $password, $database, $prefix);
     }
     
