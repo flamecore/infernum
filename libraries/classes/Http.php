@@ -36,7 +36,7 @@ class Http {
      * @static
      */
     public static function getCookie($name) {
-        $namePrefix = System::setting('main', 'cookie_name_prefix');
+        $namePrefix = ww_setting('main:cookie_name_prefix');
         $name = $namePrefix.$name;
         
         if (isset($_COOKIE[$name])) {
@@ -74,11 +74,11 @@ class Http {
             
             return true;
         } else {
-            $namePrefix = System::setting('main', 'cookie_name_prefix');
+            $namePrefix = ww_setting('main:cookie_name_prefix');
             $name = $namePrefix.$name;
             
-            $path   = System::setting('main', 'cookie_path');
-            $domain = System::setting('main', 'cookie_domain');
+            $path   = ww_setting('main:cookie_path');
+            $domain = ww_setting('main:cookie_domain');
 
             return setcookie($name, $value, $expire, $path, $domain);
         }
