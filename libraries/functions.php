@@ -70,6 +70,28 @@ function ww_setting($address, $default = false) {
 }
 
 /**
+ * Creates a new database driver instance
+ * @param    string   $driver     The database driver to use
+ * @param    string   $host       The database server host, mostly 'localhost'
+ * @param    string   $user       The username for authenticating at the database server
+ * @param    string   $password   The password for authenticating at the database server
+ * @param    string   $database   The name of the database
+ * @param    string   $prefix     The prefix of the database tables
+ * @return   Database_Base_Driver
+ */
+function ww_open_db($driver, $host, $user, $password, $database, $prefix) {
+    if (!is_string($driver) || empty($driver))
+        trigger_error('Database driver name invalid', E_USER_ERROR);
+
+    $driver_class = "Database_{$driver}_Driver";
+
+    if (!class_exists($driver_class))
+        trigger_error('Database driver "'.$driver.'" not available', E_USER_ERROR);
+
+    return new $driver_class($host, $user, $password, $database, $prefix);
+}
+
+/**
  * Parses a Webwork settings file. Returns a multidimensional array, with the section names and settings included.
  * @param    string   $filename   The filename of the INI file being parsed.
  * @return   array

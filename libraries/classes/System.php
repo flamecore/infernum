@@ -80,7 +80,7 @@ class System {
         $database = self::$_settings['database']['database'];
         $prefix = self::$_settings['database']['prefix'];
         
-        self::$_db = Database::loadDriver($driver, $host, $user, $password, $database, $prefix);
+        self::$_db = ww_open_db($driver, $host, $user, $password, $database, $prefix);
         
         // All systems are started now and running smoothly
         self::$_initialized = true;
