@@ -32,18 +32,18 @@ class System {
     /**
      * All loaded settings
      * @var      array
-     * @access   public
+     * @access   private
      * @static
      */
-    public static $settings = array();
+    private static $_settings = array();
     
     /**
      * The database driver object
      * @var      Database_Base_Driver
-     * @access   public
+     * @access   private
      * @static
      */
-    public static $db;
+    private static $_db;
     
     /**
      * Is the system initialized?
@@ -60,24 +60,27 @@ class System {
      * @static
      */
     public static function startup() {
+        if (!defined('WW_SITE_PATH'))
+            return;
+        
         // At first we have to load the settings
-        self::$settings = get_cached('settings', function() {
+        self::$_settings = get_cached('settings', function() {
             return parse_settings(WW_SITE_PATH.'/settings.ini');
         });
         
         // Make sure that the required settings are available and shut down the system otherwise
-        if (!isset(self::$settings['main']) || !isset(self::$settings['database']))
+        if (!isset(self::$_settings['main']) || !isset(self::$_settings['database']))
             trigger_error('Required settings "main" and/or "database" not available', E_USER_ERROR);
         
         // Now we can load our database driver
-        $driver = self::$settings['database']['driver'];
-        $host = self::$settings['database']['host'];
-        $user = self::$settings['database']['user'];
-        $password = self::$settings['database']['password'];
-        $database = self::$settings['database']['database'];
-        $prefix = self::$settings['database']['prefix'];
+        $driver = self::$_settings['database']['driver'];
+        $host = self::$_settings['database']['host'];
+        $user = self::$_settings['database']['user'];
+        $password = self::$_settings['database']['password'];
+        $database = self::$_settings['database']['database'];
+        $prefix = self::$_settings['database']['prefix'];
         
-        self::$db = Database::loadDriver($driver, $host, $user, $password, $database, $prefix);
+        self::$_db = Database::loadDriver($driver, $host, $user, $password, $database, $prefix);
         
         // All systems are started now and running smoothly
         self::$_initialized = true;
@@ -94,6 +97,38 @@ class System {
     }
 
     /**
+     * Returns the value of a setting
+     * @param    string   $setting   The settings key in the form "<section>:<keyname>"
+     * @param    mixed    $default   Custom default value (optional)
+     * @return   mixed
+     * @access   public
+     * @static
+     */
+    public static function setting($section, $keyname = null, $default = false) {
+        if (!self::isStarted())
+            trigger_error('The system is not yet ready', E_USER_ERROR);
+        
+		if (isset($keyname)) {
+			return isset(self::$_settings[$section][$keyname]) ? self::$_settings[$section][$keyname] : $default;
+		} else {
+			return isset(self::$_settings[$section]) ? self::$_settings[$section] : $default;
+		}
+	}
+    
+    /**
+     * Returns the database driver object
+     * @return   Database_Base_Driver
+     * @access   public
+     * @static
+     */
+    public static function db() {
+        if (!self::isStarted())
+            trigger_error('The system is not yet ready', E_USER_ERROR);
+        
+        return self::$_db;
+    }
+
+    /**
      * Loads a module controller
      * @param    string   $module      The name of the module
      * @param    string   $arguments   The arguments to use
@@ -102,6 +137,9 @@ class System {
      * @static
      */
     public static function loadModule($module, $arguments) {
+        if (!self::isStarted())
+            trigger_error('The system is not yet ready', E_USER_ERROR);
+        
         $argsList = explode('/', $arguments);
 
         $modulePath = WW_SITE_PATH.'/modules/'.$module;

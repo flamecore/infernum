@@ -78,7 +78,7 @@ class International {
 
         // If no preferred language was detected, fall back to the default language
         if (!isset(self::$language))
-            self::$language = System::$settings['main']['lang'];
+            self::$language = System::setting('main', 'lang');
 
         setlocale(LC_ALL, self::$languages[self::$language]['locales']);
 
@@ -93,7 +93,7 @@ class International {
      */
 	public static function getAvailableLanguages() {
         return get_cached('languages', function() {
-            $result = System::$db->select('@PREFIX@languages');
+            $result = System::db()->select('@PREFIX@languages');
 
             $languages = array();
             while ($data = $result->fetchAssoc()) {

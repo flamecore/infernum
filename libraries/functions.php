@@ -196,7 +196,7 @@ function u($path = '', $query = null) {
  * @return   string
  */
 function page($pagePath, $query = null) {
-    if (System::$settings['main']['url_rewrite']) {
+    if (System::setting('main', 'url_rewrite')) {
         $result = WW_ROOT_URL.'/'.$pagePath;
         if (isset($query) && is_array($query))
             $result .= '?'.http_build_query($query);
@@ -218,7 +218,7 @@ function page($pagePath, $query = null) {
  */
 function theme($filename, $module = null, $theme = null) {
 	if (!isset($theme))
-		$theme = System::$settings['main']['theme'];
+		$theme = System::setting('main', 'theme');
 	
 	if (isset($module)) {
 		$path = WW_ROOT_URL.'/websites/'.WW_SITE_NAME.'/modules/'.$module;

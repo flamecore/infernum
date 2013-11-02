@@ -44,7 +44,7 @@ class UserGroup {
     public function __construct($groupID) {
         // Try to fetch user group data for further usage
         $sql = 'SELECT * FROM @PREFIX@usergroups WHERE id = {0} LIMIT 1';
-        $result = System::$db->query($sql, array($groupID));
+        $result = System::db()->query($sql, array($groupID));
         if ($result->numRows() == 1) {
             $this->_groupData = $result->fetchAssoc();
         } else {

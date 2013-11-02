@@ -20,6 +20,6 @@
     <body>
         <div id="wrapper">
             <div id="header">
-                <div class="title"><?php echo System::$settings['main']['site_name'] ?></div>
+                <div class="title"><?php echo System::setting('main', 'site_name') ?></div>
             </div>
             <div id="content">

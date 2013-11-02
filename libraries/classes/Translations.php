@@ -45,7 +45,7 @@ class Translations {
         // Load all strings of the selected language pack
         $this->_strings = get_cached('translations-'.$language, function() use ($language) {
             $sql = 'SELECT string, translation FROM @PREFIX@translations WHERE language = {0}';
-            $result = System::$db->query($sql, array($language));
+            $result = System::db()->query($sql, array($language));
             
             $strings = array();
             while ($entry = $result->fetchAssoc())

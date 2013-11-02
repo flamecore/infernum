@@ -54,7 +54,7 @@ class User {
         if (!empty($identifier)) {
             // Try to fetch user data by ID
             $sql = 'SELECT * FROM @PREFIX@users WHERE `'.$selector.'` = {0} LIMIT 1';
-            $result = System::$db->query($sql, array($identifier));
+            $result = System::db()->query($sql, array($identifier));
             
             if ($result->numRows() == 1) {
                 $userData = $result->fetchAssoc();
@@ -98,14 +98,14 @@ class User {
     public function setUserData($keyOrData, $value = null) {
         if (is_array($keyOrData)) {
             // Update multiple columns
-            return System::$db->update('@PREFIX@users', $keyOrData, array(
+            return System::db()->update('@PREFIX@users', $keyOrData, array(
                 'where' => 'id = {0}',
                 'vars' => array($this->id)
             ));
         } elseif (is_string($keyOrData) && isset($value)) {
             // Update a single column
             $data = array($keyOrData => $value);
-            return System::$db->update('@PREFIX@users', $data, array(
+            return System::db()->update('@PREFIX@users', $data, array(
                 'where' => 'id = {0}',
                 'vars' => array($this->id)
             ));

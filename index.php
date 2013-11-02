@@ -32,17 +32,17 @@ require './includes/bootstrap.php';
 try {
     System::startup();
 
-    define('WW_ROOT_URL', System::$settings['main']['url']);
+    define('WW_ROOT_URL', System::setting('main', 'url'));
     
     Session::init();
 	International::init();
 
-    Template::setTitle(System::$settings['main']['site_name']);
+    Template::setTitle(System::setting('main', 'site_name'));
 
     @include WW_SITE_PATH.'/includes/global.php';
     
     // Split the path into its parts. Use frontpage path if no path is specified.
-    $path = isset($_GET['p']) && $_GET['p'] != '' ? $_GET['p'] : System::$settings['main']['frontpage'];
+    $path = isset($_GET['p']) && $_GET['p'] != '' ? $_GET['p'] : System::setting('main', 'frontpage');
     System::loadModuleFromPath($path);
 } catch (Exception $error) {
     $tpl = new Template('error');

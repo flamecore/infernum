@@ -82,7 +82,7 @@ class Session {
         if ($sessionID = Http::getCookie('session')) {
             // Cookie found: Search database for session with given ID
             $sql = 'SELECT lifetime, user, data FROM @PREFIX@sessions WHERE id = {0} AND expire > {1} LIMIT 1';
-            $result = System::$db->query($sql, array($sessionID, date('Y-m-d H:i:s')));
+            $result = System::db()->query($sql, array($sessionID, date('Y-m-d H:i:s')));
             
             // Did we find the session so we can reuse it?
             if ($result->numRows() == 1) {
@@ -131,7 +131,7 @@ class Session {
 
         // Register the session in the database
         $sql = 'INSERT INTO @PREFIX@sessions (id, expire) VALUES({0}, {1})';
-        System::$db->query($sql, array(self::$id, date('Y-m-d H:i:s', time()+self::$lifetime)));
+        System::db()->query($sql, array(self::$id, date('Y-m-d H:i:s', time()+self::$lifetime)));
         
         return self::$id;
     }
@@ -157,7 +157,7 @@ class Session {
         
         // Delete session from database
         $sql = 'DELETE FROM @PREFIX@sessions WHERE id = {0}';
-        return System::$db->query($sql, array($sessionID));
+        return System::db()->query($sql, array($sessionID));
     }
     
     /**
@@ -175,12 +175,12 @@ class Session {
         
         // Update session in database
         $sql = 'UPDATE @PREFIX@sessions SET expire = {0} WHERE id = {1} LIMIT 1';
-        System::$db->query($sql, array(date('Y-m-d H:i:s', time()+self::$lifetime), $sessionID));
+        System::db()->query($sql, array(date('Y-m-d H:i:s', time()+self::$lifetime), $sessionID));
         
         // Update the assigned user's last activity time
         if (self::isUserLogged()) {
             $sql = 'UPDATE @PREFIX@users SET lastactive = {0} WHERE id = {1} LIMIT 1';
-            System::$db->query($sql, array(date('Y-m-d H:i:s'), self::$user->id));
+            System::db()->query($sql, array(date('Y-m-d H:i:s'), self::$user->id));
         }
     }
     
@@ -194,7 +194,7 @@ class Session {
     public static function assignUser($userID) {
         // Update session info in database
         $sql = 'UPDATE @PREFIX@sessions SET user = {0} WHERE id = {1} LIMIT 1';
-        return System::$db->query($sql, array($userID, self::$id));
+        return System::db()->query($sql, array($userID, self::$id));
         
         self::$user = new User($userID);
         self::$userGroup = new UserGroup(self::$user->data['group']);
@@ -220,7 +220,7 @@ class Session {
         
         // Update session data in database
         $sql = 'UPDATE @PREFIX@sessions SET data = {0} WHERE id = {1} LIMIT 1';
-        return System::$db->query($sql, array(serialize(self::$data), $sessionID));
+        return System::db()->query($sql, array(serialize(self::$data), $sessionID));
     }
     
     /**
@@ -231,7 +231,7 @@ class Session {
      */
     public static function cleanup() {
         $sql = 'DELETE FROM @PREFIX@sessions WHERE expire <= {0}';
-        return System::$db->query($sql, array(date('Y-m-d H:i:s')));
+        return System::db()->query($sql, array(date('Y-m-d H:i:s')));
     }
     
     /**
@@ -260,7 +260,7 @@ class Session {
         
         // Set lifetime in database
         $sql = 'UPDATE @PREFIX@sessions SET lifetime = {0} WHERE id = {1} LIMIT 1';
-        System::$db->query($sql, array(self::$lifetime, self::$id));
+        System::db()->query($sql, array(self::$lifetime, self::$id));
         
         // Update lifetime of session cookie
         Http::setCookie('session', self::$id, time()+self::$lifetime);
