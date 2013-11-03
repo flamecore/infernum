@@ -141,58 +141,6 @@ function parse_settings($filename) {
 }
 
 /**
- * Stores data to a cache file and reads from it. Returns the stored data on success or NULL on failure.
- * @param    string     $name       The name of the cache file
- * @param    callable   $callback   The callback function that returns the data to store
- * @return   mixed
- */
-function get_cached($name, $callback) {
-    global $CONFIG;
-    
-    if (!is_callable($callback)) {
-        trigger_error('Invalid callback given for cache instance "'.$name.'"', E_USER_WARNING);
-        return null;
-    }
-    
-    $cache_path = WW_ENGINE_PATH.'/cache/'.WW_SITE_NAME;
-    
-    if (!is_dir($cache_path))
-        mkdir($cache_path);
-
-    if (isset($CONFIG['enable_caching']) && $CONFIG['enable_caching']) {
-        // Caching is enabled, so we use a file
-        $filename = "{$cache_path}/{$name}.cache";
-
-        // Check if the file exists
-        if (file_exists($filename)) {
-            $file_content = file_get_contents($filename);
-            list($modified, $raw_data) = explode(',', $file_content, 2);
-
-            // Check if the file has expired. If so, there is no data we could use.
-            $lifetime = isset($CONFIG['cache_lifetime']) ? $CONFIG['cache_lifetime'] : 86400;
-            if ($lifetime > 0 && $modified + $lifetime < time())
-                $raw_data = null;
-        }
-
-        if (isset($raw_data)) {
-            // We were able to retrieve data from the file
-            return unserialize($raw_data);
-        } else {
-            // No data from file, so we use the data callback and store the given value
-            $data = $callback();
-            
-            $file_content = time().','.serialize($data);
-            file_put_contents($filename, $file_content);
-            
-            return $data;
-        }
-    } else {
-        // Caching is disabled, so we use the data callback
-        return $callback();
-    }
-}
-
-/**
  * Returns the translation of a string
  * @param    string   $string   The string to translate
  * @param    array    $vars     Variables ('%var%') to replace as array
