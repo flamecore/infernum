@@ -140,20 +140,25 @@ class System {
     public static function loadModule($module, $arguments) {
         if (!self::isStarted())
             trigger_error('The system is not yet ready', E_USER_ERROR);
-        
-        $argsList = explode('/', $arguments);
 
-        $modulePath = WW_SITE_PATH.'/modules/'.$module;
-        $moduleFile = $modulePath.'/controller.php';
+        if (defined('WW_MODULE'))
+            trigger_error('A module has already been loaded', E_USER_ERROR);
 
-        if (!file_exists($moduleFile))
+        define('WW_MODULE', $module);
+        define('WW_MODULE_PATH', WW_SITE_PATH.'/modules/'.$module);
+
+        $controller_file = WW_MODULE_PATH.'/controller.php';
+
+        if (!file_exists($controller_file))
             error(404);
 
-        WebworkLoader::setModulePath($modulePath);
+        WebworkLoader::setModulePath(WW_MODULE_PATH);
         
-        include $moduleFile;
+        $args_list = explode('/', $arguments);
+
+        include $controller_file;
     }
-    
+
     /**
      * Loads a module controller by given path
      * @param    string   $path   The path of the module page
