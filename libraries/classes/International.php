@@ -92,7 +92,8 @@ class International {
      * @static
      */
 	public static function getAvailableLanguages() {
-        return get_cached('languages', function() {
+        $cache = new Cache('languages');
+        return $cache->data(function () {
             $result = System::db()->select('@PREFIX@languages');
 
             $languages = array();
