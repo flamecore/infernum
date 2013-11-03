@@ -24,21 +24,21 @@
 define('WW_CACHE_PATH', WW_ENGINE_PATH.'/cache/'.WW_SITE_NAME);
 
 /**
- * Class for reading and storing cache files
+ * Class for reading and storing cache instances
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
 class Cache {
 
     /**
-     * The name of the cache file
+     * The name of the cache instance
      * @var      string
      * @access   private
      */
     private $_name;
 
     /**
-     * The lifetime of the cache file in seconds
+     * The lifetime of the cache instance in seconds
      * @var      int
      * @access   private
      */
@@ -46,14 +46,17 @@ class Cache {
 
     /**
      * Constructor
-     * @param    string   $name       The name of the cache file
-     * @param    int      $lifetime   The lifetime of the cache file in seconds (0 = infinite)
+     * @param    string   $name       The name of the cache instance
+     * @param    int      $lifetime   The lifetime of the cache instance in seconds (0 = infinite)
      * @return   void
      * @access   public
      */
     public function __construct($name, $lifetime = null) {
         if (!is_dir(WW_CACHE_PATH))
             mkdir(WW_CACHE_PATH);
+
+        if (!preg_match('#^[\w/]+$#', $name))
+            trigger_error('Invalid cache name given ("'.$name.'")', E_USER_ERROR);
 
         if (!isset($lifetime))
             $lifetime = ww_config('cache_lifetime', 86400);
@@ -63,7 +66,7 @@ class Cache {
     }
 
     /**
-     * Reads data from cache. The $callback is used to generate the data if they are missing or expired.
+     * Reads data from cache. The $callback is used to generate the data if missing or expired.
      * @param    callable   $callback   The callback function that returns the data to store
      * @return   mixed
      * @access   public
@@ -76,14 +79,14 @@ class Cache {
 
         if (ww_config('enable_caching') == true) {
             // Caching is enabled, so we use a file
-			$filename = WW_CACHE_PATH.'/'.$this->_name.'.cache';
+            $filename = WW_CACHE_PATH.'/'.$this->_name.'.cache';
 
             // Check if the file exists
             if (file_exists($filename)) {
                 $file_content = file_get_contents($filename);
                 list($modified, $raw_data) = explode("\n", $file_content, 2);
 
-                // Check if the file has expired. If so, there is no data we could use.
+                // Check if the file has expired. If so, there is no data we could use
                 if ($this->_lifetime > 0 && $modified + $this->_lifetime < time())
                     $raw_data = null;
             }
