@@ -62,7 +62,7 @@ class WebworkLoader {
      */
     public static function loadClass($name) {
         $name = str_replace('_', '/', $name);
-        $classfile = self::find($name, 'libraries/classes/*.php');
+        $classfile = self::find($name, 'libraries/*.php');
         
         if ($classfile)
             require_once $classfile;

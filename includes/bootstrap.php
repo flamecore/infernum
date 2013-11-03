@@ -52,4 +52,4 @@ define('WW_SHARED_PATH', WW_ENGINE_PATH.'/websites/shared');
 
 require_once WW_ENGINE_PATH.'/includes/autoloader.php';
 require_once WW_ENGINE_PATH.'/includes/exception.php';
-require_once WW_ENGINE_PATH.'/libraries/functions.php';
+require_once WW_ENGINE_PATH.'/includes/functions.php';
