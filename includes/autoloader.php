@@ -45,8 +45,8 @@ class WebworkLoader {
     public static function getSources() {
         $sources = array(WW_ENGINE_PATH);
         
-        if (isset(self::$modulePath))
-            array_push($sources, self::$modulePath);
+        if (defined('WW_MODULE_PATH'))
+            array_push($sources, WW_MODULE_PATH);
         
         array_push($sources, WW_SITE_PATH, WW_SHARED_PATH);
         
@@ -101,17 +101,6 @@ class WebworkLoader {
             return $results;
 		
 		return false;
-    }
-
-    /**
-     * Sets the module path
-     * @param    string   $path   The module path
-     * @return   void
-     * @access   public
-     * @static
-     */
-    public static function setModulePath($path) {
-        self::$modulePath = $path;
     }
     
 }

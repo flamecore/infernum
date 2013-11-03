@@ -151,8 +151,6 @@ class System {
 
         if (!file_exists($controller_file))
             error(404);
-
-        WebworkLoader::setModulePath(WW_MODULE_PATH);
         
         $args_list = explode('/', $arguments);
 
