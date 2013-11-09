@@ -34,15 +34,15 @@ require_once WW_ENGINE_PATH.'/includes/autoloader.php';
 require_once WW_ENGINE_PATH.'/includes/exception.php';
 require_once WW_ENGINE_PATH.'/includes/functions.php';
 
-if ($CONFIG['enable_multisite'] && isset($CONFIG['sites'])) {
+if (ww_config('enable_multisite') && $sites = ww_config('sites')) {
     // This is a multi-site installation, so we need to know the current domain name
     $domain = $_SERVER['SERVER_NAME'];
 
     // Check if there is a site for the current domain, fall back to default site otherwise
-    if (isset($CONFIG['sites'][$domain])) {
-        $activeSite = $CONFIG['sites'][$domain];
+    if (isset($sites[$domain])) {
+        $activeSite = $sites[$domain];
     } else {
-        $activeSite = isset($CONFIG['default_site']) ? $CONFIG['default_site'] : 'default';
+        $activeSite = ww_config('default_site', 'default');
     }
 } else {
     // This is a single-site installation, hence we use the default site
