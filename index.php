@@ -30,8 +30,6 @@
 require './includes/bootstrap.php';
 
 try {
-    define('WW_ROOT_URL', ww_setting('main:url'));
-    
     Session::init();
 	International::init();
 

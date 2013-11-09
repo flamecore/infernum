@@ -168,7 +168,10 @@ function te($string, $vars = null) {
  * @return   string
  */
 function u($path = '', $query = null) {
-    $result = WW_ROOT_URL.$path;
+    $rooturl = ww_setting('main:url');
+    
+    $result = $rooturl.$path;
+    
     if (isset($query) && is_array($query))
         $result .= '?'.http_build_query($query);
     
@@ -183,12 +186,16 @@ function u($path = '', $query = null) {
  * @return   string
  */
 function page($pagePath, $query = null) {
+    $rooturl = ww_setting('main:url');
+    
     if (ww_setting('main:url_rewrite')) {
-        $result = WW_ROOT_URL.'/'.$pagePath;
+        $result = $rooturl.'/'.$pagePath;
+        
         if (isset($query) && is_array($query))
             $result .= '?'.http_build_query($query);
     } else {
-        $result = WW_ROOT_URL.'/?p='.$pagePath;
+        $result = $rooturl.'/?p='.$pagePath;
+        
         if (isset($query) && is_array($query))
             $result .= '&'.http_build_query($query);
     }
@@ -204,13 +211,15 @@ function page($pagePath, $query = null) {
  * @return   string
  */
 function theme($filename, $module = null, $theme = null) {
+    $rooturl = ww_setting('main:url');
+    
 	if (!isset($theme))
 		$theme = ww_setting('main:theme');
 	
 	if (isset($module)) {
-		$path = WW_ROOT_URL.'/websites/'.WW_SITE_NAME.'/modules/'.$module;
+        $path = $rooturl.'/websites/'.WW_SITE_NAME.'/modules/'.$module;
 	} else {
-		$path = WW_ROOT_URL;
+        $path = $rooturl;
 	}
 	
     return "{$path}/themes/{$theme}/{$filename}";
