@@ -30,6 +30,9 @@
 define('WW_ENGINE_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
 
 include_once WW_ENGINE_PATH.'/includes/config.php';
+require_once WW_ENGINE_PATH.'/includes/autoloader.php';
+require_once WW_ENGINE_PATH.'/includes/exception.php';
+require_once WW_ENGINE_PATH.'/includes/functions.php';
 
 if ($CONFIG['enable_multisite'] && isset($CONFIG['sites'])) {
     // This is a multi-site installation, so we need to know the current domain name
@@ -49,7 +52,3 @@ if ($CONFIG['enable_multisite'] && isset($CONFIG['sites'])) {
 define('WW_SITE_NAME', $activeSite);
 define('WW_SITE_PATH', WW_ENGINE_PATH.'/websites/'.WW_SITE_NAME);
 define('WW_SHARED_PATH', WW_ENGINE_PATH.'/websites/shared');
-
-require_once WW_ENGINE_PATH.'/includes/autoloader.php';
-require_once WW_ENGINE_PATH.'/includes/exception.php';
-require_once WW_ENGINE_PATH.'/includes/functions.php';
