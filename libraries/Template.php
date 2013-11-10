@@ -159,7 +159,7 @@ class Template {
         }
         
         if (!file_exists($filePath))
-            ww_error('Template file "'.$filePath.'" does not exist.', 'template.not_found');
+            trigger_error('Template file "'.$filePath.'" does not exist', E_USER_ERROR);
         
         return $filePath;
     }

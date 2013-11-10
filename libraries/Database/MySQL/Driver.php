@@ -37,7 +37,7 @@ class Database_MySQL_Driver extends Database_Base_Driver {
         $this->_link = @mysqli_connect($this->_host, $this->_user, $this->_password, $this->_database);
         
         if (mysqli_connect_errno())
-            ww_error('Failed connecting to the database: '.mysqli_connect_error(), 'database.mysql.connection_failed');
+            trigger_error('Failed connecting to the database: '.mysqli_connect_error(), E_USER_ERROR);
     }
 
     /**
@@ -70,7 +70,7 @@ class Database_MySQL_Driver extends Database_Base_Driver {
             return true;
         }
         
-        ww_error('Database query failed: '.$this->getError(), 'database.mysql.query_failed');
+        trigger_error('Database query failed: '.$this->getError(), E_USER_ERROR);
     }
     
     /**
