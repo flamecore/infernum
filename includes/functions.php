@@ -97,6 +97,9 @@ function ww_open_db($driver, $host, $user, $password, $database, $prefix) {
  * @return   array
  */
 function parse_settings($filename) {
+    if (!is_readable($filename))
+        trigger_error('File "'.$filename.'" does not exist or is not readable', E_USER_ERROR);
+    
     $section = 'main'; $settings = array();
 	
 	$fn_error = function ($message) use ($filename, &$section) {

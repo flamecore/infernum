@@ -60,8 +60,8 @@ class System {
      * @static
      */
     public static function startup() {
-        if (!defined('WW_SITE_PATH'))
-            return;
+        if (!is_dir(WW_SITE_PATH))
+            trigger_error('Directory of site "'.WW_SITE_NAME.'" does not exist', E_USER_ERROR);
         
         // At first we have to load the settings
         $cache = new Cache('settings');
