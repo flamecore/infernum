@@ -28,17 +28,6 @@
  */
 
 /**
- * Throws a WebworkException as error
- * @param    string   $message   The Exception message to throw
- * @param    string   $type      The Exception type
- * @return   void
- * @throws   WebworkException
- */
-function ww_error($message, $type) {
-    throw new WebworkException($message, $type, E_USER_ERROR);
-}
-
-/**
  * Returns a configuration value
  * @param    string   $confkey   The configuration key
  * @param    mixed    $default   Custom default value (optional)

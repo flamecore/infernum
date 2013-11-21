@@ -31,7 +31,6 @@ define('WW_ENGINE_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
 
 include_once WW_ENGINE_PATH.'/includes/config.php';
 require_once WW_ENGINE_PATH.'/includes/autoloader.php';
-require_once WW_ENGINE_PATH.'/includes/exception.php';
 require_once WW_ENGINE_PATH.'/includes/functions.php';
 
 if (ww_config('enable_multisite') && $sites = ww_config('sites')) {
