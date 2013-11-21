@@ -22,7 +22,7 @@
  */
 
 /**
- * Class for managing user groups
+ * Object describing a user group
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
@@ -33,23 +33,45 @@ class UserGroup {
      * @var      array
      * @access   private
      */
-    private $_groupData = array();
+    private $_data = [];
     
     /**
      * Constructor
-     * @param    int      $groupID   The ID of the user group
+     * @param    int      $identifier   The ID of the user group
      * @return   void
      * @access   public
      */
-    public function __construct($groupID) {
-        // Try to fetch user group data for further usage
-        $sql = 'SELECT * FROM @PREFIX@usergroups WHERE id = {0} LIMIT 1';
-        $result = System::db()->query($sql, array($groupID));
-        if ($result->numRows() == 1) {
-            $this->_groupData = $result->fetchAssoc();
+    public function __construct($identifier) {
+        if (is_string($identifier)) {
+            $selector = 'name';
+        } elseif (is_int($identifier)) {
+            $selector = 'id';
         } else {
-            ww_error('User group '.$groupID.' does not exist.', 'usergroup.not_found');
+            trigger_error('Invalid user group identifier given', E_USER_ERROR);
         }
+        
+        $sql = 'SELECT * FROM @PREFIX@usergroups WHERE '.$selector.' = {0} LIMIT 1';
+        $result = System::db()->query($sql, [$identifier]);
+
+        if ($result->numRows() == 1) {
+            $data = $result->fetchAssoc();
+
+            $this->_data['id'] = (int) $data['id'];
+            $this->_data['name'] = $data['name'];
+            $this->_data['title'] = $data['title'];
+            $this->_data['accesslevel'] = (int) $data['accesslevel'];
+        } else {
+            throw new Exception('User group does not exist (id = '.$id.')');
+        }
+    }
+    
+    /**
+     * Returns the groups's ID
+     * @return   int
+     * @access   public
+     */
+    public function getID() {
+        return $this->_data['id'];
     }
     
     /**
@@ -58,7 +80,16 @@ class UserGroup {
      * @access   public
      */
     public function getName() {
-        return $this->_groupData['name'];
+        return $this->_data['name'];
+    }
+    
+    /**
+     * Returns the title of the group
+     * @return   string
+     * @access   public
+     */
+    public function getTitle() {
+        return $this->_data['title'];
     }
     
     /**
@@ -67,18 +98,9 @@ class UserGroup {
      * @access   public
      */
     public function getAccessLevel() {
-        return (int) $this->_groupData['accesslevel'];
+        return $this->_data['accesslevel'];
     }
-    
-    /**
-     * Returns the permissions of the group
-     * @return   array
-     * @access   public
-     */
-    public function getPermissions() {
-        return explode(',', $this->_groupData['permissions']);
-    }
-    
+
     /**
      * Checks if a user group with given ID exists
      * @param    int      $gid   The ID of the user group
