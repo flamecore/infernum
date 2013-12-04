@@ -131,6 +131,15 @@ class Database_MySQL_Result extends Database_Base_Result {
     public function numRows() {
         return mysqli_num_rows($this->_result);
     }
+    
+    /**
+     * Checks if the result has any rows
+     * @return   bool
+     * @access   public
+     */
+    public function hasRows() {
+        return $this->numRows() > 0;
+    }
 
     /**
      * Gets the number of fields in a result

@@ -118,6 +118,14 @@ abstract class Database_Base_Result {
      * @abstract
      */
     abstract public function numRows();
+	
+    /**
+     * Checks if the result has any rows
+     * @return   bool
+     * @access   public
+     * @abstract
+     */
+    abstract public function hasRows();
 
     /**
      * Gets the number of fields in a result
