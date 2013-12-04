@@ -22,230 +22,118 @@
  */
 
 /**
- * Simple user session manager
+ * Object describing an open user session
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
 class Session {
     
     /**
-     * The session ID of the currently opened session
+     * The ID of the opened session
      * @var      string
-     * @access   public
-     * @static
+     * @access   private
      */
-    public static $id = '';
+    private $_sid;
     
     /**
-     * The user who is assigned to the session
-     * @var      User
-     * @access   public
-     * @static
+     * The ID of the user who is assigned to the session
+     * @var      int
+     * @access   private
      */
-    public static $user;
-    
-    /**
-     * The group of the assigned user
-     * @var      UserGroup
-     * @access   public
-     * @static
-     */
-    public static $userGroup;
+    private $_uid;
     
     /**
      * The stored session data
      * @var      array
-     * @access   public
-     * @static
+     * @access   private
      */
-    public static $data = array();
+    private $_data = [];
     
     /**
-     * The lifetime of a session in seconds
+     * The lifetime of the session in seconds
      * @var      int
-     * @access   public
-     * @static
+     * @access   private
      */
-    public static $lifetime = 3600; // 60 minutes
+    private $_lifetime = 3600;
     
     /**
-     * Initializes the session system
+     * Constructor
+     * @param    int      $sid   The ID of the session
      * @return   void
      * @access   public
-     * @static
      */
-    public static function init() {
-        // Clean up sessions table from expired sessions before proceeding
-        self::cleanup();
+    public function __construct($sid) {
+        $sql = 'SELECT * FROM @PREFIX@sessions WHERE id = {0} AND expire > {1} LIMIT 1';
+        $result = System::db()->query($sql, [$sid, date('Y-m-d H:i:s')]);
         
-        // Check if the user has a session cookie
-        if ($sessionID = Http::getCookie('session')) {
-            // Cookie found: Search database for session with given ID
-            $sql = 'SELECT lifetime, user, data FROM @PREFIX@sessions WHERE id = {0} AND expire > {1} LIMIT 1';
-            $result = System::db()->query($sql, array($sessionID, date('Y-m-d H:i:s')));
+        if ($result->numRows() == 1) {
+            $info = $result->fetchAssoc();
             
-            // Did we find the session so we can reuse it?
-            if ($result->numRows() == 1) {
-                // Session found: Assign ID of the resumed session
-                self::$id = $sessionID;
-                
-                $sessionInfo = $result->fetchAssoc();
-                
-                self::$lifetime = $sessionInfo['lifetime'];
-                
-                if ($sessionInfo['user'] > 0) {
-                    self::$user = new User($sessionInfo['user']);
-                    self::$userGroup = new UserGroup(self::$user->data['group']);
-                }
-                
-                // If there's some data, fetch and unserialize it
-                if ($sessionInfo['data'] != '')
-                    self::$data = unserialize($sessionInfo['data']);
-
-                // Refresh the resumed session
-                self::refresh();
-                
-                return;
-            }
-        }
-
-        // No cookie or session found: Start a new session
-        self::start();
-    }
-    
-    /**
-     * Starts a new session. Returns the session ID on success or FALSE on failure.
-     * @return   string
-     * @access   public
-     * @static
-     */
-    public static function start() {
-        if (self::$id != '')
-            return false;
-        
-        // Generate a session ID
-        self::$id = self::_generateID();
-
-        // Set the session cookie
-        Http::setCookie('session', self::$id, time()+self::$lifetime);
-
-        // Register the session in the database
-        $sql = 'INSERT INTO @PREFIX@sessions (id, expire) VALUES({0}, {1})';
-        System::db()->query($sql, array(self::$id, date('Y-m-d H:i:s', time()+self::$lifetime)));
-        
-        return self::$id;
-    }
-    
-    /**
-     * Destoroys the running (if the argument $sessionID is not set) or the given session
-     * @param    string   $sessionID   The ID of the affected session (optional)
-     * @return   bool
-     * @access   public
-     * @static
-     */
-    public static function destroy($sessionID = null) {
-        if (!isset($sessionID)) {
-            // No $sessionID given, assign ID of current session
-            $sessionID = self::$id;
+            $this->_sid = $info['id'];
+            $this->_lifetime = $info['lifetime'];
             
-            self::$id = '';
-            self::$user = null;
-            self::$userGroup = null;
+            if ($info['user'] > 0)
+                $this->_uid = $info['user'];
             
-            Http::deleteCookie('session');
-        }
-        
-        // Delete session from database
-        $sql = 'DELETE FROM @PREFIX@sessions WHERE id = {0}';
-        return System::db()->query($sql, array($sessionID));
-    }
-    
-    /**
-     * Refreshes the currently running (if the argument $sessionID is not set) or the given session
-     * @param    string   $sessionID   The ID of the affected session (optional)
-     * @return   void
-     * @access   public
-     * @static
-     */
-    public static function refresh($sessionID = null) {
-        if (!isset($sessionID)) {
-            // No $sessionID given, assign ID of this session
-            $sessionID = self::$id;
-        }
-        
-        // Update session in database
-        $sql = 'UPDATE @PREFIX@sessions SET expire = {0} WHERE id = {1} LIMIT 1';
-        System::db()->query($sql, array(date('Y-m-d H:i:s', time()+self::$lifetime), $sessionID));
-        
-        // Update the assigned user's last activity time
-        if (self::isUserLogged()) {
-            $sql = 'UPDATE @PREFIX@users SET lastactive = {0} WHERE id = {1} LIMIT 1';
-            System::db()->query($sql, array(date('Y-m-d H:i:s'), self::$user->id));
-        }
-    }
-    
-    /**
-     * Assigns a user to the currently running session
-     * @param    int      $userID     The ID of the user who belongs to the session
-     * @return   bool
-     * @access   public
-     * @static
-     */
-    public static function assignUser($userID) {
-        // Update session info in database
-        $sql = 'UPDATE @PREFIX@sessions SET user = {0} WHERE id = {1} LIMIT 1';
-        return System::db()->query($sql, array($userID, self::$id));
-        
-        self::$user = new User($userID);
-        self::$userGroup = new UserGroup(self::$user->data['group']);
-    }
-    
-    /**
-     * Stores data to the currently running (if the argument $sessionID is not set) or the given session
-     * @param    string   $key         The key of the data entry
-     * @param    mixed    $value       The value of the data entry
-     * @param    string   $sessionID   The ID of the affected session (optional)
-     * @return   bool
-     * @access   public
-     * @static
-     */
-    public static function store($key, $value, $sessionID = null) {
-        if (!isset($sessionID)) {
-            // No $sessionID given, assign ID of this session
-            $sessionID = self::$id;
-            
-            // Update session data locally
-            self::$data[$key] = $value;
-        }
-        
-        // Update session data in database
-        $sql = 'UPDATE @PREFIX@sessions SET data = {0} WHERE id = {1} LIMIT 1';
-        return System::db()->query($sql, array(serialize(self::$data), $sessionID));
-    }
-    
-    /**
-     * Deletes all expired sessions
-     * @return   bool
-     * @access   public
-     * @static
-     */
-    public static function cleanup() {
-        $sql = 'DELETE FROM @PREFIX@sessions WHERE expire <= {0}';
-        return System::db()->query($sql, array(date('Y-m-d H:i:s')));
-    }
-    
-    /**
-     * Checks if the visitor is a registered user
-     * @return   bool
-     * @access   public
-     * @static
-     */
-    public static function isUserLogged() {
-        if (isset(self::$user) && is_a(self::$user, 'User')) {
-            return true;
+            if ($info['data'] != '')
+                $this->data = unserialize($info['data']);
         } else {
+            throw new Exception('Session does not exist (id = '.$sid.')');
+        }
+    }
+    
+    /**
+     * Refreshes the session
+     * @return   void
+     * @access   public
+     */
+    public function refresh() {
+        $sql = 'UPDATE @PREFIX@sessions SET expire = {0} WHERE id = {1} LIMIT 1';
+        System::db()->query($sql, [date('Y-m-d H:i:s', time()+$this->_lifetime), $this->_sid]);
+    }
+    
+    /**
+     * Assigns a user to the session
+     * @param    int      $uid   The ID of the user to assign
+     * @return   bool
+     * @access   public
+     */
+    public function assignUser($uid) {
+        $uid = (int) $uid;
+        
+        if (!User::exists($uid)) {
+            trigger_error('Can not assign user to session: User does not exist', E_USER_WARNING);
             return false;
         }
+        
+        $this->_uid = $uid;
+        
+        $sql = 'UPDATE @PREFIX@sessions SET user = {0} WHERE id = {1} LIMIT 1';
+        return System::db()->query($sql, [$uid, $this->_sid]);
+    }
+    
+    /**
+     * Reads data from the currently running session
+     * @param    string   $key   The key of the data entry
+     * @return   mixed
+     * @access   public
+     */
+    public function read($key) {
+        return $this->_data[$key];
+    }
+    
+    /**
+     * Stores data to the session
+     * @param    string   $key     The key of the data entry
+     * @param    mixed    $value   The value of the data entry
+     * @return   bool
+     * @access   public
+     */
+    public function store($key, $value) {
+        $this->_data[$key] = $value;
+        
+        $sql = 'UPDATE @PREFIX@sessions SET data = {0} WHERE id = {1} LIMIT 1';
+        return System::db()->query($sql, [serialize($this->_data), $this->_sid]);
     }
 
     /**
@@ -253,27 +141,43 @@ class Session {
      * @param    int      $time   The new session lifetime in seconds. Defaults to 3600.
      * @return   void
      * @access   public
-     * @static
      */
-    public static function setLifetime($time = 3600) {
-        self::$lifetime = $time;
+    public function setLifetime($time = 3600) {
+        $this->_lifetime = $time;
         
-        // Set lifetime in database
-        $sql = 'UPDATE @PREFIX@sessions SET lifetime = {0} WHERE id = {1} LIMIT 1';
-        System::db()->query($sql, array(self::$lifetime, self::$id));
-        
-        // Update lifetime of session cookie
-        Http::setCookie('session', self::$id, time()+self::$lifetime);
+        $sql = 'UPDATE @PREFIX@sessions SET lifetime = {0}, expire = {1} WHERE id = {2} LIMIT 1';
+        System::db()->query($sql, [$this->_lifetime, time()+$this->_lifetime, $this->_sid]);
     }
 
     /**
-     * Generates a unique session ID
-     * @return   string
-     * @access   private
-     * @static
+     * Destoroys the session
+     * @return   bool
+     * @access   public
      */
-    private static function _generateID() {
-        return uniqid(time(), true);
+    public function destroy() {
+        $sql = 'DELETE FROM @PREFIX@sessions WHERE id = {0}';
+        return System::db()->query($sql, [$this->_sid]);
+        
+        $this->_sid = null;
+        $this->_userid = null;
+    }
+    
+    /**
+     * Returns the ID of the session
+     * @return   string
+     * @access   public
+     */
+    public function getSID() {
+        return $this->_sid;
+    }
+    
+    /**
+     * Returns the ID of the user who is assigned to the session. FALSE is returned if no user is logged.
+     * @return   string
+     * @access   public
+     */
+    public function getUserID() {
+        return isset($this->_uid) ? $this->_uid : false;
     }
     
 }

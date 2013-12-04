@@ -17,6 +17,8 @@ cookie_name_prefix = "ww_"
 cookie_domain = ""
 ; Path on the server in which cookies will be available on
 cookie_path = "/"
+; Default session lifetime
+session_lifetime = 3600
 ; Username for anonymous users
 guest_username = "Anonymous"
 ; Assign anonymous users to this usergroup

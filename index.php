@@ -30,7 +30,7 @@
 require './includes/bootstrap.php';
 
 try {
-    Session::init();
+    SessionManager::init();
 	International::init();
 
     Template::setTitle(ww_setting('main:site_name'));
