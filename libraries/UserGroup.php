@@ -78,5 +78,19 @@ class UserGroup {
     public function getPermissions() {
         return explode(',', $this->_groupData['permissions']);
     }
+    
+    /**
+     * Checks if a user group with given ID exists
+     * @param    int      $gid   The ID of the user group
+     * @return   bool
+     * @access   public
+     * @static
+     */
+    public static function exists($gid) {
+        $sql = 'SELECT id FROM @PREFIX@usergroups WHERE id = {0} LIMIT 1';
+        $result = System::db()->query($sql, [$gid]);
+        
+        return $result->hasRows();
+    }
 
 }
