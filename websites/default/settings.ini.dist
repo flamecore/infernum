@@ -1,28 +1,34 @@
 [main]
 ; URL of Webwork root
 url = "http://localhost/Webwork"
-; Path which represents the frontpage
-frontpage = "start"
-; Use URL rewriting for page paths
-url_rewrite = true
 ; Theme from /themes folder
 theme = "default"
-; Name of the website
-site_name = "Webwork"
 ; Default language 
 lang = "en"
-; Name prefix for cookies
-cookie_name_prefix = "ww_"
-; Domain that cookies are available to
-cookie_domain = ""
-; Path on the server in which cookies will be available on
-cookie_path = "/"
+; Use URL rewriting for page paths
+url_rewrite = true
+; Path which represents the frontpage
+frontpage = "start"
+; Name of the website
+site_name = "Webwork"
+
+[session]
 ; Default session lifetime
-session_lifetime = 3600
+lifetime = 3600
+
+[guest]
 ; Username for anonymous users
-guest_username = "Anonymous"
+username = "Anonymous"
 ; Assign anonymous users to this usergroup
-guest_group = 1
+group = 1
+
+[cookie]
+; Name prefix for cookies
+name_prefix = "ww_"
+; Domain that cookies are available to
+domain = ""
+; Path on the server in which cookies will be available on
+path = "/"
 
 [database]
 ; Database driver to use
