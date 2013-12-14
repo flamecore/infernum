@@ -15,6 +15,8 @@ site_name = "Webwork"
 [session]
 ; Default session lifetime
 lifetime = 3600
+; The threshold in seconds at which a user is considered as logged off
+online_threshold = 600
 
 [guest]
 ; Username for anonymous users

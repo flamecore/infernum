@@ -209,13 +209,12 @@ class User {
 
     /**
      * Checks if the user is online
-     * @param    int      $threshold   The threshold in seconds at which a user is considered as logged off. (Defaults
-     *                                   to 600 seconds = 10 minutes)
      * @return   bool
      * @access   public
      */
-    public function isOnline($threshold = 600) {
+    public function isOnline() {
         $lastactive = $this->_data['lastactive'];
+        $threshold = ww_setting('session:online_threshold', 600);
         
         // Check if the last activity time is within the threshold
         return time() - $lastactive <= $threshold;
