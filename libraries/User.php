@@ -113,5 +113,19 @@ class User {
         
         return false;
     }
+    
+    /**
+     * Checks if a user with given ID exists
+     * @param    int      $uid   The ID of the user
+     * @return   bool
+     * @access   public
+     * @static
+     */
+    public static function exists($uid) {
+        $sql = 'SELECT id FROM @PREFIX@users WHERE id = {0} LIMIT 1';
+        $result = System::db()->query($sql, [$uid]);
+        
+        return (bool) $result->numRows();
+    }
 
 }
