@@ -139,7 +139,7 @@ function parse_settings($filename) {
  * @return   string
  */
 function t($string, $vars = null) {
-    return International::$t->get($string, $vars);
+    return International::t()->get($string, $vars);
 }
 
 /**
@@ -149,7 +149,7 @@ function t($string, $vars = null) {
  * @return   void
  */
 function te($string, $vars = null) {
-    echo International::$t->get($string, $vars);
+    echo International::t()->get($string, $vars);
 }
 
 /**
