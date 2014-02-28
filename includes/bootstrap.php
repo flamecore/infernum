@@ -52,3 +52,5 @@ if ($CONFIG['enable_multisite'] && isset($CONFIG['sites'])) {
 define('WW_SITE_NAME', $activeSite);
 define('WW_SITE_PATH', WW_ENGINE_PATH.'/websites/'.WW_SITE_NAME);
 define('WW_SHARED_PATH', WW_ENGINE_PATH.'/websites/shared');
+
+System::startup();
