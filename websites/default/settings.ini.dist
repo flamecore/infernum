@@ -4,7 +4,7 @@ url = "http://localhost/Webwork"
 ; Theme from /themes folder
 theme = "default"
 ; Default language 
-lang = "en"
+lang = "en-US"
 ; Use URL rewriting for page paths
 url_rewrite = true
 ; Path which represents the frontpage
@@ -45,3 +45,4 @@ password = ""
 database = "webwork"
 ; Database table prefix
 prefix = "ww_"
+

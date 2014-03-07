@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `ww_languages` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `ww_languages` (`id`, `name`, `direction`, `locales`) VALUES
-('en', 'English', 'ltr', 'en_US.UTF-8,en_US,eng,English');
+('en-US', 'English', 'ltr', 'en_US.UTF-8,en_US,eng,English');
 
 CREATE TABLE IF NOT EXISTS `ww_translations` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
