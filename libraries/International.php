@@ -58,9 +58,9 @@ class International {
         if ($language = SessionManager::read('language')) {
             // There was found a language setting in the user's session
             self::$_language = $language;
-        } elseif ($browserLangs = Http::getAcceptLanguage()) {
+        } elseif ($browserLangs = Http::getBrowserLanguages()) {
             // We have to use the browser language: Try to find the best match
-            foreach (array_keys($browserLangs) as $browserLang) {
+            foreach ($browserLangs as $browserLang) {
                 if (isset($languages[$browserLang])) {
                     self::$_language = $browserLang;
                     break;

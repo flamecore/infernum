@@ -36,8 +36,8 @@ class Http {
      * @static
      */
     public static function getCookie($name) {
-        $namePrefix = ww_setting('cookie:name_prefix');
-        $name = $namePrefix.$name;
+        $name_prefix = ww_setting('cookie:name_prefix');
+        $name = $name_prefix.$name;
         
         if (isset($_COOKIE[$name])) {
             return $_COOKIE[$name];
@@ -69,13 +69,13 @@ class Http {
         $expire = self::_parseExpireTime($expire);
 
         if (is_array($value)) {
-            foreach ($value as $elementKey => $elementValue)
-                self::setCookie($name.'['.$elementKey.']', $elementValue, $expire);
+            foreach ($value as $element_key => $element_value)
+                self::setCookie($name.'['.$element_key.']', $element_value, $expire);
             
             return true;
         } else {
-            $namePrefix = ww_setting('cookie:name_prefix');
-            $name = $namePrefix.$name;
+            $name_prefix = ww_setting('cookie:name_prefix');
+            $name = $name_prefix.$name;
             
             $path   = ww_setting('cookie:path');
             $domain = ww_setting('cookie:domain');
@@ -102,17 +102,17 @@ class Http {
      *                                   status status code string.
      * @param    bool     $replace     Indicates whether the header should replace a previous similar header, or add a second
      *                                   header of the same type. Defaults to TRUE.
-     * @param    int      $respCode    Forces the HTTP response code to the specified value. Optional.
+     * @param    int      $respcode    Forces the HTTP response code to the specified value. Optional.
      * @return   bool
      * @access   public
      * @static
      */
-    public static function setHeader($directive, $value = null, $replace = true, $respCode = null) {
+    public static function setHeader($directive, $value = null, $replace = true, $respcode = null) {
         if (!headers_sent()) {
             if (isset($value)) {
-                header($directive.': '.$value, $replace, $respCode);
+                header($directive.': '.$value, $replace, $respcode);
             } else {
-                header($directive, $replace, $respCode);
+                header($directive, $replace, $respcode);
             }
 
             return true;
@@ -124,25 +124,25 @@ class Http {
     /**
      * Generates a header redirection
      * @param    string   $url        The URL where the redirection goes to
-     * @param    int      $respCode   Forces the HTTP response code to the specified value. Defaults to 302.
+     * @param    int      $respcode   Forces the HTTP response code to the specified value. Defaults to 302.
      * @return   bool
      * @access   public
      * @static
      */
-    public static function redirect($url, $respCode = 302) {
-        return self::setHeader('Location', $url, true, $respCode);
+    public static function redirect($url, $respcode = 302) {
+        return self::setHeader('Location', $url, true, $respcode);
     }
     
     /**
-     * Parses the 'Accept-Language' header sent by the client. Returns an array in the form [locale => q-factor] on success
+     * Lists the languages that the browser accepts by parsing the 'Accept-Language' header. Returns an array on success
      *   or FALSE if no or an invalid header was sent.
      * @return   array
      * @access   public
      * @static
      */
-    public static function getAcceptLanguage() {
+    public static function getBrowserLanguages() {
         if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-            $langs = array();
+            $languages = array();
 
             // Break up the string into pieces (languages and q-factors)
             $pattern = '/(?P<locale>[a-z]{1,8}(-[a-z]{1,8})?)\s*(;\s*q\s*=\s*(?P<q>1|0\.[0-9]+))?/i';
@@ -151,12 +151,12 @@ class Http {
             if ($matched != false) {
                 // Create list of accepted languages with their q-factor (omitted q-factor = 1)
                 foreach ($items as $item)
-                    $langs[$item['locale']] = !empty($item['q']) ? $item['q'] : 1;
+                    $languages[$item['locale']] = !empty($item['q']) ? (float) $item['q'] : 1.0;
 
                 // Sort the list based on q-factor
-                arsort($langs, SORT_NUMERIC);
+                arsort($languages, SORT_NUMERIC);
                 
-                return $langs;
+                return array_keys($languages);
             }
         }
         
@@ -165,29 +165,29 @@ class Http {
 
     /**
      * Parses a given expire time
-     * @param    mixed    $expireTime   The time the cookie expires. There are several input possibilities:
-     *                                    * 0 (zero)      Cookie expires at the end of the session (default)
-     *                                    * <timestamp>   Cookie expires at given timestamp (moment)
-     *                                    * '+Xm'         Cookie expires in X minutes (period)
-     *                                    * '+Xh'         Cookie expires in X hours (period)
-     *                                    * '+Xd'         Cookie expires in X days (period)
+     * @param    mixed    $expire_time   The time the cookie expires. There are several input possibilities:
+     *                                     * 0 (zero)      Cookie expires at the end of the session (default)
+     *                                     * <timestamp>   Cookie expires at given timestamp (moment)
+     *                                     * '+Xm'         Cookie expires in X minutes (period)
+     *                                     * '+Xh'         Cookie expires in X hours (period)
+     *                                     * '+Xd'         Cookie expires in X days (period)
      * @return   int
      * @access   private
      * @static
      */
-    private static function _parseExpireTime($expireTime) {
-        if (is_int($expireTime)) {
-            return $expireTime;
-        } elseif (preg_match('/\+([0-9]+)(m|h|d)/i', $expireTime, $matches)) {
+    private static function _parseExpireTime($expire_time) {
+        if (is_int($expire_time)) {
+            return $expire_time;
+        } elseif (preg_match('/\+([0-9]+)(m|h|d)/i', $expire_time, $matches)) {
             $factor = (int) $matches[1];
             $timeUnit = $matches[2];
 
             if ($timeUnit == 'm') {
                 $seconds = $factor * 60;
             } elseif ($timeUnit == 'h') {
-                $seconds = $factor * 60 * 60;
+                $seconds = $factor * 3600; // 60*60
             } elseif ($timeUnit == 'd') {
-                $seconds = $factor * 60 * 60 * 24;
+                $seconds = $factor * 86400; // 60*60*24
             }
 
             return time() + $seconds;
