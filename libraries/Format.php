@@ -30,27 +30,26 @@ class Format {
     
     /**
      * Shortens a text string to the given length. The truncated text part is replaced by an ellipsis.
-     * @param    string   $string       The text string to shorten 
-     * @param    int      $length       Determines how many characters to shorten to
-     * @param    string   $ellipsis     Text string that replaces the truncated text part. Its length is included in the
-     *                                    shortening length setting.
-     * @param    bool     $breakWords   Determines whether or not to break words when truncating.
-     *                                    FALSE truncates the text exactly at a word boundary.
-     * @param    bool     $middle       Determines whether the truncation happens in the middle of the string. Note that
-     *                                    if this setting is TRUE, then word boundaries are ignored.
-     *                                    FALSE truncates the text at the end of the string. 
+     * @param    string   $string        The text string to shorten 
+     * @param    int      $length        Determines how many characters to shorten to (Default = 80)
+     * @param    string   $ellipsis      Text string that replaces truncated text part. (Default = '...')
+     *                                     Note: Length is included in shortening length setting.
+     * @param    bool     $break_words   Break words when truncating? (Default = FALSE)
+     *                                     Note: FALSE truncates the text only at word boundaries.
+     * @param    bool     $middle        Truncate in the middle of the string? (Default = FALSE)
+     *                                     Note: With this option activated, word boundaries are ignored.
      * @return   string
      * @access   public
      * @static
      */
-    public static function shorten($string, $length = 80, $ellipsis = '...', $breakWords = false, $middle = false) {
+    public static function shorten($string, $length = 80, $ellipsis = '...', $break_words = false, $middle = false) {
         if ($length == 0)
             return '';
 
         if (isset($string[$length])) {
             $length -= min($length, strlen($ellipsis));
 
-            if (!$breakWords && !$middle)
+            if (!$break_words && !$middle)
                 $string = preg_replace('/\s+?(\S+)?$/', '', substr($string, 0, $length + 1));
 
             if (!$middle)
@@ -64,39 +63,39 @@ class Format {
     
     /**
      * Formats a number with grouped thousands
-     * @param    float    $number           The number to be formatted
-     * @param    int      $decimals         Sets the number of decimal points
-     * @param    bool     $groupThousands   Enable grouping of thousands
+     * @param    float    $number            The number to be formatted
+     * @param    int      $decimals          Sets the number of decimal points (Default = 0)
+     * @param    bool     $group_thousands   Enable grouping of thousands (Default = FALSE)
      * @return   string
      * @access   public
      * @static
      */
-    public static function number($number, $decimals = 0, $groupThousands = false) {
+    public static function number($number, $decimals = 0, $group_thousands = false) {
         $locale = localeconv();
         
-        $decimalPoint = $locale['decimal_point'];
-        $thousandsSep = $groupThousands ? $locale['thousands_sep'] : '';
+        $decimal_sep = $locale['decimal_point'];
+        $thousands_sep = $group_thousands ? $locale['thousands_sep'] : '';
         
-        return number_format($number, $decimals, $decimalPoint, $thousandsSep);
+        return number_format($number, $decimals, $decimal_sep, $thousands_sep);
     }
 
     /**
-     * Formats a number as a currency string
+     * Formats a number as a monetary string
      * @param    float    $number   The number to be formatted
-     * @param    string   $format   The money_format() format to use. Defaults to '%i'.
+     * @param    string   $format   The money_format() format to use (Default = '%i')
      * @return   string
      * @access   public
      * @static
      */
-    public static function currency($number, $format = '%i') {
+    public static function money($number, $format = '%i') {
         return money_format($format, $number);
     }
 
     /**
      * Formats the given time or date
      * @param    string   $format   The date() format to use
-     * @param    mixed    $input    The time/date to be formatted. Can be DateTime object, UNIX timestamp, MySQL timestamp
-     *                                or date/time string. Defaults to the current time.
+     * @param    mixed    $input    Time/Date to be formatted. Can be UNIX timestamp, DateTime object or time/date string.
+     *                                When omitted, the current time is used.
      * @return   string
      * @access   public
      * @static
@@ -105,15 +104,12 @@ class Format {
         if (!isset($input)) {
             // No input, use current time
             $time = time();
-        } elseif ($input instanceof DateTime) {
-            $time = $input->getTimestamp();
-        } elseif (preg_match('/^\d{14}$/', $input)) {
-            // MySQL timestamp format of YYYYMMDDHHMMSS
-            $time = mktime(substr($input, 8, 2), substr($input, 10, 2), substr($input, 12, 2),
-                           substr($input, 4, 2), substr($input, 6, 2),  substr($input, 0, 4));
         } elseif (is_numeric($input)) {
             // Numeric string, we handle it as timestamp
             $time = (int) $input;
+        } elseif ($input instanceof DateTime) {
+            // DateTime object, get timestamp
+            $time = $input->getTimestamp();
         } else {
             // strtotime() should handle it
             $strtotime = strtotime($input);
