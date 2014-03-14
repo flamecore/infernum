@@ -55,7 +55,7 @@ class Cache {
         if (!is_dir(WW_CACHE_PATH))
             mkdir(WW_CACHE_PATH);
 
-        if (!preg_match('#^[\w/]+$#', $name))
+        if (!preg_match('#^[\w-+@\./]+$#', $name))
             trigger_error('Invalid cache name given ("'.$name.'")', E_USER_ERROR);
 
         if (!isset($lifetime))
