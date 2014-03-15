@@ -119,7 +119,7 @@ class Session {
      * @access   public
      */
     public function read($key) {
-        return $this->_data[$key];
+        return isset($this->_data[$key]) ? $this->_data[$key] : false;
     }
     
     /**
