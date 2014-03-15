@@ -101,24 +101,10 @@ class Format {
      * @static
      */
     public static function time($format, $input = null) {
-        if (!isset($input)) {
-            // No input, use current time
-            $time = time();
-        } elseif (is_numeric($input)) {
-            // Numeric string, we handle it as timestamp
-            $time = (int) $input;
-        } elseif ($input instanceof DateTime) {
-            // DateTime object, get timestamp
-            $time = $input->getTimestamp();
+        if (isset($input)) {
+            $time = Util::toTimestamp($input);
         } else {
-            // strtotime() should handle it
-            $strtotime = strtotime($input);
-            if ($strtotime != -1 && $strtotime !== false) {
-                $time = $strtotime;
-            } else {
-                // strtotime() was not able to parse, use current time
-                $time = time();
-            }
+            $time = time();
         }
         
         return date($format, $time);
