@@ -49,7 +49,7 @@ class Template {
      * @access   private
      * @static
      */
-    private static $_globalVars = array();
+    private static $_globals = array();
 
     /**
      * The title of the page
@@ -65,25 +65,22 @@ class Template {
      * @access   private
      * @static
      */
-    private static $_headTags = array();
+    private static $_head_tags = array();
 
     /**
      * Generates a new template object
-     * @param    string   $file     The file path of the template to load (without '.tpl.php')
-     * @param    string   $module   The name of the module where the template file is loaded from. No module means that
-     *                                the template is loaded from the global templates directory of the theme.
-     * @param    string   $theme    The name of the theme where the template file is loaded from (optional)
+     * @param    string   $template   The file path of the template to load (without '.tpl.php')
+     * @param    string   $module     The name of the module where the template file is loaded from. No module means that
+     *                                  the template is loaded from the global templates directory of the theme.
+     * @param    string   $theme      The name of the theme where the template file is loaded from (optional)
      * @return   void
      * @access   public
      */
-    public function __construct($file, $module = null, $theme = null) {
+    public function __construct($template, $module = null, $theme = null) {
         if (!isset($theme))
             $theme = ww_setting('main:theme');
         
-        $this->_filename = self::locate($file, $module, $theme);
-        
-        // Set some common variables
-        $this->set('SITE_URL', u());
+        $this->_filename = self::locate($template, $module, $theme);
     }
 
     /**
@@ -106,7 +103,7 @@ class Template {
      * @static
      */
     public static function setGlobal($name, $value) {
-        self::$_globalVars[$name] = $value;
+        self::$_globals[$name] = $value;
     }
 
     /**
@@ -117,76 +114,68 @@ class Template {
      */
     public function render($output = true) {
         // Create a sandbox function to isolate the template
-        $template = function() {
-            // Import the defined variables
+        $sandbox = function () {
             extract(func_get_arg(1));
             
-            // Load the template file and capture its output
             ob_start();
             include func_get_arg(0);
             return ob_get_clean();
         };
         
         // Render the template with defined variables
-        $variables = array_merge(self::$_globalVars, $this->_variables);
-        $content = $template($this->_filename, $variables);
+        $variables = array_merge(self::$_globals, $this->_variables);
+        $rendered = $sandbox($this->_filename, $variables);
         
         if ($output) {
-            echo $content;
+            echo $rendered;
         } else {
-            return $content;
+            return $rendered;
         }
     }
     
     /**
      * Loads a template file from the given theme
-     * @param    string   $file     The file path of the template to load (without '.tpl.php')
-     * @param    string   $module   The name of the module where the template file is loaded from. No module means that
-     *                                the template is loaded from the global templates directory of the theme.
-     * @param    string   $theme    The name of the theme where the template file is loaded from (optional)
+     * @param    string   $template   The file path of the template to load (without '.tpl.php')
+     * @param    string   $module     The name of the module where the template file is loaded from. No module means that
+     *                                  the template is loaded from the global templates directory of the theme.
+     * @param    string   $theme      The name of the theme where the template file is loaded from (optional)
      * @return   string
      * @access   public
-     * @static 
+     * @static
      */
-    public static function locate($file, $module = null, $theme = null) {
+    public static function locate($template, $module = null, $theme = null) {
         if (!isset($theme))
             $theme = ww_setting('main:theme');
         
         if (isset($module)) {
-            $filePath = WW_SITE_PATH.'/modules/'.$module.'/themes/'.$theme.'/templates/'.$file.'.tpl.php';
+            $filename = WW_SITE_PATH.'/modules/'.$module.'/themes/'.$theme.'/templates/'.$template.'.tpl.php';
         } else {
-            $filePath = WW_ENGINE_PATH.'/themes/'.$theme.'/templates/'.$file.'.tpl.php';
+            $filename = WW_ENGINE_PATH.'/themes/'.$theme.'/templates/'.$template.'.tpl.php';
         }
         
-        if (!file_exists($filePath))
-            trigger_error('Template file "'.$filePath.'" does not exist', E_USER_ERROR);
+        if (!file_exists($filename))
+            trigger_error('Template file "'.$filename.'" does not exist', E_USER_ERROR);
         
-        return $filePath;
+        return $filename;
     }
-
+    
     /**
-     * Returns the title
-     * @return   string 
+     * Sets or returns the page title
+     * @param    string   $title    The text to set as title or append to the title (optional)
+     * @param    bool     $append   Should the given text be appended to the currently set title? (Default: TRUE)
+     * @return   string
      * @access   public
      * @static
      */
-    public static function getTitle() {
-        return self::$_title;
-    }
-
-    /**
-     * Sets the given text as title or appends it to the current title
-     * @param    string   $title    The text to set as title or append to the title
-     * @param    bool     $append   Should the given text be appended to the currently set title? Defaults to TRUE.
-     * @return   void
-     * @access   public
-     * @static
-     */
-    public static function setTitle($title, $append = true) {
-        if ($append && self::$_title != '') {
-            self::$_title = $title.' &bull; '.self::$_title;
+    public static function title($title = null, $append = true) {
+        if (isset($title)) {
+            if ($append && self::$_title != '') {
+                self::$_title = $title.' &bull; '.self::$_title;
+            } else {
+                self::$_title = $title;
+            }
         } else {
-            self::$_title = $title;
+            return self::$_title;
         }
     }
 
@@ -199,7 +188,7 @@ class Template {
      * @static
      */
     public static function addMetaTag($name, $content) {
-        self::$_headTags['meta'][] = array(
+        self::$_head_tags['meta'][] = array(
             'name'    => $name,
             'content' => $content
         );
@@ -215,7 +204,7 @@ class Template {
      * @static
      */
     public static function addLinkTag($rel, $url, $type) {
-        self::$_headTags['link'][] = array(
+        self::$_head_tags['link'][] = array(
             'rel'  => $rel,
             'href' => $url,
             'type' => $type
@@ -231,7 +220,7 @@ class Template {
      * @static
      */
     public static function addCSS($url, $media = 'all') {
-        self::$_headTags['css'][] = array(
+        self::$_head_tags['css'][] = array(
             'url'   => $url,
             'media' => $media
         );
@@ -246,7 +235,7 @@ class Template {
      * @static
      */
     public static function addScript($url, $type = 'application/javascript') {
-        self::$_headTags['script'][] = array(
+        self::$_head_tags['script'][] = array(
             'url'  => $url,
             'type' => $type
         );
@@ -260,8 +249,8 @@ class Template {
      * @static
      */
     public static function getHeadTags($group) {
-        if (isset(self::$_headTags[$group])) {
-            return self::$_headTags[$group];
+        if (isset(self::$_head_tags[$group])) {
+            return self::$_head_tags[$group];
         } else {
             return array();
         }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title><?php echo Template::getTitle() ?></title>
+        <title><?php echo Template::title() ?></title>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <?php foreach (Template::getHeadTags('meta') as $tag): ?>
         <meta name="<?php echo $tag['name'] ?>" content="<?php echo $tag['content'] ?>" />

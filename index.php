@@ -33,7 +33,7 @@ try {
     SessionManager::init();
 	International::init();
 
-    Template::setTitle(ww_setting('main:site_name'));
+    Template::title(ww_setting('main:site_name'));
 
     @include WW_SITE_PATH.'/includes/global.php';
     
