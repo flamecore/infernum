@@ -52,4 +52,6 @@ define('WW_SITE_NAME', $activeSite);
 define('WW_SITE_PATH', WW_ENGINE_PATH.'/websites/'.WW_SITE_NAME);
 define('WW_SHARED_PATH', WW_ENGINE_PATH.'/websites/shared');
 
+define('WW_CACHE_PATH', WW_ENGINE_PATH.'/cache/'.WW_SITE_NAME);
+
 System::startup();

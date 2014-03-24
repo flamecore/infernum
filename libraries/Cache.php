@@ -21,8 +21,6 @@
  * @license     ISC License (http://www.opensource.org/licenses/ISC)
  */
 
-define('WW_CACHE_PATH', WW_ENGINE_PATH.'/cache/'.WW_SITE_NAME);
-
 /**
  * Class for reading and storing cache instances
  *
@@ -52,8 +50,8 @@ class Cache {
      * @access   public
      */
     public function __construct($name, $lifetime = null) {
-        if (!is_dir(WW_CACHE_PATH))
-            mkdir(WW_CACHE_PATH);
+        if (!is_dir(WW_CACHE_PATH.'/data'))
+            mkdir(WW_CACHE_PATH.'/data', 0777, true);
 
         if (!preg_match('#^[\w-+@\./]+$#', $name))
             trigger_error('Invalid cache name given ("'.$name.'")', E_USER_ERROR);
@@ -79,7 +77,7 @@ class Cache {
 
         if (ww_config('enable_caching') == true) {
             // Caching is enabled, so we use a file
-            $filename = WW_CACHE_PATH.'/'.$this->_name.'.cache';
+            $filename = WW_CACHE_PATH.'/data/'.$this->_name.'.dat';
 
             // Check if the file exists
             if (file_exists($filename)) {
