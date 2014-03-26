@@ -27,8 +27,6 @@
  * @author   Christian Neff <christian.neff@gmail.com>
  */
 
-define('WW_ENGINE_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
-
 include_once WW_ENGINE_PATH.'/includes/config.php';
 require_once WW_ENGINE_PATH.'/includes/autoloader.php';
 require_once WW_ENGINE_PATH.'/includes/functions.php';

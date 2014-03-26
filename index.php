@@ -27,7 +27,10 @@
  * @author   Christian Neff <christian.neff@gmail.com>
  */
 
-require './includes/bootstrap.php';
+define('DS', DIRECTORY_SEPARATOR);
+define('WW_ENGINE_PATH', DS != '/' ? str_replace(DS, '/', __DIR__) : __DIR__);
+
+require WW_ENGINE_PATH.'/includes/bootstrap.php';
 
 try {
     SessionManager::init();
