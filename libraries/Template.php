@@ -84,26 +84,40 @@ class Template {
     }
 
     /**
-     * Sets a template variable
-     * @param    string   $name    The name of the variable
-     * @param    mixed    $value   The value of the variable
+     * Sets one or more template variables
+     * @param    mixed    $param1   The name of the variable (string) or pairs of names and values of multiple
+     *                                variables (array in the format [name => value, ...]) to be set
+     * @param    mixed    $param2   The value of the variable (only if parameter 1 is used for the variable name)
      * @return   void
      * @access   public
      */
-    public function set($name, $value) {
-        $this->_variables[$name] = $value;
+    public function set($param1, $param2) {
+        if (is_array($param1)) {
+            // Set multiple variables
+            array_merge($this->_variables, $param1);
+        } elseif (is_string($param1) && isset($param2)) {
+            // Set a single variable
+            $this->_variables[$param1] = $param2;
+        }
     }
 
     /**
-     * Sets a global template variable
-     * @param    string   $name    The name of the variable
-     * @param    mixed    $value   The value of the variable
+     * Sets one or more global template variables
+     * @param    mixed    $param1   The name of the variable (string) or pairs of names and values of multiple
+     *                                variables (array in the format [name => value, ...]) to be set
+     * @param    mixed    $param2   The value of the variable (only if parameter 1 is used for the variable name)
      * @return   void
      * @access   public
      * @static
      */
-    public static function setGlobal($name, $value) {
-        self::$_globals[$name] = $value;
+    public static function setGlobal($param1, $param2) {
+        if (is_array($param1)) {
+            // Set multiple variables
+            array_merge(self::$_globals, $param1);
+        } elseif (is_string($param1) && isset($param2)) {
+            // Set a single variable
+            self::$_globals[$param1] = $param2;
+        }
     }
 
     /**
