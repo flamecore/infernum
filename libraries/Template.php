@@ -78,7 +78,7 @@ class Template {
      */
     public function __construct($template, $module = null, $theme = null) {
         if (!isset($theme))
-            $theme = ww_setting('main:theme');
+            $theme = ww_setting('Main:Theme');
         
         $this->_filename = self::locate($template, $module, $theme);
     }
@@ -162,7 +162,7 @@ class Template {
      */
     public static function locate($template, $module = null, $theme = null) {
         if (!isset($theme))
-            $theme = ww_setting('main:theme');
+            $theme = ww_setting('Main:Theme');
         
         if (isset($module)) {
             $filename = WW_SITE_PATH.'/modules/'.$module.'/themes/'.$theme.'/templates/'.$template.'.tpl.php';

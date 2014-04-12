@@ -70,16 +70,16 @@ class System {
         });
         
         // Make sure that the required settings are available and shut down the system otherwise
-        if (!isset(self::$_settings['main']) || !isset(self::$_settings['database']))
-            trigger_error('Required settings "main" and/or "database" not available', E_USER_ERROR);
+        if (!isset(self::$_settings['Main']) || !isset(self::$_settings['Database']))
+            trigger_error('Required settings "Main" and/or "Database" not available', E_USER_ERROR);
         
         // Now we can load our database driver
-        $driver = self::$_settings['database']['driver'];
-        $host = self::$_settings['database']['host'];
-        $user = self::$_settings['database']['user'];
-        $password = self::$_settings['database']['password'];
-        $database = self::$_settings['database']['database'];
-        $prefix = self::$_settings['database']['prefix'];
+        $driver = self::$_settings['Database']['Driver'];
+        $host = self::$_settings['Database']['Host'];
+        $user = self::$_settings['Database']['User'];
+        $password = self::$_settings['Database']['Password'];
+        $database = self::$_settings['Database']['Database'];
+        $prefix = self::$_settings['Database']['Prefix'];
         
         self::$_db = ww_open_db($driver, $host, $user, $password, $database, $prefix);
         

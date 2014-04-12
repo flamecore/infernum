@@ -1,48 +1,48 @@
-[main]
+[Main]
 ; URL of Webwork root
-url = "http://localhost/Webwork"
+Url = "http://localhost/Webwork"
 ; Theme from /themes folder
-theme = "default"
+Theme = "default"
 ; Default language 
-lang = "en-US"
+Language = "en-US"
 ; Use URL rewriting for page paths
-url_rewrite = true
+UrlRewrite = true
 ; Path which represents the frontpage
-frontpage = "start"
+Frontpage = "start"
 ; Name of the website
-site_name = "Webwork"
+SiteName = "Webwork"
 
-[session]
+[Session]
 ; Default session lifetime
-lifetime = 3600
+Lifetime = 3600
 ; The threshold in seconds at which a user is considered as logged off
-online_threshold = 600
+OnlineThreshold = 600
 
-[guest]
+[Guest]
 ; Username for anonymous users
-username = "Anonymous"
+Username = "Anonymous"
 ; Assign anonymous users to this usergroup
-group = 1
+Group = 1
 
-[cookie]
+[Cookie]
 ; Name prefix for cookies
-name_prefix = "ww_"
+NamePrefix = "ww_"
 ; Domain that cookies are available to
-domain = ""
+Domain = ""
 ; Path on the server in which cookies will be available on
-path = "/"
+Path = "/"
 
-[database]
+[Database]
 ; Database driver to use
-driver = "MySQL"
+Driver = "MySQL"
 ; Database server host
-host = "localhost"
+Host = "localhost"
 ; Username of database server user
-user = "root"
+User = "root"
 ; Password of database server user
-password = ""
+Password = ""
 ; Name of database
-database = "webwork"
+Database = "webwork"
 ; Database table prefix
-prefix = "ww_"
+Prefix = "ww_"
 

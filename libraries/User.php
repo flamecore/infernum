@@ -214,7 +214,7 @@ class User {
      */
     public function isOnline() {
         $lastactive = $this->_data['lastactive'];
-        $threshold = ww_setting('session:online_threshold', 600);
+        $threshold = ww_setting('Session:OnlineThreshold', 600);
         
         // Check if the last activity time is within the threshold
         return time() - $lastactive <= $threshold;

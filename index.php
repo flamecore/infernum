@@ -36,12 +36,12 @@ try {
     SessionManager::init();
 	International::init();
 
-    Template::title(ww_setting('main:site_name'));
+    Template::title(ww_setting('Main:SiteName'));
 
     @include WW_SITE_PATH.'/includes/global.php';
     
     // Split the path into its parts. Use frontpage path if no path is specified.
-    $path = isset($_GET['p']) && $_GET['p'] != '' ? $_GET['p'] : ww_setting('main:frontpage');
+    $path = isset($_GET['p']) && $_GET['p'] != '' ? $_GET['p'] : ww_setting('Main:Frontpage');
     System::loadModuleFromPath($path);
 } catch (Exception $error) {
     $tpl = new Template('error');

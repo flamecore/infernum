@@ -158,7 +158,7 @@ function te($string, $vars = null) {
  * @return   string
  */
 function u($path = '', $query = null) {
-    $rooturl = ww_setting('main:url');
+    $rooturl = ww_setting('Main:Url');
     
     $result = $rooturl.$path;
     
@@ -176,9 +176,9 @@ function u($path = '', $query = null) {
  * @return   string
  */
 function page($pagePath, $query = null) {
-    $rooturl = ww_setting('main:url');
+    $rooturl = ww_setting('Main:Url');
     
-    if (ww_setting('main:url_rewrite')) {
+    if (ww_setting('Main:UrlRewrite')) {
         $result = $rooturl.'/'.$pagePath;
         
         if (isset($query) && is_array($query))
@@ -201,10 +201,10 @@ function page($pagePath, $query = null) {
  * @return   string
  */
 function theme($filename, $module = null, $theme = null) {
-    $rooturl = ww_setting('main:url');
+    $rooturl = ww_setting('Main:Url');
     
 	if (!isset($theme))
-		$theme = ww_setting('main:theme');
+        $theme = ww_setting('Main:Theme');
 	
 	if (isset($module)) {
         $path = $rooturl.'/websites/'.WW_SITE_NAME.'/modules/'.$module;
