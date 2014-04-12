@@ -48,12 +48,10 @@ function ww_config($confkey, $default = false) {
  * @return   mixed
  */
 function ww_setting($address, $default = false) {
-    if (preg_match('/^(\w+)(:(\w+))$/', $address, $addrpart)) {
-        $section = $addrpart[1];
-        $keyname = isset($addrpart[2]) ? $addrpart[3] : null;
-    } else {
-        trigger_error('Invalid settings address "'.$address.'" given');
-    }
+    $addrpart = explode(':', $address, 2);
+    
+    $section = $addrpart[0];
+    $keyname = isset($addrpart[1]) ? $addrpart[1] : null;
 
     return System::setting($section, $keyname, $default);
 }
