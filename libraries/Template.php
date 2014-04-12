@@ -108,11 +108,10 @@ class Template {
 
     /**
      * Renders the loaded template
-     * @param    bool     $output   Output the generated template? Defaults to TRUE.
      * @return   string
      * @access   public
      */
-    public function render($output = true) {
+    public function render() {
         // Create a sandbox function to isolate the template
         $sandbox = function () {
             extract(func_get_arg(1));
@@ -124,13 +123,17 @@ class Template {
         
         // Render the template with defined variables
         $variables = array_merge(self::$_globals, $this->_variables);
-        $rendered = $sandbox($this->_filename, $variables);
         
-        if ($output) {
-            echo $rendered;
-        } else {
-            return $rendered;
-        }
+        return $sandbox($this->_filename, $variables);
+    }
+    
+    /**
+     * Displays the loaded template
+     * @return   void
+     * @access   public
+     */
+    public function display() {
+        echo $this->render();
     }
     
     /**

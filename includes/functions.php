@@ -229,7 +229,7 @@ function message($message, $type = 'info') {
     $tpl = new Template('message_body');
     $tpl->set('message', $message);
     $tpl->set('type', $type);
-    $tpl->render();
+    $tpl->display();
     
     exit();
 }
@@ -256,7 +256,7 @@ function error($code) {
     Http::setHeader('HTTP/1.1 '.$errorstr);
     
     $tpl = new Template($errortpl);
-    $tpl->render();
+    $tpl->display();
     
     exit();
 }

@@ -47,5 +47,5 @@ try {
     $tpl = new Template('error');
     if ($CONFIG['enable_debugmode'])
         $tpl->set('debug', $error->getMessage());
-    $tpl->render();
+    $tpl->display();
 }
