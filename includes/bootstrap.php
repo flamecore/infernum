@@ -27,7 +27,12 @@
  * @author   Christian Neff <christian.neff@gmail.com>
  */
 
-include_once WW_ENGINE_PATH.'/includes/config.php';
+if (!is_readable(WW_ENGINE_PATH.'/includes/config.php'))
+    exit('No configuration file found. Please copy the file "includes/config.php.dist" to "includes/config.php".');
+
+$CONFIG = [];
+
+require_once WW_ENGINE_PATH.'/includes/config.php';
 require_once WW_ENGINE_PATH.'/includes/autoloader.php';
 require_once WW_ENGINE_PATH.'/includes/functions.php';
 
