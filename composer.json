@@ -1,0 +1,9 @@
+{
+    "name": "iceflame-net/Webwork",
+    "description": "Lightweight Web Application Engine written in PHP 5",
+    "license": "ISC",
+    "require": {
+        "php": ">=5.5.0"
+    },
+    "minimum-stability": "dev"
+}

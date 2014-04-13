@@ -30,10 +30,15 @@
 if (!is_readable(WW_ENGINE_PATH.'/includes/config.php'))
     exit('No configuration file found. Please copy the file "includes/config.php.dist" to "includes/config.php".');
 
+if (!is_readable(WW_ENGINE_PATH.'/vendor/autoload.php'))
+    exit('No vendor autoloader found. Please make sure that you have installed the required libraries using Composer.');
+
 $CONFIG = [];
 
 require_once WW_ENGINE_PATH.'/includes/config.php';
 require_once WW_ENGINE_PATH.'/includes/autoloader.php';
+require_once WW_ENGINE_PATH.'/vendor/autoload.php';
+
 require_once WW_ENGINE_PATH.'/includes/functions.php';
 
 if (ww_config('enable_multisite') && $sites = ww_config('sites')) {
