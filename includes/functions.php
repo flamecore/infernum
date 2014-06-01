@@ -64,13 +64,13 @@ function ww_setting($address, $default = false) {
  * @param    string   $password   The password for authenticating at the database server
  * @param    string   $database   The name of the database
  * @param    string   $prefix     The prefix of the database tables
- * @return   Database_Base_Driver
+ * @return   Database_Base_Connection
  */
 function ww_open_db($driver, $host, $user, $password, $database, $prefix) {
     if (!is_string($driver) || empty($driver))
         trigger_error('Database driver name invalid', E_USER_ERROR);
 
-    $driver_class = "Database_{$driver}_Driver";
+    $driver_class = "Database_{$driver}_Connection";
 
     if (!class_exists($driver_class))
         trigger_error('Database driver "'.$driver.'" not available', E_USER_ERROR);

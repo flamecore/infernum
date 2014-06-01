@@ -26,7 +26,7 @@
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Database_MySQL_Driver extends Database_Base_Driver {
+class Database_MySQL_Connection extends Database_Base_Connection {
 
     /**
      * Connects to the database server and selects the database using the given configuration

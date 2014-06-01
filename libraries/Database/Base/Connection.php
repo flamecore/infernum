@@ -31,7 +31,7 @@
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-abstract class Database_Base_Driver {
+abstract class Database_Base_Connection {
 
     /**
      * The database server host

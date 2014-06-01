@@ -39,7 +39,7 @@ class System {
     
     /**
      * The database driver object
-     * @var      Database_Base_Driver
+     * @var      Database_Base_Connection
      * @access   private
      * @static
      */
@@ -66,7 +66,7 @@ class System {
         // At first we have to load the settings
         $cache = new Cache('settings');
         self::$_settings = $cache->data(function () {
-            return parse_settings(WW_SITE_PATH.'/settings.yml');
+            return parse_settings(WW_SITE_PATH.'/settings.ini');
         });
         
         // Make sure that the required settings are available and shut down the system otherwise
