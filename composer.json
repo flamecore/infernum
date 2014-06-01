@@ -3,7 +3,8 @@
     "description": "Lightweight Web Application Engine written in PHP 5",
     "license": "ISC",
     "require": {
-        "php": ">=5.5.0"
+        "php": ">=5.5.0",
+        "symfony/yaml": "2.4.*"
     },
     "minimum-stability": "dev"
 }

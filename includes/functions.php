@@ -80,54 +80,14 @@ function ww_open_db($driver, $host, $user, $password, $database, $prefix) {
 
 /**
  * Parses a Webwork settings file. Returns a multidimensional array, with the section names and settings included.
- * @param    string   $filename   The filename of the INI file being parsed.
+ * @param    string   $filename   The filename of the YAML file being parsed
  * @return   array
  */
 function parse_settings($filename) {
     if (!is_readable($filename))
         trigger_error('File "'.$filename.'" does not exist or is not readable', E_USER_ERROR);
     
-    $section = 'main'; $settings = array();
-	
-	$fn_error = function ($message) use ($filename, &$section) {
-		trigger_error($filename.' ['.$section.']: '.$message, E_USER_ERROR);
-	};
-    
-    $lines = file($filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($lines as $line) {
-        $line = trim($line);
-        if (preg_match('/^(;|#)/', $line)) {
-            // Comment
-            continue;
-        } elseif (preg_match('/^(\w+)\s*=\s*(.+)$/', $line, $part)) {
-            // Directive declaration
-            list(, $key, $val) = $part;
-            $result = json_decode('{"val":'.$val.'}', true);
-            if (isset($result)) {
-                $settings[$section][$key] = $result['val'];
-            } else {
-                $errno = json_last_error();
-                if ($errno == JSON_ERROR_DEPTH) {
-                    $fn_error('Maximum JSON stack depth exceeded');
-                } elseif ($errno == JSON_ERROR_STATE_MISMATCH) {
-                    $fn_error('Underflow or the modes mismatch');
-                } elseif ($errno == JSON_ERROR_SYNTAX) {
-                    $fn_error('Malformed value');
-                } else {
-                    $fn_error('Unknown error in value');
-                }
-            }
-        } elseif (preg_match('/^\[(\w+)\]$/', $line, $part)) {
-            // Section declaration
-            $section = $part[1];
-            $settings[$section] = array();
-        } else {
-            // Anything else
-            $fn_error('Invalid command');
-        }
-    }
-    
-    return $settings;
+    return \Symfony\Component\Yaml\Yaml::parse($filename);
 }
 
 /**
