@@ -27,6 +27,25 @@
  * @author   Christian Neff <christian.neff@gmail.com>
  */
 class Util {
+    
+    /**
+     * Checks if the given value matches the list of patterns
+     * @param    string   $value   The value to match
+     * @param    string   $list    List of fnmatch() patterns separated by commas
+     * @return   bool
+     * @access   public
+     * @static
+     */
+    public static function matchesPatternList($value, $list) {
+        $patterns = explode(',', $list);
+        
+        foreach ($patterns as $pattern) {
+            if (fnmatch($pattern, $value))
+                return true;
+        }
+        
+        return false;
+    }
 
     /**
      * Transforms the given input into a timestamp
