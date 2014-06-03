@@ -39,7 +39,7 @@ class System {
     
     /**
      * The database driver object
-     * @var      Database_Base_Connection
+     * @var      Database_Connection
      * @access   private
      * @static
      */
@@ -81,7 +81,7 @@ class System {
         $database = self::$_settings['Database']['Database'];
         $prefix = self::$_settings['Database']['Prefix'];
         
-        self::$_db = ww_open_db($driver, $host, $user, $password, $database, $prefix);
+        self::$_db = new Database_Connection($driver, $host, $user, $password, $database, $prefix);
         
         // All systems are started now and running smoothly
         self::$_initialized = true;
