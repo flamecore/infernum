@@ -109,12 +109,12 @@ class System {
         if (!self::isStarted())
             trigger_error('The system is not yet ready', E_USER_ERROR);
         
-		if (isset($keyname)) {
-			return isset(self::$_settings[$section][$keyname]) ? self::$_settings[$section][$keyname] : $default;
-		} else {
-			return isset(self::$_settings[$section]) ? self::$_settings[$section] : $default;
-		}
-	}
+        if (isset($keyname)) {
+            return isset(self::$_settings[$section][$keyname]) ? self::$_settings[$section][$keyname] : $default;
+        } else {
+            return isset(self::$_settings[$section]) ? self::$_settings[$section] : $default;
+        }
+    }
     
     /**
      * Returns the database driver object

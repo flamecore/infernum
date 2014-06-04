@@ -100,10 +100,10 @@ class WebworkLoader {
         if ($findall && !empty($results))
             return $results;
 		
-		return false;
+        return false;
     }
     
 }
 
 // Register the autoloader
-spl_autoload_register(array('WebworkLoader', 'loadClass'));
+spl_autoload_register(['WebworkLoader', 'loadClass']);

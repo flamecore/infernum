@@ -33,7 +33,7 @@ if (!is_readable(WW_ENGINE_PATH.'/includes/config.php'))
 if (!is_readable(WW_ENGINE_PATH.'/vendor/autoload.php'))
     exit('No vendor autoloader found. Please make sure that you have installed the required libraries using Composer.');
 
-$CONFIG = [];
+$CONFIG = array();
 
 require_once WW_ENGINE_PATH.'/includes/config.php';
 require_once WW_ENGINE_PATH.'/includes/autoloader.php';
@@ -47,16 +47,16 @@ if (ww_config('enable_multisite') && $sites = ww_config('sites')) {
 
     // Check if there is a site for the current domain, fall back to default site otherwise
     if (isset($sites[$domain])) {
-        $activeSite = $sites[$domain];
+        $active_site = $sites[$domain];
     } else {
-        $activeSite = ww_config('default_site', 'default');
+        $active_site = ww_config('default_site', 'default');
     }
 } else {
     // This is a single-site installation, hence we use the default site
-    $activeSite = 'default';
+    $active_site = 'default';
 }
 
-define('WW_SITE_NAME', $activeSite);
+define('WW_SITE_NAME', $active_site);
 define('WW_SITE_PATH', WW_ENGINE_PATH.'/websites/'.WW_SITE_NAME);
 define('WW_SHARED_PATH', WW_ENGINE_PATH.'/websites/shared');
 

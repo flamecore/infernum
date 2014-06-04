@@ -34,11 +34,12 @@ require WW_ENGINE_PATH.'/includes/bootstrap.php';
 
 try {
     SessionManager::init();
-	International::init();
+    International::init();
 
     Template::title(ww_setting('Main:SiteName'));
 
-    @include WW_SITE_PATH.'/includes/global.php';
+    if (is_readable(WW_SITE_PATH.'/includes/global.php'))
+        include WW_SITE_PATH.'/includes/global.php';
     
     // Split the path into its parts. Use frontpage path if no path is specified.
     $path = isset($_GET['p']) && $_GET['p'] != '' ? $_GET['p'] : ww_setting('Main:Frontpage');
