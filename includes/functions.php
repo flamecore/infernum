@@ -107,31 +107,6 @@ function u($path = '', $query = null) {
 }
 
 /**
- * Generates a URL to a module page by path
- * @param    string   $pagePath   The path of the module page
- * @param    array    $query      Optional data that is added to the URL as query string.
- *                                  For more information see {@link http://www.php.net/http_build_query}
- * @return   string
- */
-function page($pagePath, $query = null) {
-    $rooturl = ww_setting('Main:Url');
-    
-    if (ww_setting('Main:UrlRewrite')) {
-        $result = $rooturl.'/'.$pagePath;
-        
-        if (isset($query) && is_array($query))
-            $result .= '?'.http_build_query($query);
-    } else {
-        $result = $rooturl.'/?p='.$pagePath;
-        
-        if (isset($query) && is_array($query))
-            $result .= '&'.http_build_query($query);
-    }
-
-    return $result;
-}
-
-/**
  * Generates a URL to a theme file
  * @param    string   $filename   The name of the file (appended to path)
  * @param    string   $module     Use module theme path instead of global theme path
