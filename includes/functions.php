@@ -89,24 +89,6 @@ function te($string, $vars = null) {
 }
 
 /**
- * Generates a URL to a relative path based on the application URL
- * @param    string   $path    The relative path of the location
- * @param    array    $query   Optional data that is added to the URL as query string.
- *                               For more information see {@link http://www.php.net/http_build_query}
- * @return   string
- */
-function u($path = '', $query = null) {
-    $rooturl = ww_setting('Main:Url');
-    
-    $result = $rooturl.$path;
-    
-    if (isset($query) && is_array($query))
-        $result .= '?'.http_build_query($query);
-    
-    return $result;
-}
-
-/**
  * Generates a URL to a theme file
  * @param    string   $filename   The name of the file (appended to path)
  * @param    string   $module     Use module theme path instead of global theme path

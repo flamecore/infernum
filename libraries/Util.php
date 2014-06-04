@@ -29,6 +29,24 @@
 class Util {
 
     /**
+     * Generates a URL to a relative path based on the application URL
+     * @param    string   $path    The relative path of the location
+     * @param    array    $query   Optional data that is added to the URL as query string.
+     *                               For more information see {@link http://www.php.net/http_build_query}
+     * @return   string
+     */
+    function makeURL($path = '', $query = null) {
+        $root_url = ww_setting('Main:Url');
+
+        $result = $root_url.'/'.$path;
+
+        if (isset($query) && is_array($query))
+            $result .= '?'.http_build_query($query);
+
+        return $result;
+    }
+
+    /**
      * Generates a URL to a module page by path
      * @param    string   $page_path   The path of the module page
      * @param    array    $query      Optional data that is added to the URL as query string.
