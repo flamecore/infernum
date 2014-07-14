@@ -36,6 +36,7 @@ if (!is_readable(WW_ENGINE_PATH.'/vendor/autoload.php'))
 $CONFIG = array();
 
 require_once WW_ENGINE_PATH.'/includes/config.php';
+require_once WW_ENGINE_PATH.'/includes/errorhandler.php';
 require_once WW_ENGINE_PATH.'/includes/autoloader.php';
 require_once WW_ENGINE_PATH.'/vendor/autoload.php';
 

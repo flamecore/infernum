@@ -32,21 +32,14 @@ define('WW_ENGINE_PATH', DS != '/' ? str_replace(DS, '/', __DIR__) : __DIR__);
 
 require WW_ENGINE_PATH.'/includes/bootstrap.php';
 
-try {
-    SessionManager::init();
-    International::init();
+SessionManager::init();
+International::init();
 
-    Template::title(ww_setting('Main:SiteName'));
+Template::title(ww_setting('Main:SiteName'));
 
-    if (is_readable(WW_SITE_PATH.'/includes/global.php'))
-        include WW_SITE_PATH.'/includes/global.php';
-    
-    // Split the path into its parts. Use frontpage path if no path is specified.
-    $path = isset($_GET['p']) && $_GET['p'] != '' ? $_GET['p'] : ww_setting('Main:Frontpage');
-    System::loadModuleFromPath($path);
-} catch (Exception $error) {
-    $tpl = new Template('error');
-    if ($CONFIG['enable_debugmode'])
-        $tpl->set('debug', $error->getMessage());
-    $tpl->display();
-}
+if (is_readable(WW_SITE_PATH.'/includes/global.php'))
+    include WW_SITE_PATH.'/includes/global.php';
+
+// Split the path into its parts. Use frontpage path if no path is specified.
+$path = isset($_GET['p']) && $_GET['p'] != '' ? $_GET['p'] : ww_setting('Main:Frontpage');
+System::loadModuleFromPath($path);
