@@ -150,11 +150,13 @@ class System {
         $controller_file = WW_MODULE_PATH.'/controller.php';
 
         if (!file_exists($controller_file))
-            not_found_error();
+            return false;
         
         $args_list = explode('/', $arguments);
 
-        include $controller_file;
+        $return = include_once $controller_file;
+
+        return (bool) $return;
     }
 
     /**
@@ -170,7 +172,7 @@ class System {
         $module = str_replace('-', '_', $module);
         $module = strtolower($module);
 
-        self::loadModule($module, $arguments);
+        return self::loadModule($module, $arguments);
     }
     
 }

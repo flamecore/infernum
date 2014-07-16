@@ -39,4 +39,4 @@ if (is_readable(WW_SITE_PATH.'/includes/global.php'))
 
 // Split the path into its parts. Use frontpage path if no path is specified.
 $path = isset($_GET['p']) && $_GET['p'] != '' ? $_GET['p'] : ww_setting('Main:Frontpage');
-System::loadModuleFromPath($path);
+System::loadModuleFromPath($path) or not_found_error();
