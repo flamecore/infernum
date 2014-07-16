@@ -150,7 +150,7 @@ class System {
         $controller_file = WW_MODULE_PATH.'/controller.php';
 
         if (!file_exists($controller_file))
-            error(404);
+            not_found_error();
         
         $args_list = explode('/', $arguments);
 
