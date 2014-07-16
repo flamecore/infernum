@@ -32,9 +32,6 @@ define('WW_ENGINE_PATH', DS != '/' ? str_replace(DS, '/', __DIR__) : __DIR__);
 
 require WW_ENGINE_PATH.'/includes/bootstrap.php';
 
-SessionManager::init();
-International::init();
-
 Template::title(ww_setting('Main:SiteName'));
 
 if (is_readable(WW_SITE_PATH.'/includes/global.php'))
