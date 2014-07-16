@@ -130,6 +130,17 @@ class System {
     }
 
     /**
+     * Checks the existance of a module
+     * @param    string   $module   The module name
+     * @return   bool
+     * @access   public
+     * @static
+     */
+    public static function moduleExists($module) {
+        return is_readable(WW_ENGINE_PATH.'/modules/'.$module.'/controller.php');
+    }
+
+    /**
      * Loads a module controller
      * @param    string   $module      The name of the module
      * @param    string   $arguments   The arguments to use
@@ -144,17 +155,15 @@ class System {
         if (defined('WW_MODULE'))
             trigger_error('A module has already been loaded', E_USER_ERROR);
 
-        define('WW_MODULE', $module);
-        define('WW_MODULE_PATH', WW_SITE_PATH.'/modules/'.$module);
-
-        $controller_file = WW_MODULE_PATH.'/controller.php';
-
-        if (!file_exists($controller_file))
+        if (!self::moduleExists($module))
             return false;
+
+        define('WW_MODULE', $module);
+        define('WW_MODULE_PATH', WW_ENGINE_PATH.'/modules/'.$module);
         
         $args_list = is_string($arguments) && !empty($arguments) ? explode('/', $arguments) : false;
 
-        $return = include_once $controller_file;
+        $return = include_once WW_MODULE_PATH.'/controller.php';
 
         return (bool) $return;
     }
