@@ -7,8 +7,8 @@ Main:
   Language: "en-US"
   # Use URL rewriting for page paths
   UrlRewrite: true
-  # Path which represents the frontpage
-  Frontpage: "start"
+  # Module to use as frontpage
+  Frontpage: start
   # Name of the website
   SiteName: "Webwork"
 
