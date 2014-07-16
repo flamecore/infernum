@@ -137,7 +137,7 @@ class System {
      * @access   public
      * @static
      */
-    public static function loadModule($module, $arguments) {
+    public static function loadModule($module, $arguments = false) {
         if (!self::isStarted())
             trigger_error('The system is not yet ready', E_USER_ERROR);
 
@@ -152,7 +152,7 @@ class System {
         if (!file_exists($controller_file))
             return false;
         
-        $args_list = explode('/', $arguments);
+        $args_list = is_string($arguments) && !empty($arguments) ? explode('/', $arguments) : false;
 
         $return = include_once $controller_file;
 
@@ -167,7 +167,15 @@ class System {
      * @static
      */
     public static function loadModuleFromPath($path) {
-        @list($module, $arguments) = explode('/', $path, 2);
+        $path_parts = explode('/', $path, 2);
+        
+        if (count($path_parts) > 1) {
+            $module = $path_parts[0];
+            $arguments = $path_parts[1];
+        } else {
+            $module = $path_parts[0];
+            $arguments = false;
+        }
 
         $module = str_replace('-', '_', $module);
         $module = strtolower($module);
