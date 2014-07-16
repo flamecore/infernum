@@ -193,7 +193,7 @@ class System {
      * @access   public
      * @static
      */
-    public static function loadModule($module, $arguments = false) {
+    public static function loadModule($module, $action, $arguments = false) {
         if (!self::isStarted())
             trigger_error('The system is not yet ready', E_USER_ERROR);
 
@@ -205,12 +205,15 @@ class System {
 
         define('WW_MODULE', $module);
         define('WW_MODULE_PATH', WW_ENGINE_PATH.'/modules/'.$module);
+
+        include_once WW_MODULE_PATH.'/controller.php';
+
+        $controller = 'module_'.WW_MODULE;
         
-        $args_list = is_string($arguments) && !empty($arguments) ? explode('/', $arguments) : false;
+        if (!class_exists($controller) || !is_subclass_of($controller, 'Controller'))
+            trigger_error('Module "'.$module.'" does not provide a valid controller', E_USER_ERROR);
 
-        $return = include_once WW_MODULE_PATH.'/controller.php';
-
-        return (bool) $return;
+        return $controller::execute($action, $arguments);
     }
 
     /**
@@ -221,20 +224,26 @@ class System {
      * @static
      */
     public static function loadModuleFromPath($path) {
-        $path_parts = explode('/', $path, 2);
+        $path_parts = explode('/', $path);
         
-        if (count($path_parts) > 1) {
+        if (count($path_parts) > 2) {
+            $mount = array_shift($path_parts);
+            $action = array_shift($path_parts);
+            $arguments = $path_parts;
+        } elseif (count($path_parts) == 2) {
             $mount = $path_parts[0];
-            $arguments = $path_parts[1];
+            $action = $path_parts[1];
+            $arguments = false;
         } else {
             $mount = $path_parts[0];
+            $action = 'index';
             $arguments = false;
         }
 
         $modules = self::getActivatedModules();
         
         if (isset($modules[$mount])) {
-            return self::loadModule($modules[$mount], $arguments);
+            return self::loadModule($modules[$mount], $action, $arguments);
         } else {
             return false;
         }
