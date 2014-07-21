@@ -38,6 +38,10 @@
             #content fieldset {
                 margin-top: 20px;
             }
+            #content pre {
+                margin: 2px 4px;
+                font-size: .8em;
+            }
         </style>
     </head>
     <body>
@@ -47,19 +51,27 @@
 <?php if (isset($GLOBALS['CONFIG']['enable_debugmode']) && $GLOBALS['CONFIG']['enable_debugmode']): ?>
             <fieldset>
                 <legend>Debug Information</legend>
-                <table>
+                <table width="100%">
                     <tr>
-                        <td colspan="2"><strong><?php echo $err_message ?></strong></td>
+                        <td colspan="2"><strong><?php echo $exception->getMessage() ?></strong></td>
+                    </tr>
+                    <tr>
+                        <td>Type:</td>
+                        <td><?php echo get_class($exception) ?></td>
                     </tr>
                     <tr>
                         <td>File:</td>
-                        <td><?php echo $err_file ?></td>
+                        <td><?php echo $exception->getFile() ?></td>
                     </tr>
                     <tr>
                         <td>Line:</td>
-                        <td><?php echo $err_line ?></td>
+                        <td><?php echo $exception->getLine() ?></td>
                     </tr>
                 </table>
+            </fieldset>
+            <fieldset>
+                <legend>Stack Trace</legend>
+                <pre><?php echo str_replace(WW_ENGINE_PATH, '.', $exception->getTraceAsString()) ?></pre>
             </fieldset>
 <?php endif; ?>
         </div>

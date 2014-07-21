@@ -21,27 +21,19 @@
  * @license     ISC License (http://www.opensource.org/licenses/ISC)
  */
 
-error_reporting(0);
-
 set_error_handler('ww_handle_error');
 set_exception_handler('ww_handle_exception');
 
-function ww_handle_error($err_code, $err_message, $err_file, $err_line) {
-    switch ($err_code) {
+function ww_handle_error($code, $message, $file, $line) {
+    switch ($code) {
+        case E_ERROR:
         case E_USER_ERROR:
-            ww_log($err_message, 2);
-            
-            include WW_ENGINE_PATH.'/includes/errorpage.php';
-            exit();
+            throw new ErrorException($message, $code, 2, $file, $line);
             break;
 
         case E_WARNING:
         case E_USER_WARNING:
-            ww_log($err_message, 1);
-            break;
-
-        default:
-            return false;
+            ww_log($message, 1);
             break;
     }
     
@@ -49,7 +41,11 @@ function ww_handle_error($err_code, $err_message, $err_file, $err_line) {
 }
 
 function ww_handle_exception($exception) {
-    ww_handle_error(E_USER_ERROR, $exception->getMessage(), $exception->getFile(), $exception->getLine());
+    $severity = is_a($exception, 'ErrorException') ? $exception->getSeverity() : 2;
+    ww_log($exception->getMessage(), $severity);
+
+    include WW_ENGINE_PATH.'/includes/errorpage.php';
+    exit();
 }
 
 function ww_log($message, $severity = 0, $logfile = 'system') {
