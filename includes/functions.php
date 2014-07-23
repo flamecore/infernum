@@ -42,21 +42,6 @@ function ww_config($confkey, $default = false) {
 }
 
 /**
- * Returns the value of a setting
- * @param    string   $address   The settings address in the form "<section>[:<keyname>]"
- * @param    mixed    $default   Custom default value (optional)
- * @return   mixed
- */
-function ww_setting($address, $default = false) {
-    $addrpart = explode(':', $address, 2);
-    
-    $section = $addrpart[0];
-    $keyname = isset($addrpart[1]) ? $addrpart[1] : null;
-
-    return System::setting($section, $keyname, $default);
-}
-
-/**
  * Parses a Webwork settings file. Returns a multidimensional array, with the section names and settings included.
  * @param    string   $filename   The filename of the YAML file being parsed
  * @return   array
@@ -96,7 +81,7 @@ function te($string, $vars = null) {
  * @return   string
  */
 function theme($filename, $module = null, $theme = null) {
-    $rooturl = ww_setting('Main:Url');
+    $rooturl = System::setting('Main:Url');
     
 	if (!isset($theme))
         $theme = ww_setting('Main:Theme');

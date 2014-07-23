@@ -99,23 +99,25 @@ class System {
 
     /**
      * Returns the value of a setting
-     * @param    string   $setting   The settings key in the form "<section>:<keyname>"
+     * @param    string   $address   The settings address in the form "<section>[:<keyname>]"
      * @param    mixed    $default   Custom default value (optional)
      * @return   mixed
      * @access   public
      * @static
      */
-    public static function setting($section, $keyname = null, $default = false) {
+    public static function setting($address, $default = false) {
         if (!self::isStarted())
             trigger_error('The system is not yet ready', E_USER_ERROR);
         
-        if (isset($keyname)) {
-            return isset(self::$_settings[$section][$keyname]) ? self::$_settings[$section][$keyname] : $default;
+        $addrpart = explode(':', $address, 2);
+        
+        if (isset($addrpart[1])) {
+            return isset(self::$_settings[$addrpart[0]][$addrpart[1]]) ? self::$_settings[$addrpart[0]][$addrpart[1]] : $default;
         } else {
-            return isset(self::$_settings[$section]) ? self::$_settings[$section] : $default;
+            return isset(self::$_settings[$addrpart[0]]) ? self::$_settings[$addrpart[0]] : $default;
         }
     }
-    
+
     /**
      * Returns the database driver object
      * @return   Database_Base_Driver

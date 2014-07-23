@@ -32,7 +32,7 @@ define('WW_ENGINE_PATH', DS != '/' ? str_replace(DS, '/', __DIR__) : __DIR__);
 
 require WW_ENGINE_PATH.'/includes/bootstrap.php';
 
-Template::title(ww_setting('Main:SiteName'));
+Template::title(System::setting('Main:SiteName'));
 
 if (is_readable(WW_SITE_PATH.'/includes/global.php'))
     include WW_SITE_PATH.'/includes/global.php';
@@ -41,5 +41,5 @@ if (is_readable(WW_SITE_PATH.'/includes/global.php'))
 if (isset($_GET['p']) && !empty($_GET['p'])) {
     System::loadModuleFromPath($_GET['p']) or not_found_error();
 } else {
-    System::loadModule(ww_setting('Main:Frontpage'));
-}
+    System::loadModule(System::setting('Main:Frontpage'));
+}

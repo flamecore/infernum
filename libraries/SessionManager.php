@@ -78,7 +78,7 @@ class SessionManager {
             $sid = uniqid(time(), true);
 
             // Register the new session in the database
-            $expire = time() + ww_setting('Session:Lifetime', 3600);
+            $expire = time() + System::setting('Session:Lifetime', 3600);
             
             $sql = 'INSERT INTO @PREFIX@sessions (id, expire) VALUES({0}, {1})';
             System::db()->query($sql, array($sid, date('Y-m-d H:i:s', $expire)));

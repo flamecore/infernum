@@ -36,7 +36,7 @@ class Util {
      * @return   string
      */
     function makeURL($path = '', $query = null) {
-        $root_url = ww_setting('Main:Url');
+        $root_url = System::setting('Main:Url');
 
         $result = $root_url.'/'.$path;
 
@@ -54,9 +54,9 @@ class Util {
      * @return   string
      */
     function makePageURL($page_path, $query = null) {
-        $root_url = ww_setting('Main:Url');
+        $root_url = System::setting('Main:Url');
 
-        if (ww_setting('Main:UrlRewrite')) {
+        if (System::setting('Main:UrlRewrite')) {
             $result = $root_url.'/'.$page_path;
 
             if (isset($query) && is_array($query))
