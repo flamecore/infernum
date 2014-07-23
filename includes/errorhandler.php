@@ -52,7 +52,11 @@ function ww_log($message, $severity = 0, $logfile = 'system') {
     if (!isset($GLOBALS['CONFIG']['enable_logging']) || $GLOBALS['CONFIG']['enable_logging'] == false)
         return false;
     
-    if ($severity >= 2) {
+    if ($severity >= 4) {
+        $severity_tag = 'ALERT';
+    } elseif ($severity == 3) {
+        $severity_tag = 'CRITICAL';
+    } elseif ($severity == 2) {
         $severity_tag = 'ERROR';
     } elseif ($severity == 1) {
         $severity_tag = 'WARNING';
