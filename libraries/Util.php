@@ -138,4 +138,16 @@ class Util {
         }
     }
 
+    /**
+     * Parses a Webwork settings file. Returns a multidimensional array, with the section names and settings included.
+     * @param    string   $filename   The filename of the YAML file being parsed
+     * @return   array
+     */
+    public static function parseSettings($filename) {
+        if (!is_readable($filename))
+            trigger_error('File "'.$filename.'" does not exist or is not readable', E_USER_ERROR);
+
+        return \Symfony\Component\Yaml\Yaml::parse($filename);
+    }
+    
 }

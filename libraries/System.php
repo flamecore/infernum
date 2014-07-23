@@ -66,7 +66,7 @@ class System {
         // At first we have to load the settings
         $cache = new Cache('settings');
         self::$_settings = $cache->data(function () {
-            return parse_settings(WW_SITE_PATH.'/settings.yml');
+            return Util::parseSettings(WW_SITE_PATH.'/settings.yml');
         });
         
         // Make sure that the required settings are available and shut down the system otherwise

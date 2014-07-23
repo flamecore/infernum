@@ -42,18 +42,6 @@ function ww_config($confkey, $default = false) {
 }
 
 /**
- * Parses a Webwork settings file. Returns a multidimensional array, with the section names and settings included.
- * @param    string   $filename   The filename of the YAML file being parsed
- * @return   array
- */
-function parse_settings($filename) {
-    if (!is_readable($filename))
-        trigger_error('File "'.$filename.'" does not exist or is not readable', E_USER_ERROR);
-    
-    return \Symfony\Component\Yaml\Yaml::parse($filename);
-}
-
-/**
  * Returns the translation of a string
  * @param    string   $string   The string to translate
  * @param    array    $vars     Variables ('%var%') to replace as array
