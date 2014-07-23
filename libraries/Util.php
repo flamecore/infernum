@@ -70,6 +70,28 @@ class Util {
 
         return $result;
     }
+
+    /**
+     * Generates a URL to a theme file
+     * @param    string   $filename   The name of the file (appended to path)
+     * @param    string   $module     Use module theme path instead of global theme path
+     * @param    string   $theme      Use this specified theme
+     * @return   string
+     */
+    public static function makeThemeFileURL($filename, $module = null, $theme = null) {
+        $rooturl = System::setting('Main:Url');
+
+        if (!isset($theme))
+            $theme = System::setting('Main:Theme');
+
+        if (isset($module)) {
+            $path = $rooturl.'/websites/'.WW_SITE_NAME.'/modules/'.$module;
+        } else {
+            $path = $rooturl;
+        }
+
+        return "{$path}/themes/{$theme}/{$filename}";
+    }
     
     /**
      * Checks if the given value matches the list of patterns
