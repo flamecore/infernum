@@ -53,11 +53,8 @@ class Http {
      *                                  elements will be set all cookies with the name '<name>[<element key>]' and with the
      *                                  value of the array element.
      * @param    mixed    $expire     The time the cookie expires. There are several input possibilities:
-     *                                  * 0 (zero)     Cookie expires at the end of the session (default)
-     *                                  * <timestamp>  Cookie expires at given timestamp (moment)
-     *                                  * '+Xm'        Cookie expires in X minutes (period)
-     *                                  * '+Xh'        Cookie expires in X hours (period)
-     *                                  * '+Xd'        Cookie expires in X days (period)
+     *                                  * 0 (zero) = Cookie expires at the end of the session (default)
+     *                                  * UNIX timestamp, DateTime object or time/date string
      * @return   bool
      * @access   public
      * @static
@@ -66,7 +63,7 @@ class Http {
         if (headers_sent())
             return false;
         
-        $expire = self::_parseExpireTime($expire);
+        $expire = Util::toTimestamp($expire);
 
         if (is_array($value)) {
             foreach ($value as $element_key => $element_value)
@@ -161,39 +158,6 @@ class Http {
         }
         
         return false;
-    }
-
-    /**
-     * Parses a given expire time
-     * @param    mixed    $expire_time   The time the cookie expires. There are several input possibilities:
-     *                                     * 0 (zero)      Cookie expires at the end of the session (default)
-     *                                     * <timestamp>   Cookie expires at given timestamp (moment)
-     *                                     * '+Xm'         Cookie expires in X minutes (period)
-     *                                     * '+Xh'         Cookie expires in X hours (period)
-     *                                     * '+Xd'         Cookie expires in X days (period)
-     * @return   int
-     * @access   private
-     * @static
-     */
-    private static function _parseExpireTime($expire_time) {
-        if (is_int($expire_time)) {
-            return $expire_time;
-        } elseif (preg_match('/\+([0-9]+)(m|h|d)/i', $expire_time, $matches)) {
-            $factor = (int) $matches[1];
-            $timeUnit = $matches[2];
-
-            if ($timeUnit == 'm') {
-                $seconds = $factor * 60;
-            } elseif ($timeUnit == 'h') {
-                $seconds = $factor * 3600; // 60*60
-            } elseif ($timeUnit == 'd') {
-                $seconds = $factor * 86400; // 60*60*24
-            }
-
-            return time() + $seconds;
-        } else {
-            return 0;
-        }
     }
 
 }
