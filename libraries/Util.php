@@ -34,8 +34,10 @@ class Util {
      * @param    array    $query   Optional data that is added to the URL as query string.
      *                               For more information see {@link http://www.php.net/http_build_query}
      * @return   string
+     * @access   public
+     * @static
      */
-    function makeURL($path = '', $query = null) {
+    public static function makeURL($path = '', $query = null) {
         $root_url = System::setting('Main:Url');
 
         $result = $root_url.'/'.$path;
@@ -49,11 +51,13 @@ class Util {
     /**
      * Generates a URL to a module page by path
      * @param    string   $page_path   The path of the module page
-     * @param    array    $query      Optional data that is added to the URL as query string.
-     *                                  For more information see {@link http://www.php.net/http_build_query}
+     * @param    array    $query       Optional data that is added to the URL as query string.
+     *                                   For more information see {@link http://www.php.net/http_build_query}
      * @return   string
+     * @access   public
+     * @static
      */
-    function makePageURL($page_path, $query = null) {
+    public static function makePageURL($page_path, $query = null) {
         $root_url = System::setting('Main:Url');
 
         if (System::setting('Main:UrlRewrite')) {
@@ -77,6 +81,8 @@ class Util {
      * @param    string   $module     Use module theme path instead of global theme path
      * @param    string   $theme      Use this specified theme
      * @return   string
+     * @access   public
+     * @static
      */
     public static function makeThemeFileURL($filename, $module = null, $theme = null) {
         $rooturl = System::setting('Main:Url');
@@ -142,6 +148,8 @@ class Util {
      * Parses a Webwork settings file. Returns a multidimensional array, with the section names and settings included.
      * @param    string   $filename   The filename of the YAML file being parsed
      * @return   array
+     * @access   public
+     * @static
      */
     public static function parseSettings($filename) {
         if (!is_readable($filename))
@@ -149,5 +157,5 @@ class Util {
 
         return \Symfony\Component\Yaml\Yaml::parse($filename);
     }
-    
+
 }
