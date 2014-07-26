@@ -83,7 +83,7 @@ function message($message, $type = 'info') {
  * @return   void
  */
 function not_found_error() {
-    Http::setHeader('HTTP/1.1 404 Not Found');
+    header('HTTP/1.1 404 Not Found');
     
     $tpl = new Template('404_body');
     $tpl->display();
@@ -96,7 +96,7 @@ function not_found_error() {
  * @return   void
  */
 function forbidden_error() {
-    Http::setHeader('HTTP/1.1 403 Forbidden');
+    header('HTTP/1.1 403 Forbidden');
     
     $tpl = new Template('403_body');
     $tpl->display();

@@ -93,41 +93,15 @@ class Http {
     }
 
     /**
-     * Sends a raw HTTP header
-     * @param    string   $directive   The header directive to set or a HTTP status code string
-     * @param    string   $value       The value of the header directive you want to set. Not neccessary if you set a HTTP
-     *                                   status status code string.
-     * @param    bool     $replace     Indicates whether the header should replace a previous similar header, or add a second
-     *                                   header of the same type. Defaults to TRUE.
-     * @param    int      $respcode    Forces the HTTP response code to the specified value. Optional.
-     * @return   bool
-     * @access   public
-     * @static
-     */
-    public static function setHeader($directive, $value = null, $replace = true, $respcode = null) {
-        if (!headers_sent()) {
-            if (isset($value)) {
-                header($directive.': '.$value, $replace, $respcode);
-            } else {
-                header($directive, $replace, $respcode);
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Generates a header redirection
      * @param    string   $url        The URL where the redirection goes to
-     * @param    int      $respcode   Forces the HTTP response code to the specified value. Defaults to 302.
+     * @param    int      $response   Forces the HTTP response code to the specified value (Default: 302)
      * @return   bool
      * @access   public
      * @static
      */
-    public static function redirect($url, $respcode = 302) {
-        return self::setHeader('Location', $url, true, $respcode);
+    public static function redirect($url, $response = 302) {
+        return header('Location: '.$url, true, $response);
     }
     
     /**
