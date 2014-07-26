@@ -64,7 +64,7 @@ class SessionManager {
         
         try {
             // Check if the user has a session cookie
-            if (self::$_sid = Http::getCookie('session')) {
+            if (self::$_sid = Util::getCookie('session')) {
                 // Cookie found: Try to reopen the session
                 self::$_session = new Session(self::$_sid);
 
@@ -84,7 +84,7 @@ class SessionManager {
             System::db()->query($sql, array($sid, date('Y-m-d H:i:s', $expire)));
 
             // Set the session cookie
-            Http::setCookie('session', $sid);
+            Util::setCookie('session', $sid);
 
             self::$_sid = $sid;
             self::$_session = new Session(self::$_sid);
@@ -188,7 +188,7 @@ class SessionManager {
         self::$_user = null;
         self::$_usergroup = null;
 
-        Http::deleteCookie('session');
+        Util::deleteCookie('session');
         
         return self::$_session->destroy();
     }

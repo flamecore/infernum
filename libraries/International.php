@@ -202,7 +202,7 @@ class International {
      * @static
      */
     public static function findBestBrowserLanguage($supported_langs) {
-        $browser_langs = Http::getBrowserLanguages();
+        $browser_langs = Util::getBrowserLanguages();
         
         foreach ($browser_langs as $browser_lang) {
             if (in_array($browser_lang, $supported_langs))
