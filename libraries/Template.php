@@ -52,22 +52,6 @@ class Template {
     private static $_globals = array();
 
     /**
-     * The title of the page
-     * @var      string
-     * @access   private
-     * @static
-     */
-    private static $_title;
-
-    /**
-     * The list of all head tags
-     * @var      array
-     * @access   private
-     * @static
-     */
-    private static $_head_tags = array();
-
-    /**
      * Generates a new template object
      * @param    string   $name     Name of the template to load (without file extension)
      * @param    string   $module   Name of the module where the template file is loaded from. No module means that
@@ -174,103 +158,6 @@ class Template {
             trigger_error('Template file "'.$filename.'" does not exist', E_USER_ERROR);
         
         return $filename;
-    }
-    
-    /**
-     * Sets or returns the page title
-     * @param    string   $title    The text to set as title or append to the title (optional)
-     * @param    bool     $append   Should the given text be appended to the currently set title? (Default: TRUE)
-     * @return   string
-     * @access   public
-     * @static
-     */
-    public static function title($title = null, $append = true) {
-        if (isset($title)) {
-            if ($append && self::$_title != '') {
-                self::$_title = $title.' &bull; '.self::$_title;
-            } else {
-                self::$_title = $title;
-            }
-        } else {
-            return self::$_title;
-        }
-    }
-
-    /**
-     * Adds a meta tag to the head tags
-     * @param    string   $name      The name of the meta tag
-     * @param    string   $content   The value of the meta tag
-     * @return   void
-     * @access   public
-     * @static
-     */
-    public static function addMetaTag($name, $content) {
-        self::$_head_tags['meta'][] = array(
-            'name'    => $name,
-            'content' => $content
-        );
-    }
-
-    /**
-     * Adds a link tag to the head tags
-     * @param    string   $rel    The relation attribute
-     * @param    string   $url    The URL to the file
-     * @param    string   $type   The type attribute
-     * @return   void
-     * @access   public
-     * @static
-     */
-    public static function addLinkTag($rel, $url, $type) {
-        self::$_head_tags['link'][] = array(
-            'rel'  => $rel,
-            'href' => $url,
-            'type' => $type
-        );
-    }
-
-    /**
-     * Adds a stylesheet link to the head tags
-     * @param    string   $url     The URL to the file
-     * @param    string   $media   Only for this media types. Defaults to 'all'.
-     * @return   void
-     * @access   public
-     * @static
-     */
-    public static function addCSS($url, $media = 'all') {
-        self::$_head_tags['css'][] = array(
-            'url'   => $url,
-            'media' => $media
-        );
-    }
-
-    /**
-     * Adds a JavaScript to the head tags
-     * @param    string   $url    The URL to the file
-     * @param    string   $type   The content type of the script. Defaults to 'text/javascript'.
-     * @return   void
-     * @access   public
-     * @static
-     */
-    public static function addScript($url, $type = 'application/javascript') {
-        self::$_head_tags['script'][] = array(
-            'url'  => $url,
-            'type' => $type
-        );
-    }
-
-    /**
-     * Lists all registered head tags of a given group
-     * @param    string   $group   The group of head tags to return
-     * @return   array
-     * @access   public
-     * @static
-     */
-    public static function getHeadTags($group) {
-        if (isset(self::$_head_tags[$group])) {
-            return self::$_head_tags[$group];
-        } else {
-            return array();
-        }
     }
 
 }

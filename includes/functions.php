@@ -70,10 +70,10 @@ function te($string, $vars = null) {
  * @return   void
  */
 function message($message, $type = 'info') {
-    $tpl = new Template('message_body');
-    $tpl->set('message', $message);
-    $tpl->set('type', $type);
-    $tpl->display();
+    $view = new View('message_body');
+    $view->set('message', $message);
+    $view->set('type', $type);
+    $view->display();
     
     exit();
 }
@@ -85,8 +85,8 @@ function message($message, $type = 'info') {
 function not_found_error() {
     header('HTTP/1.1 404 Not Found');
     
-    $tpl = new Template('404_body');
-    $tpl->display();
+    $view = new View('404_body');
+    $view->display();
     
     exit();
 }
@@ -98,8 +98,8 @@ function not_found_error() {
 function forbidden_error() {
     header('HTTP/1.1 403 Forbidden');
     
-    $tpl = new Template('403_body');
-    $tpl->display();
+    $view = new View('403_body');
+    $view->display();
     
     exit();
 }
