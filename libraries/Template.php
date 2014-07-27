@@ -30,7 +30,7 @@
 class Template {
 
     /**
-     * The file path of the template to load (without '.tpl')
+     * The full filename of the template to load (without file extension)
      * @var      string
      * @access   private
      */
@@ -69,18 +69,18 @@ class Template {
 
     /**
      * Generates a new template object
-     * @param    string   $template   The file path of the template to load (without '.tpl.php')
-     * @param    string   $module     The name of the module where the template file is loaded from. No module means that
-     *                                  the template is loaded from the global templates directory of the theme.
-     * @param    string   $theme      The name of the theme where the template file is loaded from (optional)
+     * @param    string   $name     Name of the template to load (without file extension)
+     * @param    string   $module   Name of the module where the template file is loaded from. No module means that
+     *                                the template is loaded from the global templates directory of the theme.
+     * @param    string   $theme    Name of the theme where the template file is loaded from (optional)
      * @return   void
      * @access   public
      */
-    public function __construct($template, $module = null, $theme = null) {
+    public function __construct($name, $module = null, $theme = null) {
         if (!isset($theme))
             $theme = System::setting('Main:Theme');
         
-        $this->_filename = self::locate($template, $module, $theme);
+        $this->_filename = self::locate($name, $module, $theme);
     }
 
     /**
@@ -91,7 +91,7 @@ class Template {
      * @return   void
      * @access   public
      */
-    public function set($param1, $param2) {
+    public function set($param1, $param2 = null) {
         if (is_array($param1)) {
             // Set multiple variables
             array_merge($this->_variables, $param1);
@@ -110,7 +110,7 @@ class Template {
      * @access   public
      * @static
      */
-    public static function setGlobal($param1, $param2) {
+    public static function setGlobal($param1, $param2 = null) {
         if (is_array($param1)) {
             // Set multiple variables
             array_merge(self::$_globals, $param1);
