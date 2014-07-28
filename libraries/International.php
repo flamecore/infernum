@@ -34,7 +34,7 @@ class International {
      * @access   private
      * @static
      */
-    private static $_locale;
+    static private $locale;
     
     /**
      * The data of the current locale
@@ -42,7 +42,7 @@ class International {
      * @access   private
      * @static
      */
-    private static $_locale_data;
+    static private $localeData;
 
     /**
      * The translation engine object
@@ -50,7 +50,7 @@ class International {
      * @access   private
      * @static
      */
-    private static $_t;
+    static private $translations;
 
     /**
      * Initializes the internationalization system
@@ -58,7 +58,7 @@ class International {
      * @access   public
      * @static
      */
-    public static function init() {
+    static public function init() {
         $locales = self::getAvailableLocales();
         $default_lang = (string) System::setting('I18n:Language');
 
@@ -87,10 +87,10 @@ class International {
             return System::db()->query($sql, [$locale])->fetchAssoc();
         });
         
-        self::$_locale = $locale;
-        self::$_locale_data = $locale_data;
+        self::$locale = $locale;
+        self::$localeData = $locale_data;
 
-        self::$_t = new Translations($locale);
+        self::$translations = new Translations($locale);
     }
     
     /**
@@ -99,11 +99,11 @@ class International {
      * @access   public
      * @static
      */
-    public static function getCurrentLocale() {
-        if (!isset(self::$_locale))
+    static public function getCurrentLocale() {
+        if (!isset(self::$locale))
             trigger_error('The I18n system is not yet initialized', E_USER_ERROR);
         
-        return self::$_locale;
+        return self::$locale;
     }
 
     /**
@@ -112,11 +112,11 @@ class International {
      * @access   public
      * @static
      */
-    public static function getTextDirection() {
-        if (!isset(self::$_locale_data))
+    static public function getTextDirection() {
+        if (!isset(self::$localeData))
             trigger_error('The I18n system is not yet initialized', E_USER_ERROR);
         
-        return self::$_locale_data['text_direction'];
+        return self::$localeData['text_direction'];
     }
 
     /**
@@ -125,13 +125,13 @@ class International {
      * @access   public
      * @static
      */
-    public static function getNumberSeparators() {
-        if (!isset(self::$_locale_data))
+    static public function getNumberSeparators() {
+        if (!isset(self::$localeData))
             trigger_error('The I18n system is not yet initialized', E_USER_ERROR);
         
         return [
-            'decimal'  => self::$_locale_data['number_sep_decimal'],
-            'thousand' => self::$_locale_data['number_sep_thousand']
+            'decimal'  => self::$localeData['number_sep_decimal'],
+            'thousand' => self::$localeData['number_sep_thousand']
         ];
     }
 
@@ -141,11 +141,11 @@ class International {
      * @access   public
      * @static
      */
-    public static function getMoneyFormat() {
-        if (!isset(self::$_locale_data))
+    static public function getMoneyFormat() {
+        if (!isset(self::$localeData))
             trigger_error('The I18n system is not yet initialized', E_USER_ERROR);
         
-        return self::$_locale_data['fmt_money'];
+        return self::$localeData['fmt_money'];
     }
 
     /**
@@ -154,11 +154,11 @@ class International {
      * @access   public
      * @static
      */
-    public static function getTimeFormat() {
-        if (!isset(self::$_locale_data))
+    static public function getTimeFormat() {
+        if (!isset(self::$localeData))
             trigger_error('The I18n system is not yet initialized', E_USER_ERROR);
         
-        return self::$_locale_data['fmt_time'];
+        return self::$localeData['fmt_time'];
     }
 
     /**
@@ -168,16 +168,16 @@ class International {
      * @access   public
      * @static
      */
-    public static function getDateFormat($length = 1) {
-        if (!isset(self::$_locale_data))
+    static public function getDateFormat($length = 1) {
+        if (!isset(self::$localeData))
             trigger_error('The I18n system is not yet initialized', E_USER_ERROR);
             
         if ($length >= 3) {
-            return self::$_locale_data['fmt_date_long'];
+            return self::$localeData['fmt_date_long'];
         } elseif ($length == 2) {
-            return self::$_locale_data['fmt_date_medium'];
+            return self::$localeData['fmt_date_medium'];
         } else {
-            return self::$_locale_data['fmt_date_short'];
+            return self::$localeData['fmt_date_short'];
         }
     }
     
@@ -187,29 +187,11 @@ class International {
      * @access   public
      * @static
      */
-    public static function getAvailableLocales() {
+    static public function getAvailableLocales() {
         $cache = new Cache('locales/list');
         return $cache->data(function () {
             return System::db()->select('@PREFIX@locales', 'id')->fetchColumn();
         });
-    }
-    
-    /**
-     * Tries to find an available language that can best satisfy the browser languages list
-     * @param    array    $supported_langs   The list of supported languages
-     * @return   string
-     * @access   public
-     * @static
-     */
-    public static function findBestBrowserLanguage($supported_langs) {
-        $browser_langs = Util::getBrowserLanguages();
-        
-        foreach ($browser_langs as $browser_lang) {
-            if (in_array($browser_lang, $supported_langs))
-                return $browser_lang;
-        }
-        
-        return false;
     }
 
     /**
@@ -218,11 +200,29 @@ class International {
      * @access   public
      * @static
      */
-    public static function t() {
-        if (!isset(self::$_t) || !(self::$_t instanceof Translations))
+    static public function t() {
+        if (!isset(self::$translations) || !(self::$translations instanceof Translations))
             trigger_error('The I18n system is not yet initialized', E_USER_ERROR);
         
-        return self::$_t;
+        return self::$translations;
+    }
+    
+    /**
+     * Tries to find an available language that can best satisfy the browser languages list
+     * @param    array    $supported_langs   The list of supported languages
+     * @return   string
+     * @access   private
+     * @static
+     */
+    static private function findBestBrowserLanguage($supported_langs) {
+        $browser_langs = Util::getBrowserLanguages();
+        
+        foreach ($browser_langs as $browser_lang) {
+            if (in_array($browser_lang, $supported_langs))
+                return $browser_lang;
+        }
+        
+        return false;
     }
     
 }

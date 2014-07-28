@@ -33,7 +33,7 @@ class View {
      * @var      object
      * @access   private
      */
-    private $_template;
+    private $template;
     
     /**
      * The name of the theme to use (Default: value given in settings)
@@ -41,7 +41,7 @@ class View {
      * @access   private
      * @static
      */
-    private static $_theme;
+    static private $theme;
 
     /**
      * The title of the page
@@ -49,7 +49,7 @@ class View {
      * @access   private
      * @static
      */
-    private static $_title;
+    static private $title;
 
     /**
      * The list of all head tags
@@ -57,7 +57,7 @@ class View {
      * @access   private
      * @static
      */
-    private static $_head_tags = array();
+    static private $headTags = array();
 
     /**
      * Generates a new template object
@@ -69,7 +69,7 @@ class View {
         $namespace = defined('WW_MODULE') ? WW_MODULE : null;
         $theme = self::getTheme();
         
-        $this->_template = new Template($template, $namespace, $theme);
+        $this->template = new Template($template, $namespace, $theme);
     }
 
     /**
@@ -81,7 +81,7 @@ class View {
      * @access   public
      */
     public function set($param1, $param2 = null) {
-        $this->_template->set($param1, $param2);
+        $this->template->set($param1, $param2);
     }
 
     /**
@@ -92,7 +92,7 @@ class View {
      * @static 
      */
     public function display() {
-        $this->_template->display();
+        $this->template->display();
     }
     
     /**
@@ -101,8 +101,8 @@ class View {
      * @access   public
      * @static
      */
-    public static function getTheme() {
-        return isset(self::$_theme) ? self::$_theme : System::setting('View:Theme', 'default');
+    static public function getTheme() {
+        return isset(self::$theme) ? self::$theme : System::setting('View:Theme', 'default');
     }
     
     /**
@@ -112,8 +112,8 @@ class View {
      * @access   public
      * @static
      */
-    public static function setTheme($theme) {
-        self::$_theme = (string) $theme;
+    static public function setTheme($theme) {
+        self::$theme = (string) $theme;
     }
     
     /**
@@ -122,8 +122,8 @@ class View {
      * @access   public
      * @static
      */
-    public static function getTitle($title = null, $append = true) {
-        return self::$_title;
+    static public function getTitle($title = null, $append = true) {
+        return self::$title;
     }
     
     /**
@@ -134,11 +134,11 @@ class View {
      * @access   public
      * @static
      */
-    public static function setTitle($title, $append = true) {
-        if ($append && self::$_title != '') {
-            self::$_title = $title.' &bull; '.self::$_title;
+    static public function setTitle($title, $append = true) {
+        if ($append && self::$title != '') {
+            self::$title = $title.' &bull; '.self::$title;
         } else {
-            self::$_title = (string) $title;
+            self::$title = (string) $title;
         }
     }
 
@@ -150,8 +150,8 @@ class View {
      * @access   public
      * @static
      */
-    public static function addMetaTag($name, $content) {
-        self::$_head_tags['meta'][] = array(
+    static public function addMetaTag($name, $content) {
+        self::$headTags['meta'][] = array(
             'name'    => $name,
             'content' => $content
         );
@@ -166,8 +166,8 @@ class View {
      * @access   public
      * @static
      */
-    public static function addLinkTag($rel, $url, $type) {
-        self::$_head_tags['link'][] = array(
+    static public function addLinkTag($rel, $url, $type) {
+        self::$headTags['link'][] = array(
             'rel'  => $rel,
             'href' => $url,
             'type' => $type
@@ -182,8 +182,8 @@ class View {
      * @access   public
      * @static
      */
-    public static function addCSS($url, $media = 'all') {
-        self::$_head_tags['css'][] = array(
+    static public function addCSS($url, $media = 'all') {
+        self::$headTags['css'][] = array(
             'url'   => $url,
             'media' => $media
         );
@@ -197,8 +197,8 @@ class View {
      * @access   public
      * @static
      */
-    public static function addScript($url, $type = 'application/javascript') {
-        self::$_head_tags['script'][] = array(
+    static public function addScript($url, $type = 'application/javascript') {
+        self::$headTags['script'][] = array(
             'url'  => $url,
             'type' => $type
         );
@@ -211,9 +211,9 @@ class View {
      * @access   public
      * @static
      */
-    public static function getHeadTags($group) {
-        if (isset(self::$_head_tags[$group])) {
-            return self::$_head_tags[$group];
+    static public function getHeadTags($group) {
+        if (isset(self::$headTags[$group])) {
+            return self::$headTags[$group];
         } else {
             return array();
         }

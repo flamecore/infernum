@@ -34,14 +34,14 @@ class Template {
      * @var      string
      * @access   private
      */
-    private $_filename;
+    private $filename;
 
     /**
      * All assigned template variables
      * @var      array
      * @access   private
      */
-    private $_variables = array();
+    private $variables = array();
     
     /**
      * All assigned global template variables
@@ -49,7 +49,7 @@ class Template {
      * @access   private
      * @static
      */
-    private static $_globals = array();
+    static private $globals = array();
 
     /**
      * Generates a new template object
@@ -64,7 +64,7 @@ class Template {
         if (!isset($theme))
             $theme = View::getTheme();
         
-        $this->_filename = self::locate($name, $module, $theme);
+        $this->filename = self::locate($name, $module, $theme);
     }
 
     /**
@@ -78,10 +78,10 @@ class Template {
     public function set($param1, $param2 = null) {
         if (is_array($param1)) {
             // Set multiple variables
-            array_merge($this->_variables, $param1);
+            array_merge($this->variables, $param1);
         } elseif (is_string($param1) && isset($param2)) {
             // Set a single variable
-            $this->_variables[$param1] = $param2;
+            $this->variables[$param1] = $param2;
         }
     }
 
@@ -97,10 +97,10 @@ class Template {
     public static function setGlobal($param1, $param2 = null) {
         if (is_array($param1)) {
             // Set multiple variables
-            array_merge(self::$_globals, $param1);
+            array_merge(self::$globals, $param1);
         } elseif (is_string($param1) && isset($param2)) {
             // Set a single variable
-            self::$_globals[$param1] = $param2;
+            self::$globals[$param1] = $param2;
         }
     }
 
@@ -120,9 +120,9 @@ class Template {
         };
         
         // Render the template with defined variables
-        $variables = array_merge(self::$_globals, $this->_variables);
+        $variables = array_merge(self::$globals, $this->variables);
         
-        return $sandbox($this->_filename, $variables);
+        return $sandbox($this->filename, $variables);
     }
     
     /**

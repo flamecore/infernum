@@ -33,14 +33,14 @@ class Cache {
      * @var      string
      * @access   private
      */
-    private $_name;
+    private $name;
 
     /**
      * The lifetime of the cache instance in seconds
      * @var      int
      * @access   private
      */
-    private $_lifetime;
+    private $lifetime;
 
     /**
      * Constructor
@@ -59,8 +59,8 @@ class Cache {
         if (!isset($lifetime))
             $lifetime = ww_config('cache_lifetime', 86400);
 
-        $this->_name = $name;
-        $this->_lifetime = (int) $lifetime;
+        $this->name = $name;
+        $this->lifetime = (int) $lifetime;
     }
 
     /**
@@ -71,13 +71,13 @@ class Cache {
      */
     public function data($callback) {
         if (!is_callable($callback)) {
-            trigger_error('Invalid callback given for cache instance "'.$this->_name.'"', E_USER_WARNING);
+            trigger_error('Invalid callback given for cache instance "'.$this->name.'"', E_USER_WARNING);
             return;
         }
 
         if (ww_config('enable_caching') == true) {
             // Caching is enabled, so we use a file
-            $filename = WW_CACHE_PATH.'/data/'.$this->_name.'.dat';
+            $filename = WW_CACHE_PATH.'/data/'.$this->name.'.dat';
 
             // Check if the file exists
             if (file_exists($filename)) {
@@ -85,7 +85,7 @@ class Cache {
                 list($modified, $raw_data) = explode("\n", $file_content, 2);
 
                 // Check if the file has expired. If so, there is no data we could use
-                if ($this->_lifetime > 0 && $modified + $this->_lifetime < time())
+                if ($this->lifetime > 0 && $modified + $this->lifetime < time())
                     $raw_data = null;
             }
 

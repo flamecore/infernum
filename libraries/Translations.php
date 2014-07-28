@@ -34,7 +34,7 @@ class Translations {
      * @var      array
      * @access   private
      */
-    private $_strings = array();
+    private $strings = array();
 
     /**
      * Constructor
@@ -44,7 +44,7 @@ class Translations {
     public function __construct($language) {
         // Load all strings of the selected language pack
         $cache = new Cache('translations/'.$language);
-        $this->_strings = $cache->data(function () use ($language) {
+        $this->strings = $cache->data(function () use ($language) {
             $sql = 'SELECT string, translation FROM @PREFIX@translations WHERE language = {0}';
             $result = System::db()->query($sql, array($language));
             
@@ -66,8 +66,8 @@ class Translations {
      */
     public function get($string, $vars = null) {
         // Check if a translation is available, if not use the input string
-        if (isset($this->_strings[$string])) {
-            $translation = $this->_strings[$string];
+        if (isset($this->strings[$string])) {
+            $translation = $this->strings[$string];
         } else {
             $translation = $string;
         }
