@@ -66,12 +66,10 @@ class View {
      * @access   public
      */
     public function __construct($template) {
-        if (!isset(self::$_theme))
-            self::$_theme = System::setting('View:Theme', 'default');
-        
         $namespace = defined('WW_MODULE') ? WW_MODULE : null;
+        $theme = self::getTheme();
         
-        $this->_template = new Template($template, $namespace, self::$_theme);
+        $this->_template = new Template($template, $namespace, $theme);
     }
 
     /**
@@ -104,7 +102,7 @@ class View {
      * @static
      */
     public static function getTheme() {
-        return self::$_theme;
+        return isset(self::$_theme) ? self::$_theme : System::setting('View:Theme', 'default');
     }
     
     /**

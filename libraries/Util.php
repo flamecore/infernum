@@ -88,7 +88,7 @@ class Util {
         $rooturl = System::setting('Web:Url');
 
         if (!isset($theme))
-            $theme = System::setting('View:Theme');
+            $theme = View::getTheme();
 
         if (isset($module)) {
             $path = $rooturl.'/websites/'.WW_SITE_NAME.'/modules/'.$module;

@@ -62,7 +62,7 @@ class Template {
      */
     public function __construct($name, $module = null, $theme = null) {
         if (!isset($theme))
-            $theme = System::setting('View:Theme');
+            $theme = View::getTheme();
         
         $this->_filename = self::locate($name, $module, $theme);
     }
