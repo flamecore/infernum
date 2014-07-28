@@ -38,7 +38,7 @@ class Util {
      * @static
      */
     public static function makeURL($path = '', $query = null) {
-        $root_url = System::setting('Main:Url');
+        $root_url = System::setting('Web:Url');
 
         $result = $root_url.'/'.$path;
 
@@ -58,9 +58,9 @@ class Util {
      * @static
      */
     public static function makePageURL($page_path, $query = null) {
-        $root_url = System::setting('Main:Url');
+        $root_url = System::setting('Web:Url');
 
-        if (System::setting('Main:UrlRewrite')) {
+        if (System::setting('Web:UrlRewrite')) {
             $result = $root_url.'/'.$page_path;
 
             if (isset($query) && is_array($query))
@@ -85,10 +85,10 @@ class Util {
      * @static
      */
     public static function makeThemeFileURL($filename, $module = null, $theme = null) {
-        $rooturl = System::setting('Main:Url');
+        $rooturl = System::setting('Web:Url');
 
         if (!isset($theme))
-            $theme = System::setting('Main:Theme');
+            $theme = System::setting('View:Theme');
 
         if (isset($module)) {
             $path = $rooturl.'/websites/'.WW_SITE_NAME.'/modules/'.$module;

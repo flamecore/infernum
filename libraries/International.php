@@ -60,7 +60,7 @@ class International {
      */
     public static function init() {
         $locales = self::getAvailableLocales();
-        $default_lang = (string) System::setting('Main:Language');
+        $default_lang = (string) System::setting('I18n:Language');
 
         if (!in_array($default_lang, $locales))
             trigger_error('The default language is invalid or undefined', E_USER_ERROR);

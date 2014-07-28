@@ -1,16 +1,36 @@
 Main:
-  # URL of Webwork root
-  Url: "http://localhost/Webwork"
-  # Theme from /themes folder
-  Theme: "default"
-  # Default language 
-  Language: "en-US"
-  # Use URL rewriting for page paths
-  UrlRewrite: true
-  # Module to use as frontpage
-  Frontpage: start
   # Name of the website
   SiteName: "Webwork"
+  # Module to use as frontpage
+  Frontpage: start
+
+Web:
+  # URL of Webwork root
+  Url: "http://localhost/Webwork"
+  # Use URL rewriting for page paths
+  UrlRewrite: true
+
+View:
+  # Theme from /themes folder
+  Theme: default
+
+I18n:
+  # Default language 
+  Language: "en-US"
+
+Database:
+  # Database driver to use
+  Driver: "MySQL"
+  # Database server host
+  Host: "localhost"
+  # Username of database server user
+  User: "root"
+  # Password of database server user
+  Password: ""
+  # Name of database
+  Database: "webwork"
+  # Database table prefix
+  Prefix: "ww_"
 
 Session:
   # Default session lifetime
@@ -31,17 +51,3 @@ Cookie:
   Domain: ""
   # Path on the server in which cookies will be available on
   Path: "/"
-
-Database:
-  # Database driver to use
-  Driver: "MySQL"
-  # Database server host
-  Host: "localhost"
-  # Username of database server user
-  User: "root"
-  # Password of database server user
-  Password: ""
-  # Name of database
-  Database: "webwork"
-  # Database table prefix
-  Prefix: "ww_"

@@ -62,7 +62,7 @@ class Template {
      */
     public function __construct($name, $module = null, $theme = null) {
         if (!isset($theme))
-            $theme = System::setting('Main:Theme');
+            $theme = System::setting('View:Theme');
         
         $this->_filename = self::locate($name, $module, $theme);
     }
@@ -146,7 +146,7 @@ class Template {
      */
     public static function locate($template, $module = null, $theme = null) {
         if (!isset($theme))
-            $theme = System::setting('Main:Theme');
+            $theme = System::setting('View:Theme');
         
         if (isset($module)) {
             $filename = WW_SITE_PATH.'/modules/'.$module.'/themes/'.$theme.'/templates/'.$template.'.tpl.php';
