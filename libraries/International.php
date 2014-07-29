@@ -200,11 +200,11 @@ class International {
      * @access   public
      * @static
      */
-    static public function t() {
+    static public function translate($string, $vars = null) {
         if (!isset(self::$translations) || !(self::$translations instanceof Translations))
             trigger_error('The I18n system is not yet initialized', E_USER_ERROR);
         
-        return self::$translations;
+        return self::$translations->get($string, $vars);
     }
     
     /**

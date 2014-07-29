@@ -48,7 +48,7 @@ function ww_config($confkey, $default = false) {
  * @return   string
  */
 function t($string, $vars = null) {
-    return International::t()->get($string, $vars);
+    return International::translate($string, $vars);
 }
 
 /**
@@ -58,7 +58,7 @@ function t($string, $vars = null) {
  * @return   void
  */
 function te($string, $vars = null) {
-    echo International::t()->get($string, $vars);
+    echo International::translate($string, $vars);
 }
 
 /**
