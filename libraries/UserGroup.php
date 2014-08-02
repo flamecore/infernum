@@ -26,18 +26,11 @@
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class UserGroup {
+class UserGroup extends DatabaseRecord {
     
     /**
-     * The user group data
-     * @var      array
-     * @access   private
-     */
-    private $_data = [];
-    
-    /**
-     * Constructor
-     * @param    int      $identifier   The ID of the user group
+     * Fetches the data of the user group
+     * @param    mixed    $identifier   The ID (int) or name (string) of the user group
      * @return   void
      * @access   public
      */
@@ -50,18 +43,20 @@ class UserGroup {
             trigger_error('Invalid user group identifier given', E_USER_ERROR);
         }
         
-        $sql = 'SELECT * FROM @PREFIX@usergroups WHERE '.$selector.' = {0} LIMIT 1';
+        $sql = sprintf('SELECT * FROM @PREFIX@usergroups WHERE %s = {0} LIMIT 1', $selector);
         $result = System::db()->query($sql, [$identifier]);
 
-        if ($result->numRows() == 1) {
-            $data = $result->fetchAssoc();
+        if ($result->hasRows()) {
+            $info = $result->fetchAssoc();
 
-            $this->_data['id'] = (int) $data['id'];
-            $this->_data['name'] = $data['name'];
-            $this->_data['title'] = $data['title'];
-            $this->_data['accesslevel'] = (int) $data['accesslevel'];
+            $this->_data = array(
+                'id' => (int) $info['id'],
+                'name' => $info['name'],
+                'title' => $info['title'],
+                'accesslevel' => (int) $info['accesslevel']
+            );
         } else {
-            throw new Exception('User group does not exist (id = '.$id.')');
+            throw new Exception(sprintf('User group does not exist (%s = %s)', $selector, $identifier));
         }
     }
     
@@ -71,7 +66,7 @@ class UserGroup {
      * @access   public
      */
     public function getID() {
-        return $this->_data['id'];
+        return $this->get('id');
     }
     
     /**
@@ -80,7 +75,7 @@ class UserGroup {
      * @access   public
      */
     public function getName() {
-        return $this->_data['name'];
+        return $this->get('name');
     }
     
     /**
@@ -89,7 +84,7 @@ class UserGroup {
      * @access   public
      */
     public function getTitle() {
-        return $this->_data['title'];
+        return $this->get('title');
     }
     
     /**
@@ -98,19 +93,52 @@ class UserGroup {
      * @access   public
      */
     public function getAccessLevel() {
-        return $this->_data['accesslevel'];
+        return $this->get('accesslevel');
+    }
+    
+    /**
+     * Sets the title of the group
+     * @param    string   $title   The new title
+     * @return   bool
+     * @access   public
+     */
+    public function setTitle($title) {
+        return $this->set('title', $title);
+    }
+    
+    /**
+     * Sets the access level of the group
+     * @param    int      $level   The new access level
+     * @return   bool
+     * @access   public
+     */
+    public function setAccessLevel($level) {
+        return $this->set('accesslevel', $level);
+    }
+    
+    /**
+     * Updates the given columns in the database table
+     * @param    array    $columns   Names and values of columns to be updated (Format: [name => value, ...])
+     * @return   bool
+     * @access   protected
+     */
+    protected function update($columns) {
+        return System::db()->update('@PREFIX@usergroups', $columns, [
+            'where' => 'id = {0}',
+            'vars' => [$this->get('id')]
+        ]);
     }
 
     /**
-     * Checks if a user group with given ID exists
-     * @param    int      $gid   The ID of the user group
+     * Checks whether or not a user group with given ID exists
+     * @param    int      $id   The ID of the user group
      * @return   bool
      * @access   public
      * @static
      */
-    public static function exists($gid) {
+    public static function exists($id) {
         $sql = 'SELECT id FROM @PREFIX@usergroups WHERE id = {0} LIMIT 1';
-        $result = System::db()->query($sql, [$gid]);
+        $result = System::db()->query($sql, [$id]);
         
         return $result->hasRows();
     }

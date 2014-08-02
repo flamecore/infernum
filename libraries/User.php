@@ -26,25 +26,11 @@
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class User {
+class User extends DatabaseRecord {
     
     /**
-     * The data of the user
-     * @var      array
-     * @access   private
-     */
-    private $_data = [];
-    
-    /**
-     * The profile info of the user
-     * @var      array
-     * @access   private
-     */
-    private $_profile = [];
-    
-    /**
-     * Constructor
-     * @param    mixed    $identifier   ID or username of the user
+     * Fetches the data of the user
+     * @param    mixed    $identifier   The ID (int) or username (string) of the user
      * @return   void
      * @access   public
      */
@@ -57,21 +43,23 @@ class User {
             trigger_error('Invalid user identifier given', E_USER_ERROR);
         }
         
-        $sql = 'SELECT * FROM @PREFIX@users WHERE `'.$selector.'` = {0} LIMIT 1';
+        $sql = sprintf('SELECT * FROM @PREFIX@users WHERE `%s` = {0} LIMIT 1', $selector);
         $result = System::db()->query($sql, [$identifier]);
 
         if ($result->hasRows()) {
-            $data = $result->fetchAssoc();
+            $info = $result->fetchAssoc();
             
-            $this->_data['id'] = (int) $data['id'];
-            $this->_data['username'] = $data['username'];
-            $this->_data['email'] = $data['email'];
-            $this->_data['pwhash'] = $data['password'];
-            $this->_data['group'] = (int) $data['group'];
-            $this->_data['lastactive'] = strtotime($data['lastactive']);
-            $this->_profile = json_decode($data['profile']);
+            $this->data = array(
+                'id' => (int) $info['id'],
+                'username' => $info['username'],
+                'email' => $info['email'],
+                'password' => $info['password'],
+                'group' => (int) $info['group'],
+                'lastactive' => strtotime($info['lastactive']),
+                'profile' => json_decode($info['profile'])
+            );
         } else {
-            throw new Exception('User does not exist ('.$selector.' = '.$identifier.')');
+            throw new Exception(sprintf('User does not exist (%s = %s)', $selector, $identifier));
         }
     }
     
@@ -81,7 +69,7 @@ class User {
      * @access   public
      */
     public function getID() {
-        return $this->_data['id'];
+        return $this->get('id');
     }
     
     /**
@@ -90,7 +78,7 @@ class User {
      * @access   public
      */
     public function getUsername() {
-        return $this->_data['username'];
+        return $this->get('username');
     }
     
     /**
@@ -99,7 +87,7 @@ class User {
      * @access   public
      */
     public function getEmail() {
-        return $this->_data['email'];
+        return $this->get('email');
     }
     
     /**
@@ -108,7 +96,7 @@ class User {
      * @access   public
      */
     public function verifyPassword($password) {
-        return password_verify($password, $this->_data['pwhash']);
+        return password_verify($password, $this->get('password'));
     }
     
     /**
@@ -117,7 +105,7 @@ class User {
      * @access   public
      */
     public function getGroupID() {
-        return $this->_data['group'];
+        return $this->get('group');
     }
     
     /**
@@ -128,7 +116,7 @@ class User {
      * @access   public
      */
     public function getProfile($key = null) {
-        return isset($key) ? $this->_profile[$key] : $this->_profile;
+        return isset($key) ? $this->getListItem('profile', $key) : $this->get('profile');
     }
     
     /**
@@ -137,9 +125,7 @@ class User {
      * @access   public
      */
     public function setUsername($username) {
-        $this->_data['username'] = $email;
-        
-        return $this->_update('username', $username);
+        return $this->set('username', $username);
     }
     
     /**
@@ -148,9 +134,7 @@ class User {
      * @access   public
      */
     public function setEmail($email) {
-        $this->_data['email'] = $email;
-        
-        return $this->_update('email', $email);
+        return $this->set('email', $email);
     }
     
     /**
@@ -159,11 +143,8 @@ class User {
      * @access   public
      */
     public function setPassword($password) {
-        $pwhash = password_hash($password, PASSWORD_BCRYPT);
-        
-        $this->_data['pwhash'] = $pwhash;
-        
-        return $this->_update('password', $pwhash);
+        $hash = password_hash($password, PASSWORD_BCRYPT);
+        return $this->set('password', $hash);
     }
     
     /**
@@ -179,32 +160,28 @@ class User {
             return false;
         }
         
-        $this->_data['group'] = $gid;
-        
-        return $this->_update('group', $gid);
+        return $this->set('group', $gid);
     }
 
     /**
-     * Updates user profile in the database
-     * @param    mixed    $param1   The name of a single column (string) or pairs of names and values of multiple
-     *                                columns (array in the format [name => value, ...]) to be updated
-     * @param    mixed    $param2   The new value of the column to be updated (only if parameter 1 is used for
-     *                                the column name)
+     * Updates one or more items in the user profile
+     * @param    mixed    $param1   The name of a single field (string) or pairs of names and values of multiple
+     *                                fields (array in the format [name => value, ...]) to be updated
+     * @param    mixed    $param2   The new value of the field to be updated (only if parameter 1 is used for
+     *                                the field name)
      * @return   bool
      * @access   public
      */
     public function setProfile($param1, $param2 = null) {
         if (is_array($param1)) {
             // Update multiple columns
-            foreach ($param1 as $key => $value) {
-                $this->_profile[$key] = $value;
-            }
+            return $this->setListItems('profile', $param1);
         } elseif (is_string($param1) && isset($param2)) {
             // Update a single column
-            $this->_profile[$param1] = $param2;
+            return $this->setListItem('profile', $param1, $param2);
+        } else {
+            throw new InvalidArgumentException('The first parameter must be an array or a string together with the second parameter.');
         }
-        
-        return $this->_update('profile', json_encode($this->_profile));
     }
 
     /**
@@ -213,7 +190,7 @@ class User {
      * @access   public
      */
     public function isOnline() {
-        $lastactive = $this->_data['lastactive'];
+        $lastactive = $this->get('lastactive');
         $threshold = System::setting('Session:OnlineThreshold', 600);
         
         // Check if the last activity time is within the threshold
@@ -221,27 +198,28 @@ class User {
     }
     
     /**
-     * Updates the given column in the user database table
+     * Updates the given columns in the database table
+     * @param    array    $columns   Names and values of columns to be updated (Format: [name => value, ...])
      * @return   bool
-     * @access   private
+     * @access   protected
      */
-    private function _update($column, $value) {
-        return System::db()->update('@PREFIX@users', [$column => $value], [
+    protected function update($columns) {
+        return System::db()->update('@PREFIX@users', $columns, [
             'where' => 'id = {0}',
-            'vars' => [$this->_data['id']]
+            'vars' => [$this->get('id')]
         ]);
     }
     
     /**
      * Checks if a user with given ID exists
-     * @param    int      $uid   The ID of the user
+     * @param    int      $id   The ID of the user
      * @return   bool
      * @access   public
      * @static
      */
-    public static function exists($uid) {
+    static public function exists($id) {
         $sql = 'SELECT id FROM @PREFIX@users WHERE id = {0} LIMIT 1';
-        $result = System::db()->query($sql, [$uid]);
+        $result = System::db()->query($sql, [$id]);
         
         return $result->hasRows();
     }

@@ -26,59 +26,29 @@
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Session {
+class Session extends DatabaseRecord {
     
     /**
-     * The ID of the opened session
-     * @var      string
-     * @access   private
-     */
-    private $_sid;
-    
-    /**
-     * The ID of the user who is assigned to the session
-     * @var      int
-     * @access   private
-     */
-    private $_uid;
-    
-    /**
-     * The stored session data
-     * @var      array
-     * @access   private
-     */
-    private $_data = [];
-    
-    /**
-     * The lifetime of the session in seconds
-     * @var      int
-     * @access   private
-     */
-    private $_lifetime = 3600;
-    
-    /**
-     * Constructor
-     * @param    int      $sid   The ID of the session
+     * Fetches the data of the session
+     * @param    string   $identifier   The ID of the session
      * @return   void
      * @access   public
      */
-    public function __construct($sid) {
+    public function __construct($identifier) {
         $sql = 'SELECT * FROM @PREFIX@sessions WHERE id = {0} AND expire > {1} LIMIT 1';
-        $result = System::db()->query($sql, [$sid, date('Y-m-d H:i:s')]);
+        $result = System::db()->query($sql, [$identifier, date('Y-m-d H:i:s')]);
         
-        if ($result->numRows() == 1) {
+        if ($result->hasRows()) {
             $info = $result->fetchAssoc();
             
-            $this->_sid = $info['id'];
-            $this->_lifetime = $info['lifetime'];
-            
-            if ($info['user'] > 0)
-                $this->_uid = $info['user'];
-            
-            if ($info['data'] != '')
-                $this->data = unserialize($info['data']);
+            $this->data = array(
+                'id' => $info['id'],
+                'lifetime' => $info['lifetime'],
+                'user' => $info['user'] > 0 ? $info['user'] : null,
+                'data' => !empty($info['data']) ? unserialize($info['data']) : null
+            );
         } else {
-            throw new Exception('Session does not exist (id = '.$sid.')');
+            throw new Exception('Session does not exist (id = '.$identifier.')');
         }
     }
     
@@ -88,8 +58,8 @@ class Session {
      * @access   public
      */
     public function refresh() {
-        $sql = 'UPDATE @PREFIX@sessions SET expire = {0} WHERE id = {1} LIMIT 1';
-        System::db()->query($sql, [date('Y-m-d H:i:s', time()+$this->_lifetime), $this->_sid]);
+        $expire = time() + $this->get('lifetime');
+        $this->set('expire', date('Y-m-d H:i:s', $expire));
     }
     
     /**
@@ -106,10 +76,7 @@ class Session {
             return false;
         }
         
-        $this->_uid = $uid;
-        
-        $sql = 'UPDATE @PREFIX@sessions SET user = {0} WHERE id = {1} LIMIT 1';
-        return System::db()->query($sql, [$uid, $this->_sid]);
+        $this->set('user', $uid);
     }
     
     /**
@@ -119,7 +86,7 @@ class Session {
      * @access   public
      */
     public function read($key) {
-        return isset($this->_data[$key]) ? $this->_data[$key] : false;
+        return $this->getListItem('data', $key);
     }
     
     /**
@@ -130,23 +97,20 @@ class Session {
      * @access   public
      */
     public function store($key, $value) {
-        $this->_data[$key] = $value;
-        
-        $sql = 'UPDATE @PREFIX@sessions SET data = {0} WHERE id = {1} LIMIT 1';
-        return System::db()->query($sql, [serialize($this->_data), $this->_sid]);
+        return $this->setListItem('data', $key, $value);
     }
 
     /**
      * Sets the lifetime of the session
-     * @param    int      $time   The new session lifetime in seconds. Defaults to 3600.
+     * @param    int      $lifetime   The new session lifetime in seconds
      * @return   void
      * @access   public
      */
-    public function setLifetime($time = 3600) {
-        $this->_lifetime = $time;
-        
-        $sql = 'UPDATE @PREFIX@sessions SET lifetime = {0}, expire = {1} WHERE id = {2} LIMIT 1';
-        System::db()->query($sql, [$this->_lifetime, time()+$this->_lifetime, $this->_sid]);
+    public function setLifetime($lifetime) {
+        $this->setMultiple([
+            'lifetime' => $lifetime,
+            'expire' => time() + $lifetime
+        ]);
     }
 
     /**
@@ -158,8 +122,8 @@ class Session {
         $sql = 'DELETE FROM @PREFIX@sessions WHERE id = {0}';
         return System::db()->query($sql, [$this->_sid]);
         
-        $this->_sid = null;
-        $this->_userid = null;
+        unset($this->data);
+        $this->close();
     }
     
     /**
@@ -167,8 +131,8 @@ class Session {
      * @return   string
      * @access   public
      */
-    public function getSID() {
-        return $this->_sid;
+    public function getID() {
+        return $this->get('id');
     }
     
     /**
@@ -177,7 +141,35 @@ class Session {
      * @access   public
      */
     public function getUserID() {
-        return isset($this->_uid) ? $this->_uid : false;
+        return $this->get('user');
+    }
+    
+    /**
+     * Updates the given columns in the database table
+     * @param    array    $columns   Names and values of columns to be updated (Format: [name => value, ...])
+     * @return   bool
+     * @access   protected
+     */
+    protected function update($columns) {
+        return System::db()->update('@PREFIX@sessions', $columns, [
+            'where' => 'id = {0}',
+            'vars' => [$this->get('id')]
+        ]);
+    }
+    
+    /**
+     * Checks wheter or not the session with given ID exists
+     * @param    string   $id   The ID of the session
+     * @return   bool
+     * @access   public
+     * @static
+     * @abstract
+     */
+    public static function exists($id) {
+        $sql = 'SELECT id FROM @PREFIX@sessions WHERE id = {0} LIMIT 1';
+        $result = System::db()->query($sql, [$id]);
+        
+        return $result->hasRows();
     }
     
 }
