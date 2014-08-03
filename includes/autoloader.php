@@ -29,14 +29,6 @@
 class WebworkLoader {
     
     /**
-     * Path of the currently loaded module
-     * @var      string
-     * @access   private
-     * @static
-     */
-    private static $modulePath;
-    
-    /**
      * Returns a list of possible source paths
      * @return   array
      * @access   public

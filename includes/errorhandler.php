@@ -49,8 +49,9 @@ function ww_handle_exception($exception) {
 }
 
 function ww_log($message, $severity = 0, $logfile = 'system') {
-    if (!isset($GLOBALS['CONFIG']['enable_logging']) || $GLOBALS['CONFIG']['enable_logging'] == false)
-        return false;
+    $enabled = isset($GLOBALS['CONFIG']['enable_logging']) ? $GLOBALS['CONFIG']['enable_logging'] : false;
+	
+    if (!$enabled) return false;
     
     if ($severity >= 4) {
         $severity_tag = 'ALERT';
