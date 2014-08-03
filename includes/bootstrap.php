@@ -27,15 +27,15 @@
  * @author   Christian Neff <christian.neff@gmail.com>
  */
 
-if (!is_readable(WW_ENGINE_PATH.'/includes/config.php'))
-    exit('No configuration file found. Please copy the file "includes/config.php.dist" to "includes/config.php".');
+if (!is_readable(WW_ENGINE_PATH.'/config.php'))
+    exit('No configuration file found. Please copy the file "config.php.dist" to "config.php".');
 
 if (!is_readable(WW_ENGINE_PATH.'/vendor/autoload.php'))
     exit('No vendor autoloader found. Please make sure that you have installed the required libraries using Composer.');
 
 $CONFIG = array();
 
-require_once WW_ENGINE_PATH.'/includes/config.php';
+require_once WW_ENGINE_PATH.'/config.php';
 require_once WW_ENGINE_PATH.'/includes/errorhandler.php';
 require_once WW_ENGINE_PATH.'/includes/autoloader.php';
 require_once WW_ENGINE_PATH.'/vendor/autoload.php';
