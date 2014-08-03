@@ -59,7 +59,7 @@ class International {
      * @static
      */
     static public function init() {
-        $locales = self::getAvailableLocales();
+        $locales = Localization::getAvailable();
         $default_lang = (string) System::setting('I18n:Language');
 
         if (!in_array($default_lang, $locales))
@@ -81,15 +81,7 @@ class International {
             $locale = $default_lang;
         }
         
-        $cache = new Cache('locales/'.$locale);
-        $locale_data = $cache->data(function () use ($locale) {
-            $sql = 'SELECT * FROM @PREFIX@locales WHERE id = {0}';
-            return System::db()->query($sql, [$locale])->fetchAssoc();
-        });
-        
-        self::$locale = $locale;
-        self::$localeData = $locale_data;
-
+        self::$locale = new Localization($locale);
         self::$translations = new Translations($locale);
     }
     
@@ -99,99 +91,11 @@ class International {
      * @access   public
      * @static
      */
-    static public function getCurrentLocale() {
-        if (!isset(self::$locale))
+    static public function getLocale() {
+        if (!isset(self::$locale) || !(self::$locale instanceof Localization))
             trigger_error('The I18n system is not yet initialized', E_USER_ERROR);
         
         return self::$locale;
-    }
-
-    /**
-     * Returns the text direction of the locale
-     * @return   string
-     * @access   public
-     * @static
-     */
-    static public function getTextDirection() {
-        if (!isset(self::$localeData))
-            trigger_error('The I18n system is not yet initialized', E_USER_ERROR);
-        
-        return self::$localeData['text_direction'];
-    }
-
-    /**
-     * Returns the number separators
-     * @return   array
-     * @access   public
-     * @static
-     */
-    static public function getNumberSeparators() {
-        if (!isset(self::$localeData))
-            trigger_error('The I18n system is not yet initialized', E_USER_ERROR);
-        
-        return [
-            'decimal'  => self::$localeData['number_sep_decimal'],
-            'thousand' => self::$localeData['number_sep_thousand']
-        ];
-    }
-
-    /**
-     * Returns the money format
-     * @return   string
-     * @access   public
-     * @static
-     */
-    static public function getMoneyFormat() {
-        if (!isset(self::$localeData))
-            trigger_error('The I18n system is not yet initialized', E_USER_ERROR);
-        
-        return self::$localeData['fmt_money'];
-    }
-
-    /**
-     * Returns the time format
-     * @return   string
-     * @access   public
-     * @static
-     */
-    static public function getTimeFormat() {
-        if (!isset(self::$localeData))
-            trigger_error('The I18n system is not yet initialized', E_USER_ERROR);
-        
-        return self::$localeData['fmt_time'];
-    }
-
-    /**
-     * Returns the date format
-     * @param    int      $length   The date length (1 = short [default], 2 = medium, 3 = long)
-     * @return   string
-     * @access   public
-     * @static
-     */
-    static public function getDateFormat($length = 1) {
-        if (!isset(self::$localeData))
-            trigger_error('The I18n system is not yet initialized', E_USER_ERROR);
-            
-        if ($length >= 3) {
-            return self::$localeData['fmt_date_long'];
-        } elseif ($length == 2) {
-            return self::$localeData['fmt_date_medium'];
-        } else {
-            return self::$localeData['fmt_date_short'];
-        }
-    }
-    
-    /**
-     * Returns a list of available locale packs
-     * @return   array
-     * @access   public
-     * @static
-     */
-    static public function getAvailableLocales() {
-        $cache = new Cache('locales/list');
-        return $cache->data(function () {
-            return System::db()->select('@PREFIX@locales', 'id')->fetchColumn();
-        });
     }
 
     /**

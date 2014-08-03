@@ -71,7 +71,7 @@ class Format {
      * @static
      */
     public static function number($number, $decimals = 0, $group_thousands = false) {
-        $separators = International::getNumberSeparators();
+        $separators = International::getLocale()->getNumberSeparators();
         
         $decimal_sep = $separators['decimal'];
         $thousands_sep = $group_thousands ? $separators['thousand'] : '';
@@ -89,7 +89,7 @@ class Format {
      * @static
      */
     public static function money($number, $currency, $format = null) {
-        $format = isset($format) ? $format : International::getMoneyFormat();
+        $format = isset($format) ? $format : International::getLocale()->getMoneyFormat();
         
         if (preg_match('/(\$ ?)*#(.?)###(.)(#+)( ?\$)*/', $format, $parts)) {
             $prefix = str_replace('$', $currency, $parts[1]);
@@ -115,7 +115,7 @@ class Format {
      * @static
      */
     public static function time($input = null, $format = null) {
-        $format = isset($format) ? $format : International::getTimeFormat();
+        $format = isset($format) ? $format : International::getLocale()->getTimeFormat();
         $time   = isset($input) ? Util::toTimestamp($input) : time();
         
         return date($format, $time);
@@ -132,10 +132,10 @@ class Format {
      * @static
      */
     public static function date($input = null, $length = 1, $with_time = false) {
-        $format = International::getDateFormat($length);
+        $format = International::getLocale()->getDateFormat($length);
         
         if ($with_time)
-            $format .= ', ' . International::getTimeFormat();
+            $format .= ', ' . International::getLocale()->getTimeFormat();
         
         $time = isset($input) ? Util::toTimestamp($input) : time();
         
