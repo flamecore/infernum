@@ -29,33 +29,27 @@
 class Util {
 
     /**
-     * Generates a URL to a relative path based on the application URL
+     * Generates a URL to a path based on the application URL
      * @param    string   $path    The relative path of the location
-     * @param    array    $query   Optional data that is added to the URL as query string.
-     *                               For more information see {@link http://www.php.net/http_build_query}
+     * @param    string   $query   Optional query string that is added to the URL
      * @return   string
-     * @access   public
-     * @static
      */
     public static function makeURL($path = '', $query = null) {
         $root_url = System::setting('Web:Url');
 
         $result = $root_url.'/'.$path;
 
-        if (isset($query) && is_array($query))
-            $result .= '?'.http_build_query($query);
+        if (isset($query))
+            $result .= '?'.$query;
 
         return $result;
     }
 
     /**
-     * Generates a URL to a module page by path
+     * Generates a URL to a module page
      * @param    string   $page_path   The path of the module page
-     * @param    array    $query       Optional data that is added to the URL as query string.
-     *                                   For more information see {@link http://www.php.net/http_build_query}
+     * @param    string   $query       Optional query string that is added to the URL
      * @return   string
-     * @access   public
-     * @static
      */
     public static function makePageURL($page_path, $query = null) {
         $root_url = System::setting('Web:Url');
@@ -63,13 +57,13 @@ class Util {
         if (System::setting('Web:UrlRewrite')) {
             $result = $root_url.'/'.$page_path;
 
-            if (isset($query) && is_array($query))
-                $result .= '?'.http_build_query($query);
+            if (isset($query))
+                $result .= '?'.$query;
         } else {
             $result = $root_url.'/?p='.$page_path;
 
-            if (isset($query) && is_array($query))
-                $result .= '&'.http_build_query($query);
+            if (isset($query))
+                $result .= '&'.$query;
         }
 
         return $result;
@@ -81,8 +75,6 @@ class Util {
      * @param    string   $module     Use module theme path instead of global theme path
      * @param    string   $theme      Use this specified theme
      * @return   string
-     * @access   public
-     * @static
      */
     public static function makeThemeFileURL($filename, $module = null, $theme = null) {
         $rooturl = System::setting('Web:Url');
@@ -103,8 +95,6 @@ class Util {
      * Returns the value of an HTTP cookie. Returns FALSE if the cookie is not set.
      * @param    string   $name   The name of the cookie. The prefix is prepended automatically.
      * @return   mixed
-     * @access   public
-     * @static
      */
     public static function getCookie($name) {
         $name_prefix = System::setting('Cookie:NamePrefix');
@@ -127,8 +117,6 @@ class Util {
      *                                  * 0 (zero) = Cookie expires at the end of the session (default)
      *                                  * UNIX timestamp, DateTime object or time/date string
      * @return   bool
-     * @access   public
-     * @static
      */
     public static function setCookie($name, $value, $expire = 0) {
         if (headers_sent())
@@ -156,8 +144,6 @@ class Util {
      * Forces the deletion of a cookie by setting it to expire
      * @param    string   $name   The name of the cookie
      * @return   bool
-     * @access   public
-     * @static
      */
     public static function deleteCookie($name) {
         return self::setCookie($name, '', time()-3600);
@@ -168,8 +154,6 @@ class Util {
      * @param    string   $url        The URL where the redirection goes to
      * @param    int      $response   Forces the HTTP response code to the specified value (Default: 302)
      * @return   bool
-     * @access   public
-     * @static
      */
     public static function redirect($url, $response = 302) {
         return header('Location: '.$url, true, $response);
@@ -179,8 +163,6 @@ class Util {
      * Lists the languages that the browser accepts by parsing the 'Accept-Language' header. Returns an array on success
      *   or FALSE if no or an invalid header was sent.
      * @return   array
-     * @access   public
-     * @static
      */
     public static function getBrowserLanguages() {
         if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
@@ -210,8 +192,6 @@ class Util {
      * @param    string   $value   The value to match
      * @param    string   $list    List of fnmatch() patterns separated by commas
      * @return   bool
-     * @access   public
-     * @static
      */
     public static function matchesPatternList($value, $list) {
         $patterns = explode(',', $list);
@@ -228,8 +208,6 @@ class Util {
      * Transforms the given input into a timestamp
      * @param    mixed    $input   Time/Date input can be UNIX timestamp, DateTime object or time/date string
      * @return   int
-     * @access   public
-     * @static
      */
     public static function toTimestamp($input) {
         if (is_numeric($input)) {
@@ -254,8 +232,6 @@ class Util {
      * Parses a Webwork settings file. Returns a multidimensional array, with the section names and settings included.
      * @param    string   $filename   The filename of the YAML file being parsed
      * @return   array
-     * @access   public
-     * @static
      */
     public static function parseSettings($filename) {
         if (!is_readable($filename))
