@@ -181,6 +181,22 @@ class User extends DatabaseRecord {
             throw new InvalidArgumentException('The first parameter must be an array or a string together with the second parameter.');
         }
     }
+    
+    /**
+     * Returns the last activity time of the user
+     * @return   DateTime
+     */
+    public function getLastActive() {
+        return $this->get('lastactive');
+    }
+    
+    /**
+     * Updates the last activity time of the user
+     * @param    DateTime   $time   The new last activity time (Default: now)
+     */
+    public function setLastActive(DateTime $time = null) {
+        $this->set('lastactive', $time ?: new DateTime());
+    }
 
     /**
      * Checks if the user is online

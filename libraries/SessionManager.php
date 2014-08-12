@@ -104,10 +104,8 @@ class SessionManager {
         self::$_session->refresh();
         
         // Update the assigned user's last activity time
-        if (self::isUserLogged()) {
-            $sql = 'UPDATE @PREFIX@users SET lastactive = {0} WHERE id = {1} LIMIT 1';
-            System::db()->query($sql, array(date('Y-m-d H:i:s'), self::$_user->id));
-        }
+        if ($user = self::getUser())
+            $user->setLastActive();
     }
     
     /**
