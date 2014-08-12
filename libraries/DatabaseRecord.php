@@ -97,7 +97,7 @@ abstract class DatabaseRecord {
     final protected function set($key, $value) {
         $this->data[$key] = $value;
         
-        return $this->update([$key => $value]);
+        return $this->update([$key => $this->encode($value)]);
     }
 
     /**
@@ -117,20 +117,6 @@ abstract class DatabaseRecord {
     }
 
     /**
-     * Sets a new list for a data entry
-     * @param    string   $key    The key of the data entry
-     * @param    array    $list   The new list of the data entry
-     * @return   bool
-     * @access   protected
-     * @final
-     */
-    final protected function setList($key, Array $list) {
-        $this->data[$key] = $list;
-        
-        return $this->update([$key => json_encode($list)]);
-    }
-
-    /**
      * Sets the value of a list item in a data entry
      * @param    string   $key      The key of the data entry
      * @param    string   $subkey   The key of the list item
@@ -142,7 +128,7 @@ abstract class DatabaseRecord {
     final protected function setListItem($key, $subkey, $value) {
         $this->data[$key][$subkey] = $value;
         
-        return $this->update([$key => json_encode($this->data[$key])]);
+        return $this->update([$key => $this->encode($this->data[$key])]);
     }
 
     /**
@@ -159,7 +145,55 @@ abstract class DatabaseRecord {
         
         $this->data[$key] = array_merge($this->data[$key], $items);
         
-        return $this->update([$key => json_encode($this->data[$key])]);
+        return $this->update([$key => $this->encode($this->data[$key])]);
+    }
+    
+    /**
+     * Encodes the given value for usage in a database statement
+     * @param    mixed   $value   The value
+     * @return   mixed
+     */
+    final protected function encode($value) {
+        if (is_object($value) && $value instanceof DateTime) {
+            return $value->format('Y-m-d H:i:s');
+        } elseif (is_array($value)) {
+            return json_encode($value);
+        } else {
+            return $value;
+        }
+    }
+    
+    /**
+     * Decodes the value as given datatype
+     * @param    string   $value   The value
+     * @param    string   $type    The datatype of the value
+     * @return   mixed
+     */
+    final protected function decode($value, $type) {
+        if ($type == 'int') {
+            return (int) $value;
+        } elseif ($type == 'float') {
+            return (float) $value;
+        } elseif ($type == 'bool') {
+            return (bool) $value;
+        } elseif ($type == 'datetime') {
+            return new DateTime($value);
+        } elseif ($type == 'array') {
+            return json_decode($value, true);
+        } else {
+            return $value;
+        }
+    }
+    
+    /**
+     * Sets all data with given type mapping
+     * @param    array   $data      The data from database
+     * @param    array   $typemap   The type mapping
+     */
+    final protected function setData(Array $data, Array $typemap) {
+        foreach ($typemap as $key => $type) {
+            $this->data[$key] = $this->decode($data[$key], $type);
+        }
     }
 
 }

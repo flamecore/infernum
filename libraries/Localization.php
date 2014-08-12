@@ -39,20 +39,18 @@ class Localization extends DatabaseRecord {
         $result = System::db()->query($sql, [$identifier]);
 
         if ($result->hasRows()) {
-            $info = $result->fetchAssoc();
-
-            $this->_data = array(
-                'id' => $info['id'],
-                'name' => $info['name'],
-                'text_direction' => $info['text_direction'],
-                'number_sep_decimal' => $info['number_sep_decimal'],
-                'number_sep_thousand' => $info['number_sep_thousand'],
-                'fmt_money' => $info['fmt_money'],
-                'fmt_time' => $info['fmt_time'],
-                'fmt_date_short' => $info['fmt_date_short'],
-                'fmt_date_medium' => $info['fmt_date_medium'],
-                'fmt_date_long' => $info['fmt_date_long']
-            );
+            $this->setData($result->fetchAssoc(), [
+                'id' => 'string',
+                'name' => 'string',
+                'text_direction' => 'string',
+                'number_sep_decimal' => 'string',
+                'number_sep_thousand' => 'string',
+                'fmt_money' => 'string',
+                'fmt_time' => 'string',
+                'fmt_date_short' => 'string',
+                'fmt_date_medium' => 'string',
+                'fmt_date_long' => 'string'
+            ]);
         } else {
             throw new Exception(sprintf('Locale does not exist (id = %s)', $identifier));
         }

@@ -47,17 +47,15 @@ class User extends DatabaseRecord {
         $result = System::db()->query($sql, [$identifier]);
 
         if ($result->hasRows()) {
-            $info = $result->fetchAssoc();
-            
-            $this->data = array(
-                'id' => (int) $info['id'],
-                'username' => $info['username'],
-                'email' => $info['email'],
-                'password' => $info['password'],
-                'group' => (int) $info['group'],
-                'lastactive' => strtotime($info['lastactive']),
-                'profile' => json_decode($info['profile'])
-            );
+            $this->setData($result->fetchAssoc(), [
+                'id' => 'int',
+                'username' => 'string',
+                'email' => 'string',
+                'password' => 'string',
+                'group' => 'int',
+                'lastactive' => 'datetime',
+                'profile' => 'array'
+            ]);
         } else {
             throw new Exception(sprintf('User does not exist (%s = %s)', $selector, $identifier));
         }
@@ -194,7 +192,7 @@ class User extends DatabaseRecord {
         $threshold = System::setting('Session:OnlineThreshold', 600);
         
         // Check if the last activity time is within the threshold
-        return time() - $lastactive <= $threshold;
+        return time() - $lastactive->getTimestamp() <= $threshold;
     }
     
     /**

@@ -39,14 +39,12 @@ class Session extends DatabaseRecord {
         $result = System::db()->query($sql, [$identifier, date('Y-m-d H:i:s')]);
         
         if ($result->hasRows()) {
-            $info = $result->fetchAssoc();
-            
-            $this->data = array(
-                'id' => $info['id'],
-                'lifetime' => $info['lifetime'],
-                'user' => $info['user'] > 0 ? $info['user'] : null,
-                'data' => !empty($info['data']) ? unserialize($info['data']) : null
-            );
+            $this->setData($result->fetchAssoc(), [
+                'id' => 'string',
+                'lifetime' => 'int',
+                'user' => 'int',
+                'data' => 'array'
+            ]);
         } else {
             throw new Exception('Session does not exist (id = '.$identifier.')');
         }

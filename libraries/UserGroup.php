@@ -47,14 +47,12 @@ class UserGroup extends DatabaseRecord {
         $result = System::db()->query($sql, [$identifier]);
 
         if ($result->hasRows()) {
-            $info = $result->fetchAssoc();
-
-            $this->_data = array(
-                'id' => (int) $info['id'],
-                'name' => $info['name'],
-                'title' => $info['title'],
-                'accesslevel' => (int) $info['accesslevel']
-            );
+            $this->setData($result->fetchAssoc(), [
+                'id' => 'int',
+                'name' => 'string',
+                'title' => 'string',
+                'accesslevel' => 'int'
+            ]);
         } else {
             throw new Exception(sprintf('User group does not exist (%s = %s)', $selector, $identifier));
         }
