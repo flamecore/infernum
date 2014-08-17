@@ -210,12 +210,14 @@ class System {
 
         include_once WW_MODULE_PATH.'/controller.php';
 
-        $controller = 'module_'.WW_MODULE;
+        $controller_class = 'module_'.WW_MODULE;
         
-        if (!class_exists($controller) || !is_subclass_of($controller, 'Controller'))
+        if (!class_exists($controller_class) || !is_subclass_of($controller_class, 'Controller'))
             trigger_error('Module "'.$module.'" does not provide a valid controller', E_USER_ERROR);
 
-        return $controller::execute($action, $arguments);
+        $module = new $controller_class();
+
+        return $module->run($action, $arguments);
     }
 
     /**
@@ -235,11 +237,11 @@ class System {
         } elseif (count($path_parts) == 2) {
             $mount = $path_parts[0];
             $action = $path_parts[1];
-            $arguments = false;
+            $arguments = null;
         } else {
             $mount = $path_parts[0];
             $action = 'index';
-            $arguments = false;
+            $arguments = null;
         }
 
         $modules = self::getActivatedModules();

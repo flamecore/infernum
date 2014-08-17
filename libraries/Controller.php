@@ -31,33 +31,29 @@ abstract class Controller {
     /**
      * Executes the action with given arguments
      * @param    string   $action      The action name
-     * @param    array    $arguments   Arguments as array
+     * @param    array    $arguments   The arguments as array (optional)
      * @return   bool
-     * @access   public
-     * @static
      */
-    public static function execute($action, $arguments = false) {
-        if (!self::actionExists($action))
+    final public function run($action, Array $arguments = null) {
+        if (!$this->actionExists($action))
             return false;
         
-        if (is_array($arguments) && !empty($arguments)) {
-            call_user_func_array([get_called_class(), 'action_'.$action], $arguments);
+        if (isset($arguments) && !empty($arguments)) {
+            call_user_func_array([$this, 'action_'.$action], $arguments);
         } else {
-            call_user_func([get_called_class(), 'action_'.$action]);
+            call_user_func([$this, 'action_'.$action]);
         }
         
         return true;
     }
     
     /**
-     * Checks the existance of an action
+     * Checks whether an action exists
      * @param    string   $action   The action name
      * @return   bool
-     * @access   public
-     * @static
      */
-    public static function actionExists($action) {
-        return method_exists(get_called_class(), 'action_'.$action);
+    final public function actionExists($action) {
+        return method_exists($this, 'action_'.$action);
     }
 
 }
