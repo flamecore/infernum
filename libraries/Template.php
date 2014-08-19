@@ -66,6 +66,19 @@ class Template {
         
         $this->filename = self::locate($name, $module, $theme);
     }
+    
+    /**
+     * Returns the rendered template
+     * @return   string
+     */
+    public function __toString() {
+        try {
+            return $this->render();
+        } catch (Exception $e) {
+            trigger_error($e->getMessage(), E_USER_WARNING);
+            return '';
+        }
+    }
 
     /**
      * Sets one or more template variables

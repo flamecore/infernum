@@ -71,6 +71,19 @@ class View {
         
         $this->template = new Template($template, $namespace, $theme);
     }
+    
+    /**
+     * Returns the rendered view
+     * @return   string
+     */
+    public function __toString() {
+        try {
+            return $this->render();
+        } catch (Exception $e) {
+            trigger_error($e->getMessage(), E_USER_WARNING);
+            return '';
+        }
+    }
 
     /**
      * Sets one or more template variables
@@ -85,11 +98,15 @@ class View {
     }
 
     /**
-     * Displays the view
-     * @param    bool     $return   Return the rendered view
+     * Renders the view
      * @return   string
-     * @access   public
-     * @static 
+     */
+    public function render() {
+        return $this->template->render();
+    }
+
+    /**
+     * Displays the view
      */
     public function display() {
         $this->template->display();
