@@ -34,8 +34,8 @@ require WW_ENGINE_PATH.'/includes/bootstrap.php';
 
 View::setTitle(System::setting('Main:SiteName'));
 
-if (is_readable(WW_SITE_PATH.'/includes/global.php'))
-    include WW_SITE_PATH.'/includes/global.php';
+if (is_readable(WW_SITE_PATH.'/setup.php'))
+    include WW_SITE_PATH.'/setup.php';
 
 $path = $request->query->get('p') ?: '';
 
