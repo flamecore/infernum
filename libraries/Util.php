@@ -148,16 +148,6 @@ class Util {
     public static function deleteCookie($name) {
         return self::setCookie($name, '', time()-3600);
     }
-
-    /**
-     * Generates a header redirection
-     * @param    string   $url        The URL where the redirection goes to
-     * @param    int      $response   Forces the HTTP response code to the specified value (Default: 302)
-     * @return   bool
-     */
-    public static function redirect($url, $response = 302) {
-        return header('Location: '.$url, true, $response);
-    }
     
     /**
      * Lists the languages that the browser accepts by parsing the 'Accept-Language' header. Returns an array on success

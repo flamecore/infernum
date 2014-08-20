@@ -21,6 +21,8 @@
  * @license     ISC License (http://www.opensource.org/licenses/ISC)
  */
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Webwork Core
  *
@@ -44,9 +46,11 @@ require_once WW_ENGINE_PATH.'/vendor/autoload.php';
 
 require_once WW_ENGINE_PATH.'/includes/functions.php';
 
+$request = Request::createFromGlobals();
+
 if (ww_config('enable_multisite') && $sites = ww_config('sites')) {
     // This is a multi-site installation, so we need to know the current domain name
-    $domain = $_SERVER['SERVER_NAME'];
+    $domain = $request->server->get('SERVER_NAME');
 
     // Check if there is a site for the current domain, fall back to default site otherwise
     if (isset($sites[$domain])) {

@@ -190,12 +190,9 @@ class System {
     /**
      * Loads a module controller
      * @param    string   $module      The name of the module
-     * @param    string   $arguments   The arguments to use
-     * @return   void
-     * @access   public
-     * @static
+     * @param    array    $arguments   The arguments to use
      */
-    public static function loadModule($module, $action, $arguments = false) {
+    public static function loadModule($module, $action, Array $arguments = null) {
         if (!self::isStarted())
             trigger_error('The system is not yet ready', E_USER_ERROR);
 
@@ -216,16 +213,12 @@ class System {
             trigger_error('Module "'.$module.'" does not provide a valid controller', E_USER_ERROR);
 
         $module = new $controller_class();
-
-        return $module->run($action, $arguments);
+        $module->run($action, $arguments)->send();
     }
 
     /**
      * Loads a module controller by given path
      * @param    string   $path   The path of the module page
-     * @return   void
-     * @access   public
-     * @static
      */
     public static function loadModuleFromPath($path) {
         $path_parts = explode('/', $path);

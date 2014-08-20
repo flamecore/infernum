@@ -37,9 +37,11 @@ Template::title(System::setting('Main:SiteName'));
 if (is_readable(WW_SITE_PATH.'/includes/global.php'))
     include WW_SITE_PATH.'/includes/global.php';
 
+$path = $request->query->get('p') ?: '';
+
 // Split the path into its parts. Use frontpage path if no path is specified.
-if (isset($_GET['p']) && !empty($_GET['p'])) {
-    System::loadModuleFromPath($_GET['p']) or not_found_error();
+if (!empty($path)) {
+    System::loadModuleFromPath($path);
 } else {
     System::loadModule(System::setting('Main:Frontpage'));
 }
