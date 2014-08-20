@@ -44,6 +44,12 @@ class System {
      * @static
      */
     private static $_db;
+
+    /**
+     * List of mounted modules
+     * @var   array
+     */
+    private static $modules = array();
     
     /**
      * Is the system initialized?
@@ -132,48 +138,38 @@ class System {
     }
 
     /**
-     * Lists all activated modules with their mountpoint
+     * Mounts the given module
+     * @param    string   $name    The name of the module to mount
+     * @param    string   $alias   Alternative mountpoint (optional)
+     */
+    public static function mountModule($name, $alias = null) {
+        $mountpoint = $alias ?: str_replace('_', '-', $name);
+
+        self::$modules[$mountpoint] = $name;
+    }
+
+    /**
+     * Unmounts the given module
+     * @param    string   $name   The name of the module to unmount
+     */
+    public static function unmountModule($name) {
+        $mountpoints = array_keys(self::$modules, $name);
+
+        foreach ($mountpoints as $mountpoint) {
+            unset(self::$modules[$mountpoint]);
+        }
+    }
+
+    /**
+     * Lists all mounted modules with their mountpoint
      *   Example: ['mount-point' => 'module_name', ...]
      * @return   array
-     * @access   public
-     * @static
      */
-    public static function getActivatedModules() {
+    public static function getMountedModules() {
         if (!self::isStarted())
             trigger_error('The system is not yet ready', E_USER_ERROR);
-
-        $cache = new Cache('modules-activated');
-        return $cache->data(function () {
-            if (!is_readable(WW_SITE_PATH.'/modules.conf'))
-                trigger_error('File "'.WW_SITE_PATH.'/modules.conf" does not exist or is not readable', E_USER_ERROR);
-            
-            $lines = file(WW_SITE_PATH.'/modules.conf', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-
-            $modules = array();
-            $entry = 0;
-
-            foreach ($lines as $line) {
-                if ($line[0] == '#') {
-                    continue;
-                } else {
-                    $entry++;
-                }
-
-                $matching = preg_match('#^(?P<name>\w+)(\s+(?P<alt>[\w-]+))*$#', $line, $module_info);
-
-                if (!$matching)
-                    trigger_error('Error in modules.conf of site "'.WW_SITE_NAME.'": Entry '.$entry.' is invalid', E_USER_ERROR);
-
-                if (!System::moduleExists($module_info['name']))
-                    trigger_error('Error in modules.conf of site "'.WW_SITE_NAME.'": Module "'.$module_info['name'].'" does not exist or controller is not reaadable (at entry '.$entry.')', E_USER_ERROR);
-
-                $mountpoint = isset($module_info['alt']) ? $module_info['alt'] : str_replace('_', '-', $module_info['name']);
-                
-                $modules[$mountpoint] = $module_info['name'];
-            }
-
-            return $modules;
-        });
+        
+        return self::$modules;
     }
 
     /**
@@ -237,7 +233,7 @@ class System {
             $arguments = null;
         }
 
-        $modules = self::getActivatedModules();
+        $modules = self::getMountedModules();
         
         if (isset($modules[$mount])) {
             return self::loadModule($modules[$mount], $action, $arguments);
