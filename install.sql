@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `ww_locales` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `ww_locales` (`id`, `name`, `text_direction`, `number_sep_decimal`, `number_sep_thousand`, `fmt_money`, `fmt_time`, `fmt_date_short`, `fmt_date_medium`, `fmt_date_long`) VALUES
-('en-US', 'English (US)', 'ltr', '.', ',', '$ #,###.##', 'H:i A', 'm/d/Y', 'F j, Y', 'D, F j, Y');
+('en-US', 'English (US)', 'ltr', '.', ',', '$ #,###.##', 'h:i A', 'm/d/Y', 'F j, Y', 'D, F j, Y');
 
 CREATE TABLE IF NOT EXISTS `ww_translations` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
