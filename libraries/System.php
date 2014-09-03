@@ -46,6 +46,12 @@ class System {
     private static $_db;
 
     /**
+     * The Session manager object
+     * @var   Session
+     */
+    private static $session;
+
+    /**
      * List of mounted modules
      * @var   array
      */
@@ -91,6 +97,9 @@ class System {
         
         // All systems are started now and running smoothly
         self::$_initialized = true;
+        
+        // Start user session
+        self::$session = new Session();
     }
 	
     /**
@@ -135,6 +144,17 @@ class System {
             trigger_error('The system is not yet ready', E_USER_ERROR);
         
         return self::$_db;
+    }
+
+    /**
+     * Returns the Session manager object
+     * @return   Session
+     */
+    public static function getSession() {
+        if (!self::isStarted())
+            trigger_error('The system is not yet ready', E_USER_ERROR);
+        
+        return self::$session;
     }
 
     /**
