@@ -27,12 +27,10 @@
  * @author   Christian Neff <christian.neff@gmail.com>
  */
 class UserGroup extends DatabaseRecord {
-    
+
     /**
      * Fetches the data of the user group
      * @param    mixed    $identifier   The ID (int) or name (string) of the user group
-     * @return   void
-     * @access   public
      */
     public function __construct($identifier) {
         if (is_string($identifier)) {
@@ -57,68 +55,61 @@ class UserGroup extends DatabaseRecord {
             throw new Exception(sprintf('User group does not exist (%s = %s)', $selector, $identifier));
         }
     }
-    
+
     /**
      * Returns the groups's ID
      * @return   int
-     * @access   public
      */
     public function getID() {
         return $this->get('id');
     }
-    
+
     /**
      * Returns the name of the group
      * @return   string
-     * @access   public
      */
     public function getName() {
         return $this->get('name');
     }
-    
+
     /**
      * Returns the title of the group
      * @return   string
-     * @access   public
      */
     public function getTitle() {
         return $this->get('title');
     }
-    
-    /**
-     * Returns the access level of the group
-     * @return   int
-     * @access   public
-     */
-    public function getAccessLevel() {
-        return $this->get('accesslevel');
-    }
-    
+
     /**
      * Sets the title of the group
      * @param    string   $title   The new title
      * @return   bool
-     * @access   public
      */
     public function setTitle($title) {
-        return $this->set('title', $title);
+        $this->set('title', $title);
     }
-    
+
+    /**
+     * Returns the access level of the group
+     * @return   int
+     */
+    public function getAccessLevel() {
+        return $this->get('accesslevel');
+    }
+
     /**
      * Sets the access level of the group
      * @param    int      $level   The new access level
      * @return   bool
-     * @access   public
      */
     public function setAccessLevel($level) {
-        return $this->set('accesslevel', $level);
+        $this->set('accesslevel', $level);
     }
-    
+
     /**
      * Updates the given columns in the database table
      * @param    array    $columns   Names and values of columns to be updated (Format: [name => value, ...])
      * @return   bool
-     * @access   protected
      */
     protected function update($columns) {
         return System::db()->update('@PREFIX@usergroups', $columns, [
@@ -131,8 +122,6 @@ class UserGroup extends DatabaseRecord {
      * Checks whether or not a user group with given ID exists
      * @param    int      $id   The ID of the user group
      * @return   bool
-     * @access   public
-     * @static
      */
     public static function exists($id) {
         $sql = 'SELECT id FROM @PREFIX@usergroups WHERE id = {0} LIMIT 1';

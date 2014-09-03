@@ -30,45 +30,34 @@ abstract class DatabaseRecord {
     
     /**
      * The data of the record
-     * @var      array
-     * @access   protected
+     * @var   array
      */
     protected $data = array();
     
     /**
      * Fetches the data of the record. This method must set the property $data.
-     * @param    mixed    $identifier   The identifier of the record
-     * @return   void
-     * @access   public
-     * @abstract
+     * @param    mixed   $identifier   The identifier of the record
      */
     abstract public function __construct($identifier);
     
     /**
-     * Updates the given columns in the database table
-     * @param    array    $columns   Names and values of columns to be updated (Format: [name => value, ...])
+     * Checks wheter or not the record with given identifier exists
+     * @param    int    $identifier   The identifier of the record
      * @return   bool
-     * @access   protected
-     * @abstract
      */
-    abstract protected function update($columns);
+    abstract public static function exists($identifier);
     
     /**
-     * Checks wheter or not the record with given identifier exists
-     * @param    int      $identifier   The identifier of the record
+     * Updates the given columns in the database table
+     * @param    array   $columns   Names and values of columns to be updated (Format: [name => value, ...])
      * @return   bool
-     * @access   public
-     * @static
-     * @abstract
      */
-    abstract static public function exists($identifier);
+    abstract protected function update($columns);
 
     /**
      * Returns the value of a data entry
      * @param    string   $key   The key of the data entry
      * @return   mixed
-     * @access   protected
-     * @final
      */
     final protected function get($key) {
         return isset($this->data[$key]) ? $this->data[$key] : false;
@@ -79,8 +68,6 @@ abstract class DatabaseRecord {
      * @param    string   $key      The key of the data entry
      * @param    string   $subkey   The key of the list item
      * @return   mixed
-     * @access   protected
-     * @final
      */
     final protected function getListItem($key, $subkey) {
         return isset($this->data[$key][$subkey]) ? $this->data[$key][$subkey] : false;
@@ -91,8 +78,6 @@ abstract class DatabaseRecord {
      * @param    string   $key     The key of the data entry
      * @param    mixed    $value   The new value of the data entry
      * @return   bool
-     * @access   protected
-     * @final
      */
     final protected function set($key, $value) {
         $this->data[$key] = $value;
@@ -102,10 +87,8 @@ abstract class DatabaseRecord {
 
     /**
      * Sets the values of multiple data entries
-     * @param    array    $values   The new values of the data entries
+     * @param    array   $values   The new values of the data entries
      * @return   bool
-     * @access   protected
-     * @final
      */
     final protected function setMultiple($values) {
         if (!is_array($values))
@@ -122,8 +105,6 @@ abstract class DatabaseRecord {
      * @param    string   $subkey   The key of the list item
      * @param    mixed    $value    The new value of the list item
      * @return   bool
-     * @access   protected
-     * @final
      */
     final protected function setListItem($key, $subkey, $value) {
         $this->data[$key][$subkey] = $value;
@@ -136,8 +117,6 @@ abstract class DatabaseRecord {
      * @param    string   $key     The key of the data entry
      * @param    array    $items   The new values of the list items
      * @return   bool
-     * @access   protected
-     * @final
      */
     final protected function setListItems($key, $items) {
         if (!is_array($items))

@@ -27,12 +27,10 @@
  * @author   Christian Neff <christian.neff@gmail.com>
  */
 class Localization extends DatabaseRecord {
-    
+
     /**
      * Fetches the data of the locale
      * @param    string   $identifier   The ID of the locale
-     * @return   void
-     * @access   public
      */
     public function __construct($identifier) {
         $sql = 'SELECT * FROM @PREFIX@locales WHERE id = {0} LIMIT 1';
@@ -55,29 +53,35 @@ class Localization extends DatabaseRecord {
             throw new Exception(sprintf('Locale does not exist (id = %s)', $identifier));
         }
     }
-    
+
     /**
      * Returns the locale's ID
      * @return   int
-     * @access   public
      */
     public function getID() {
         return $this->get('id');
     }
-    
+
     /**
      * Returns the name of the locale
      * @return   string
-     * @access   public
      */
     public function getName() {
         return $this->get('name');
     }
 
     /**
+     * Sets the name of the locale
+     * @param    string   $name   The new name
+     * @return   bool
+     */
+    public function setName($name) {
+        return $this->set('name', $name);
+    }
+
+    /**
      * Returns the text direction of the locale
      * @return   string
-     * @access   public
      */
     public function getTextDirection() {
         return $this->get('text_direction');
@@ -86,7 +90,6 @@ class Localization extends DatabaseRecord {
     /**
      * Returns the number separators of the locale
      * @return   array
-     * @access   public
      */
     public function getNumberSeparators() {
         return [
@@ -98,7 +101,6 @@ class Localization extends DatabaseRecord {
     /**
      * Returns the money format of the locale
      * @return   string
-     * @access   public
      */
     public function getMoneyFormat() {
         return $this->get('fmt_money');
@@ -107,7 +109,6 @@ class Localization extends DatabaseRecord {
     /**
      * Returns the time format of the locale
      * @return   string
-     * @access   public
      */
     public function getTimeFormat() {
         return $this->get('fmt_time');
@@ -117,7 +118,6 @@ class Localization extends DatabaseRecord {
      * Returns the date format of the locale
      * @param    int      $length   The date length (1 = short [default], 2 = medium, 3 = long)
      * @return   string
-     * @access   public
      */
     public function getDateFormat($length = 1) {
         if ($length >= 3) {
@@ -128,22 +128,11 @@ class Localization extends DatabaseRecord {
             return $this->get('fmt_date_short');
         }
     }
-    
-    /**
-     * Sets the name of the locale
-     * @param    string   $name   The new name
-     * @return   bool
-     * @access   public
-     */
-    public function setName($name) {
-        return $this->set('name', $name);
-    }
-    
+
     /**
      * Updates the given columns in the database table
      * @param    array    $columns   Names and values of columns to be updated (Format: [name => value, ...])
      * @return   bool
-     * @access   protected
      */
     protected function update($columns) {
         return System::db()->update('@PREFIX@locales', $columns, [
@@ -156,8 +145,6 @@ class Localization extends DatabaseRecord {
      * Checks whether or not a locale with given ID exists
      * @param    string   $id   The ID of the locale
      * @return   bool
-     * @access   public
-     * @static
      */
     static public function exists($id) {
         $sql = 'SELECT id FROM @PREFIX@locales WHERE id = {0} LIMIT 1';
@@ -165,12 +152,10 @@ class Localization extends DatabaseRecord {
         
         return $result->hasRows();
     }
-    
+
     /**
      * Returns a list of available locales
      * @return   array
-     * @access   public
-     * @static
      */
     static public function getAvailable() {
         $cache = new Cache('locales/list');
