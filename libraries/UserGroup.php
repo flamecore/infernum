@@ -107,6 +107,18 @@ class UserGroup extends DatabaseRecord {
     }
 
     /**
+     * Checks if the group is hierarchically equal or superior to the given group
+     * @param    mixed    $mingroup   Require at least this user group. Accepts ID (int) or name (string) of the group.
+     * @return   bool
+     */
+    public function isAuthorized($mingroup) {
+        $mingroup = new UserGroup($mingroup);
+        $minlevel = $mingroup->getAccessLevel();
+
+        return $this->get('accesslevel') >= $minlevel;
+    }
+
+    /**
      * Updates the given columns in the database table
      * @param    array    $columns   Names and values of columns to be updated (Format: [name => value, ...])
      * @return   bool
