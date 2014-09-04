@@ -29,40 +29,31 @@
 class Database_MySQL_Connection extends Database_Base_Connection {
 
     /**
-     * Connects to the database server and selects the database using the given configuration
-     * @return   bool
-     * @access   public
+     * {@inheritdoc}
      */
     public function connect() {
-        $this->_link = @mysqli_connect($this->_host, $this->_user, $this->_password, $this->_database);
+        $this->link = @mysqli_connect($this->host, $this->user, $this->password, $this->database);
         
         if (mysqli_connect_errno())
             trigger_error('Failed connecting to the database: '.mysqli_connect_error(), E_USER_ERROR);
     }
 
     /**
-     * Closes the database connection
-     * @return   void
-     * @access   public
+     * {@inheritdoc}
      */
     public function disconnect() {
-        mysqli_close($this->_link);
+        mysqli_close($this->link);
     }
 
     /**
-     * Performs a (optionally prepared) query on the database. For successful SELECT, SHOW, DESCRIBE or EXPLAIN queries
-     *   it returns a Database_MySQL_Result object on success. For other successful queries it will return TRUE.
-     * @param    string   $query   The SQL query to be executed
-     * @param    array    $vars    An array of values replacing the variables. Only neccessary if you're using variables.
-     * @return   mixed
-     * @access   public
+     * {@inheritdoc}
      */
     public function query($query, $vars = null) {
-        $query = $this->_prepareQuery($query, $vars);
+        $query = $this->prepareQuery($query, $vars);
         
-        $result = @mysqli_query($this->_link, $query);
+        $result = @mysqli_query($this->link, $query);
         if ($result) {
-            $this->_queryCount++;
+            $this->queryCount++;
             
             if ($result instanceof MySQLi_Result)
                 return new Database_MySQL_Result($result);
@@ -72,19 +63,9 @@ class Database_MySQL_Connection extends Database_Base_Connection {
         
         trigger_error('Database query failed: '.$this->getError(), E_USER_ERROR);
     }
-    
+
     /**
-     * Performs a SELECT query. Returns a Database_Base_Result object on success.
-     * @param    string   $table     The database table to query
-     * @param    string   $columns   The selected columns. Defaults to '*'.
-     * @param    array    $params    One or more of the following parameters: (optional)
-     *                                 * where    The WHERE clause
-     *                                 * vars     An array of values replacing the variables (if neccessary)
-     *                                 * limit    The result row LIMIT
-     *                                 * order    The ORDER BY parameter
-     *                                 * group    The GROUP BY parameter
-     * @return   Database_Base_Result
-     * @access   public
+     * {@inheritdoc}
      */
     public function select($table, $columns = '*', $params = array()) {
         $sql = 'SELECT '.$columns.' FROM `'.$table.'`';
@@ -100,39 +81,26 @@ class Database_MySQL_Connection extends Database_Base_Connection {
 
         return $this->query($sql, isset($params['vars']) ? $params['vars'] : null);
     }
-    
+
     /**
-     * Performs an INSERT query. Returns TRUE on success.
-     * @param    string   $table   The database table to fill
-     * @param    array    $data    The data to insert in the form [column => value]
-     * @return   bool
-     * @access   public
+     * {@inheritdoc}
      */
     public function insert($table, $data) {
         foreach ($data as $column => $value) {
             $columns[] = '`'.$column.'`';
-            $values[]  = $this->_prepareValue($value);
+            $values[]  = $this->prepareValue($value);
         }
 
         $sql = 'INSERT INTO `'.$table.'` ('.implode(', ', $columns).') VALUES('.implode(', ', $values).')';
-        
         return $this->query($sql);
     }
-    
+
     /**
-     * Performs an UPDATE query. Returns TRUE on success.
-     * @param    string   $table    The database table to query
-     * @param    array    $data     The new data in the form [column => value]
-     * @param    array    $params   One or more of the following parameters: (optional)
-     *                                * where    The WHERE clause
-     *                                * vars     An array of values replacing the variables (if neccessary)
-     *                                * limit    The result row LIMIT
-     * @return   bool
-     * @access   public
+     * {@inheritdoc}
      */
     public function update($table, $data, $params = array()) {
         foreach ($data as $key => $value) {
-            $value = $this->_prepareValue($value);
+            $value = $this->prepareValue($value);
             $dataset[] = '`'.$key.'` = '.$value;
         }
 
@@ -147,11 +115,7 @@ class Database_MySQL_Connection extends Database_Base_Connection {
     }
 
     /**
-     * Parses and executes a SQL dump file
-     * @param    string   $file   The path to the dump file
-     * @param    array    $vars   An array of values replacing the variables. Only neccessary if you're using variables.
-     * @return   bool
-     * @access   public
+     * {@inheritdoc}
      */
     public function importDump($file, $vars = null) {
         $dumpContent = file_get_contents($file);
@@ -170,89 +134,69 @@ class Database_MySQL_Connection extends Database_Base_Connection {
     }
 
     /**
-     * Returns the number of rows affected by the last INSERT, UPDATE, REPLACE or DELETE query. For SELECT statements
-     *   it returns the number of rows in the result set.
-     * @return   int
-     * @access   public
+     * {@inheritdoc}
      */
     public function affectedRows() {
-        return mysqli_affected_rows($this->_link);
+        return mysqli_affected_rows($this->link);
     }
 
     /**
-     * Returns the ID generated by a query on a table with a column having the AUTO_INCREMENT attribute. If the last
-     *   query wasn't an INSERT or UPDATE statement or if the modified table does not have a column with the AUTO_INCREMENT
-     *   attribute, this function will return 0.
-     * @return   int
-     * @access   public
+     * {@inheritdoc}
      */
     public function insertID() {
-        return mysqli_insert_id($this->_link);
+        return mysqli_insert_id($this->link);
     }
 
     /**
-     * Starts a transaction
-     * @return   void
-     * @access   public
+     * {@inheritdoc}
      */
-    public function startTransaction() {
-        mysqli_autocommit($this->_link, false);
-        $this->_inTransaction = true;
+    public function beginTransaction() {
+        mysqli_autocommit($this->link, false);
+        $this->inTransaction = true;
     }
 
     /**
-     * Ends a transaction and commits remaining queries
-     * @return   void
-     * @access   public
+     * {@inheritdoc}
      */
     public function endTransaction() {
-        mysqli_autocommit($this->_link, true);
-        $this->_inTransaction = false;
+        mysqli_autocommit($this->link, true);
+        $this->inTransaction = false;
     }
 
     /**
-     * Commits the current transaction. Returns TRUE on success or FALSE on failure or if no transaction is active.
-     * @return   bool
-     * @access   public
+     * {@inheritdoc}
      */
     public function commit() {
-        if ($this->_inTransaction) {
-            return mysqli_commit($this->_link);
+        if ($this->inTransaction) {
+            return mysqli_commit($this->link);
         } else {
             return false;
         }
     }
 
     /**
-     * Rolls back the current transaction. Returns TRUE on success or FALSE on failure or if no transaction is active.
-     * @return   bool
-     * @access   public
+     * {@inheritdoc}
      */
     public function rollback() {
-        if ($this->_inTransaction) {
-            return mysqli_rollback($this->_link);
+        if ($this->inTransaction) {
+            return mysqli_rollback($this->link);
         } else {
             return false;
         }
     }
 
     /**
-     * Escapes special characters in a string for use in an SQL statement, taking into account the current charset of the connection
-     * @param    string   $string   The string to be escaped
-     * @return   string
-     * @access   public
+     * {@inheritdoc}
      */
     public function quote($string) {
-        return mysqli_real_escape_string($this->_link, $string);
+        return mysqli_real_escape_string($this->link, $string);
     }
 
     /**
-     * Returns the last error message for the most recent query that can succeed or fail
-     * @return  string
-     * @access  public
+     * {@inheritdoc}
      */
     public function getError() {
-        return mysqli_error($this->_link);
+        return mysqli_error($this->link);
     }
 
 }

@@ -49,7 +49,7 @@ class Translations {
             $result = System::db()->query($sql, array($language));
             
             $strings = array();
-            while ($entry = $result->fetchAssoc())
+            while ($entry = $result->fetch())
                 $strings[$entry['string']] = $entry['translation'];
 
             return $strings;

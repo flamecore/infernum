@@ -3,11 +3,6 @@
  * Webwork
  * Copyright (C) 2011 IceFlame.net
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -35,59 +30,51 @@ abstract class Database_Base_Connection {
 
     /**
      * The database server host
-     * @var      string
-     * @access   protected
+     * @var   string
      */
-    protected $_host;
+    protected $host;
 
     /**
      * The username for authenticating at the database server
-     * @var      string
-     * @access   protected
+     * @var   string
      */
-    protected $_user;
+    protected $user;
 
     /**
      * The password for authenticating at the database server
-     * @var      string
-     * @access   protected
+     * @var   string
      */
-    protected $_password;
+    protected $password;
 
     /**
      * The name of the database
-     * @var      string
-     * @access   protected
+     * @var   string
      */
-    protected $_database;
+    protected $database;
 
     /**
      * The prefix of the database tables
-     * @var      string
-     * @access   protected
+     * @var   string
      */
-    protected $_prefix;
+    protected $prefix;
 
     /**
      * The link identifier of the connection
-     * @var      mysqli
-     * @access   protected
+     * @var   mysqli
      */
-    protected $_link;
+    protected $link;
 
     /**
      * The number of executed queries
-     * @var      int
-     * @access   protected
+     * @var   int
      */
-    protected $_queryCount = 0;
+    protected $queryCount = 0;
 
     /**
      * Currently in transaction?
-     * @var      bool
-     * @access   protected
+     * @var   bool
      */
-    protected $_inTransaction = false;
+    protected $inTransaction = false;
 
     /**
      * Constructor
@@ -96,15 +83,13 @@ abstract class Database_Base_Connection {
      * @param    string   $password   The password for authenticating at the database server
      * @param    string   $database   The name of the database
      * @param    string   $prefix     The prefix of the database tables
-     * @return   void
-     * @access   public
      */
     public function __construct($host = 'localhost', $user = 'root', $password = '', $database, $prefix) {
-        $this->_host = $host;
-        $this->_user = $user;
-        $this->_password = $password;
-        $this->_database = $database;
-        $this->_prefix = $prefix;
+        $this->host = $host;
+        $this->user = $user;
+        $this->password = $password;
+        $this->database = $database;
+        $this->prefix = $prefix;
         
         $this->connect();
     }
@@ -112,67 +97,54 @@ abstract class Database_Base_Connection {
     /**
      * Connects to the database server and selects the database using the given configuration
      * @return   bool
-     * @access   public
-     * @abstract
      */
     abstract public function connect();
 
     /**
      * Closes the database connection
-     * @return   void
-     * @access   public
-     * @abstract
      */
     abstract public function disconnect();
 
     /**
-     * Performs a (optionally prepared) query on the database. For successful SELECT, SHOW, DESCRIBE or EXPLAIN queries
-     *   it returns a Database_Base_Result object on success. For other successful queries it will return TRUE.
+     * Performs a (optionally prepared) query on the database. 
      * @param    string   $query   The SQL query to be executed
      * @param    array    $vars    An array of values replacing the variables. Only neccessary if you're using variables.
-     * @return   mixed
-     * @access   public
-     * @abstract
+     * @return   mixed    Returns a Database_Base_Result object sFor successful SELECT, SHOW, DESCRIBE or EXPLAIN queries.
+     *                      For other successful queries it will return TRUE.
      */
     abstract public function query($query, $vars = null);
-    
+
     /**
-     * Performs a SELECT query. Returns a Database_Base_Result object on success.
+     * Performs a SELECT query
      * @param    string   $table     The database table to query
-     * @param    string   $columns   The selected columns. Defaults to '*'.
+     * @param    string   $columns   The selected columns (Default: '*')
      * @param    array    $params    One or more of the following parameters: (optional)
-     *                                 * where    The WHERE clause
-     *                                 * vars     An array of values replacing the variables (if neccessary)
-     *                                 * limit    The result row LIMIT
-     *                                 * order    The ORDER BY parameter
-     *                                 * group    The GROUP BY parameter
-     * @return   Database_Base_Result
-     * @access   public
-     * @abstract
+     *                                 * where:    The WHERE clause
+     *                                 * vars:     An array of values replacing the variables (if neccessary)
+     *                                 * limit:    The result row LIMIT
+     *                                 * order:    The ORDER BY parameter
+     *                                 * group:    The GROUP BY parameter
+     * @return   Database_Base_Result   Returns an object of Database_Base_Result on success
      */
     abstract public function select($table, $columns = '*', $params = array());
-    
+
     /**
-     * Performs an INSERT query. Returns TRUE on success.
+     * Performs an INSERT query
      * @param    string   $table   The database table to fill
      * @param    array    $data    The data to insert in the form [column => value]
-     * @return   bool
-     * @access   public
-     * @abstract
+     * @return   bool     Returns TRUE on success
      */
     abstract public function insert($table, $data);
-    
+
     /**
-     * Performs an UPDATE query. Returns TRUE on success.
+     * Performs an UPDATE query
      * @param    string   $table    The database table to query
      * @param    array    $data     The new data in the form [column => value]
      * @param    array    $params   One or more of the following parameters: (optional)
-     *                                * where    The WHERE clause
-     *                                * vars     An array of values replacing the variables (if neccessary)
-     *                                * limit    The result row LIMIT
-     * @return   bool
-     * @access   public
-     * @abstract
+     *                                * where:    The WHERE clause
+     *                                * vars:     An array of values replacing the variables (if neccessary)
+     *                                * limit:    The result row LIMIT
+     * @return   bool     Returns TRUE on success
      */
     abstract public function update($table, $data, $params = array());
 
@@ -180,9 +152,7 @@ abstract class Database_Base_Connection {
      * Parses and executes a SQL dump file
      * @param    string   $file   The path to the dump file
      * @param    array    $vars   An array of values replacing the variables. Only neccessary if you're using variables.
-     * @return   bool
-     * @access   public
-     * @abstract
+     * @return   bool     Returns TRUE on success
      */
     abstract public function importDump($file, $vars = null);
 
@@ -190,8 +160,6 @@ abstract class Database_Base_Connection {
      * Returns the number of rows affected by the last INSERT, UPDATE, REPLACE or DELETE query. For SELECT statements
      *   it returns the number of rows in the result set.
      * @return   int
-     * @access   public
-     * @abstract
      */
     abstract public function affectedRows();
 
@@ -200,40 +168,28 @@ abstract class Database_Base_Connection {
      *   query wasn't an INSERT or UPDATE statement or if the modified table does not have a column with the AUTO_INCREMENT
      *   attribute, this function will return 0.
      * @return   int
-     * @access   public
-     * @abstract
      */
     abstract public function insertID();
 
     /**
      * Starts a transaction
-     * @return   void
-     * @access   public
-     * @abstract
      */
-    abstract public function startTransaction();
+    abstract public function beginTransaction();
 
     /**
      * Ends a transaction and commits remaining queries
-     * @return   void
-     * @access   public
-     * @abstract
      */
     abstract public function endTransaction();
 
     /**
-     * Commits the current transaction. Returns TRUE on success or FALSE on failure or if no transaction is active.
-     * @return   bool
-     * @access   public
-     * @abstract
+     * Commits the current transaction
+     * @return   bool     Returns TRUE on success or FALSE on failure or if no transaction is active
      */
     abstract public function commit();
 
     /**
-     * Rolls back the current transaction. Returns TRUE on success or FALSE on failure or if no transaction is active.
-     * @return   bool
-     * @access   public
-     * @abstract
+     * Rolls back the current transaction
+     * @return   bool     Returns TRUE on success or FALSE on failure or if no transaction is active
      */
     abstract public function rollback();
 
@@ -241,35 +197,29 @@ abstract class Database_Base_Connection {
      * Escapes special characters in a string for use in an SQL statement, taking into account the current charset of the connection
      * @param    string   $string   The string to be escaped
      * @return   string
-     * @access   public
-     * @abstract
      */
     abstract public function quote($string);
 
     /**
      * Returns the last error message for the most recent query that can succeed or fail
      * @return   string
-     * @access   public
-     * @abstract
      */
     abstract public function getError();
 
     /**
      * Returns the number of already executed SQL operations
      * @return   int
-     * @access   public
      */
     public function getQueryCount() {
-        return $this->_queryCount;
+        return $this->queryCount;
     }
 
     /**
      * Prepares a PHP value for use in a SQL statement
      * @param    mixed    $value   The value to prepare
      * @return   string
-     * @access   protected
      */
-    protected function _prepareValue($value) {
+    protected function prepareValue($value) {
         if (is_numeric($value)) {
             return $value;
         } elseif (is_bool($value)) {
@@ -290,17 +240,16 @@ abstract class Database_Base_Connection {
      * @param     string   $query   The SQL query to prepare
      * @param     array    $vars    An array of values replacing the variables. Only neccessary if you're using variables.
      * @return    string
-     * @accesss   protected
      */
-    protected function _prepareQuery($query, $vars = null) {
-        $query = str_replace('@HOST@', $this->_host, $query);
-        $query = str_replace('@USER@', $this->_user, $query);
-        $query = str_replace('@DATABASE@', $this->_database, $query);
-        $query = str_replace('@PREFIX@', $this->_prefix, $query);
+    protected function prepareQuery($query, $vars = null) {
+        $query = str_replace('@HOST@', $this->host, $query);
+        $query = str_replace('@USER@', $this->user, $query);
+        $query = str_replace('@DATABASE@', $this->database, $query);
+        $query = str_replace('@PREFIX@', $this->prefix, $query);
         
         if (is_array($vars)) {
             foreach ($vars as $key => $value) {
-                $value = $this->_prepareValue($value);
+                $value = $this->prepareValue($value);
                 $query = str_replace('{'.$key.'}', $value, $query);
             }
         }

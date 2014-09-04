@@ -45,7 +45,7 @@ class UserGroup extends DatabaseRecord {
         $result = System::db()->query($sql, [$identifier]);
 
         if ($result->hasRows()) {
-            $this->setData($result->fetchAssoc(), [
+            $this->setData($result->fetch(), [
                 'id' => 'int',
                 'name' => 'string',
                 'title' => 'string',

@@ -37,7 +37,7 @@ class Localization extends DatabaseRecord {
         $result = System::db()->query($sql, [$identifier]);
 
         if ($result->hasRows()) {
-            $this->setData($result->fetchAssoc(), [
+            $this->setData($result->fetch(), [
                 'id' => 'string',
                 'name' => 'string',
                 'text_direction' => 'string',

@@ -71,7 +71,7 @@ class Session {
                 $result = System::db()->query($sql, [$sid, date('Y-m-d H:i:s')]);
 
                 if ($result->hasRows()) {
-                    $info = $result->fetchAssoc();
+                    $info = $result->fetch();
 
                     $this->id = $info['id'];
                     $this->lifetime = (int) $info['lifetime'];

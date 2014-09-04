@@ -3,11 +3,6 @@
  * Webwork
  * Copyright (C) 2011 IceFlame.net
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -32,114 +27,71 @@
  * @author   Christian Neff <christian.neff@gmail.com>
  */
 abstract class Database_Base_Result {
-    
+
     /**
      * The result object returned by the corresponding query
-     * @var      object
-     * @access   protected
+     * @var   object
      */
-    protected $_result;
+    protected $result;
 
     /**
      * Constructor
      * @param    object   $result   The result object returned by the corresponding query
-     * @return   void
-     * @access   public
      */
     public function __construct($result) {
-        $this->_result =& $result;
+        $this->result = $result;
     }
 
     /**
-     * Gets a result row as an enumerated array. Returns an array of strings that corresponds to the fetched row
-     *   or NULL if there are no more rows in result set.
-     * @return   array
-     * @access   public
-     * @abstract
+     * Fetches a result row as an associative or enumerated array.
+     * @param    bool     $numeric   Set to TRUE to return an enumerated array (Default: FALSE)
+     * @return   array    Returns an associative array of strings representing the fetched row if $numeric is set to FALSE.
+     *                      Returns an enumerated array of strings that corresponds to the fetched row otherwise.
+     *                      Returns NULL if there are no more rows in resultset.
      */
-    abstract public function fetchRow();
+    abstract public function fetch($numeric = false);
 
     /**
-     * Gets a single cell from the first row of the result set. Returns the value of the cell or NULL on failure.
-     * @param    int      $index   The index of the cell to fetch. Defaults to 0.
-     * @return   mixed
-     * @access   public
-     * @abstract
+     * Fetches the value of a single cell in a result row
+     * @param    mixed    $index   The index (int or string) of the cell to fetch (Default: 0)
+     * @return   mixed    Returns the value of the cell or NULL on failure
      */
     abstract public function fetchCell($index = 0);
 
     /**
-     * Fetches a result row as an associative array, a numeric array, or both. Returns an array of strings that
-     *   corresponds to the fetched row or NULL if there are no more rows in the resultset.
-     * @param    string   $type   This optional parameter indicates what type of array should be produced from the current
-     *                              row data. The possible values for this parameter are 'num', 'assoc' or 'both'.
-     *                              Default: 'both'.
-     * @return   array
-     * @access   public
-     * @abstract
-     */
-    abstract public function fetchArray($type = 'both');
-
-    /**
-     * Fetches a result row as an associative array. Returns an associative array of strings representing the fetched row
-     *   in the result set, where each key in the array represents the name of one of the result set's columns or NULL if
-     *   there are no more rows in resultset.
-     * @return   array
-     * @access   public
-     * @abstract
-     */
-    abstract public function fetchAssoc();
-    
-    /**
-     * Gets the values of a single column for each row of the result set. Returns the values of each cell as an array.
-     * @param    int      $index   The index of the cell to fetch. Defaults to 0.
-     * @return   array
-     * @access   public
-     * @abstract
+     * Fetches the values of each cell in a single column of the result set
+     * @param    int      $index   The index (int or string) of the cell to fetch (Default: 0)
+     * @return   array    Returns the values of each cell as an array
      */
     abstract public function fetchColumn($index = 0);
 
     /**
-     * Fetches all result rows as an associative array, a numeric array or both. Returns an array of associative or numeric
-     *   arrays holding result rows.
-     * @param    string   $type   This optional parameter indicates what type of array should be produced from the current
-     *                              row data. The possible values for this parameter are 'num', 'assoc' or 'both'.
-     *                              Default: 'assoc'.
-     * @return   array
-     * @access   public
-     * @abstract
+     * Fetches all result rows as an associative array or a numeric array
+     * @param    bool     $numeric   Set to TRUE to return an enumerated array (Default: FALSE)
+     * @return   array    Returns an array of associative or numeric arrays holding result rows
      */
-    abstract public function fetchAll($type = 'assoc');
+    abstract public function fetchAll($numeric = false);
 
     /**
      * Gets the number of rows in a result
      * @return   int
-     * @access   public
-     * @abstract
      */
     abstract public function numRows();
-	
+
     /**
      * Checks if the result has any rows
      * @return   bool
-     * @access   public
-     * @abstract
      */
     abstract public function hasRows();
 
     /**
      * Gets the number of fields in a result
      * @return   int
-     * @access   public
-     * @abstract
      */
     abstract public function numFields();
 
     /**
      * Frees the memory associated with the result
-     * @return   void
-     * @access   public
-     * @abstract
      */
     abstract public function free();
 
