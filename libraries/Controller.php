@@ -86,7 +86,7 @@ abstract class Controller {
      * @return   \Symfony\Component\HttpFoundation\Response
      */
     final protected function message($message, $type = 'info', $status = 200) {
-        $view = new View('message_body');
+        $view = new View('@global', 'message_body');
         $view->set('message', $message);
         $view->set('type', $type);
         
@@ -98,7 +98,7 @@ abstract class Controller {
      * @return   \Symfony\Component\HttpFoundation\Response
      */
     final protected function errorNotFound() {
-        $view = new View('404_body');
+        $view = new View('@global', '404_body');
         
         return new Response($view, 404);
     }
@@ -108,7 +108,7 @@ abstract class Controller {
      * @return   \Symfony\Component\HttpFoundation\Response
      */
     final protected function errorForbidden() {
-        $view = new View('403_body');
+        $view = new View('@global', '403_body');
         
         return new Response($view, 403);
     }

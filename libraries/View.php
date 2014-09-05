@@ -61,15 +61,13 @@ class View {
 
     /**
      * Generates a new template object
+     * @param    string   $source     Module or template @namespace where the template is loaded from
      * @param    string   $template   Name of the template to load
-     * @return   void
-     * @access   public
      */
-    public function __construct($template) {
-        $namespace = defined('WW_MODULE') ? WW_MODULE : null;
-        $theme = self::getTheme();
-        
-        $this->template = new Template($template, $namespace, $theme);
+    public function __construct($source, $template) {
+        $this->template = new Template($source, $template, [
+            'theme' => self::getTheme()
+        ]);
     }
     
     /**

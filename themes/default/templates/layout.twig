@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ page_title() }}</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+{% for tag in head_tags('meta') %}
+        <meta name="{{ tag.name }}" content="{{ tag.content }}" />
+{% endfor %}
+{% for tag in head_tags('link') %}
+        <link rel="{{ tag.rel }}" href="{{ tag.href }}" type="{{ tag.type }}" />
+{% endfor %}
+        <link rel="stylesheet" href="{{ theme('css/style.css') }}" type="text/css" />
+{% for tag in head_tags('css') %}
+        <link rel="stylesheet" href="{{ tag.url }}" type="text/css" media="{{ tag.media }}" />
+{% endfor %}
+{% for tag in head_tags('script') %}
+        <script src="{{ tag.url }}" type="{{ tag.type }}"></script>
+{% endfor %}
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+                <div class="title">Webwork</div>
+            </div>
+            <div id="content">
+{% block content %}{% endblock %}
+            </div>
+        </div>
+        <div id="footer">
+            <span class="left">Powered by <a href="http://github.com/iceflame-net/Webwork">Webwork</a></span>
+            <span class="right">Copyright &copy; {{ 'now'|date('Y') }} Webwork</span>
+        </div>
+    </body>
+</html>
