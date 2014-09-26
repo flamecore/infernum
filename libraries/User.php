@@ -21,6 +21,8 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork;
+
 /**
  * Object describing a registered user
  *
@@ -57,7 +59,7 @@ class User extends DatabaseRecord
                 'profile' => 'array'
             ]);
         } else {
-            throw new Exception(sprintf('User does not exist (%s = %s)', $selector, $identifier));
+            throw new \Exception(sprintf('User does not exist (%s = %s)', $selector, $identifier));
         }
     }
 

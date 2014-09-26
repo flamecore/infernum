@@ -21,6 +21,12 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork;
+
+use FlameCore\Webwork\Template\Loader;
+use FlameCore\Webwork\Template\CoreExtension;
+use Twig_Environment;
+
 /**
  * Template object
  *
@@ -74,7 +80,7 @@ class Template
             'debug' => false
         );
 
-        if (ww_config('enable_caching')) {
+        if (config('enable_caching')) {
             $cache_path = WW_CACHE_PATH.'/templates/'.strtolower($type);
 
             if (!is_dir($cache_path))
@@ -83,10 +89,10 @@ class Template
             $engine_options['cache'] = $cache_path;
         }
 
-        if (ww_config('enable_debugmode'))
+        if (config('enable_debugmode'))
             $engine_options['debug'] = true;
 
-        $loader = new Template_Loader();
+        $loader = new Loader();
         $loader->setNamespace('global', WW_ENGINE_PATH.'/themes/'.$theme.'/templates');
 
         if ($source[0] != '@') {
@@ -97,7 +103,7 @@ class Template
         }
 
         $twig = new Twig_Environment($loader, $engine_options);
-        $twig->addExtension(new Template_CoreExtension);
+        $twig->addExtension(new CoreExtension);
 
         $this->twig = $twig;
     }
@@ -111,7 +117,7 @@ class Template
     {
         try {
             return $this->render();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             trigger_error($e->getMessage(), E_USER_WARNING);
             return '';
         }

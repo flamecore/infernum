@@ -21,13 +21,25 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork;
+
 /**
  * Autoloader for classes
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class WebworkLoader
+class Autoloader
 {
+    /**
+     * Registers the autoloader
+     *
+     * @return void
+     */
+    public static function register()
+    {
+        spl_autoload_register([__CLASS__, 'loadClass']);
+    }
+
     /**
      * Gets a list of possible source paths
      *
@@ -98,5 +110,4 @@ class WebworkLoader
     }
 }
 
-// Register the autoloader
-spl_autoload_register(['WebworkLoader', 'loadClass']);
+Autoloader::register();

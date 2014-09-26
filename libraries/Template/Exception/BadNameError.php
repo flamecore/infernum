@@ -21,11 +21,13 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork\Template\Exception;
+
 /**
  * This exception is thrown if a bad template name is given
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Template_Exception_BadNameError extends Exception
+class BadNameError extends Exception
 {
 }

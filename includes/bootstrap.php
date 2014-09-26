@@ -21,6 +21,8 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork;
+
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -48,7 +50,7 @@ require_once WW_ENGINE_PATH.'/includes/functions.php';
 
 $request = Request::createFromGlobals();
 
-if (ww_config('enable_multisite') && $sites = ww_config('sites')) {
+if (config('enable_multisite') && $sites = config('sites')) {
     // This is a multi-site installation, so we need to know the current domain name
     $domain = $request->server->get('SERVER_NAME');
 
@@ -56,7 +58,7 @@ if (ww_config('enable_multisite') && $sites = ww_config('sites')) {
     if (isset($sites[$domain])) {
         $active_site = $sites[$domain];
     } else {
-        $active_site = ww_config('default_site', 'default');
+        $active_site = config('default_site', 'default');
     }
 } else {
     // This is a single-site installation, hence we use the default site

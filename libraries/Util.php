@@ -21,6 +21,8 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork;
+
 /**
  * Common utilities
  *
@@ -219,7 +221,7 @@ class Util
         if (is_numeric($input)) {
             // Numeric input, we handle it as timestamp
             return (int) $input;
-        } elseif ($input instanceof DateTime) {
+        } elseif ($input instanceof \DateTime) {
             // DateTime object, get timestamp
             return $input->getTimestamp();
         } else {

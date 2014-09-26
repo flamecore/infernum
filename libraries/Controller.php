@@ -21,6 +21,8 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -68,7 +70,7 @@ abstract class Controller
         } elseif ($result instanceof View || is_string($result)) {
             return new Response($result);
         } else {
-            throw new UnexpectedValueException(sprintf('Action "%s" of Controller "%s" does not provide a valid response result', $action, get_class($this)));
+            throw new \UnexpectedValueException(sprintf('Action "%s" of Controller "%s" does not provide a valid response result', $action, get_class($this)));
         }
     }
 

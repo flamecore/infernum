@@ -21,10 +21,12 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-set_error_handler('ww_handle_error');
-set_exception_handler('ww_handle_exception');
+namespace FlameCore\Webwork;
 
-function ww_handle_error($code, $message, $file, $line)
+set_error_handler('FlameCore\Webwork\handle_error');
+set_exception_handler('FlameCore\Webwork\handle_exception');
+
+function handle_error($code, $message, $file, $line)
 {
     switch ($code) {
         case E_ERROR:
@@ -41,7 +43,7 @@ function ww_handle_error($code, $message, $file, $line)
     return true;
 }
 
-function ww_handle_exception($exception)
+function handle_exception($exception)
 {
     $severity = is_a($exception, '\ErrorException') ? $exception->getSeverity() : 2;
     ww_log($exception->getMessage(), $severity);

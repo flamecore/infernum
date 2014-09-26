@@ -21,6 +21,8 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork\Database;
+
 /**
  * Class for managing a database connection
  *
@@ -60,7 +62,7 @@
  * @see      Database_Base_Connection
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Database_Connection
+class Connection
 {
     /**
      * Name of the used driver
@@ -91,7 +93,7 @@ class Database_Connection
         if (!is_string($driver) || empty($driver))
             throw new \InvalidArgumentException('Database driver name is invalid', E_USER_ERROR);
 
-        $driver_class = "Database_{$driver}_Connection";
+        $driver_class = sprintf('%s\%s\Connection', __NAMESPACE__, $driver);
 
         if (!$driver_class || !class_exists($driver_class))
             throw new \DomainException('Database driver "'.$driver.'" is not available', E_USER_ERROR);

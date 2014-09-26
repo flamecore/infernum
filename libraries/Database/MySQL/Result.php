@@ -21,12 +21,16 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork\Database\MySQL;
+
+use FlameCore\Webwork\Database\Base\Result as BaseResult;
+
 /**
  * Result set returned by a MySQL query
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Database_MySQL_Result extends Database_Base_Result
+class Result extends BaseResult
 {
     /**
      * {@inheritdoc}
@@ -46,7 +50,7 @@ class Database_MySQL_Result extends Database_Base_Result
         } elseif (is_string($index)) {
             $row = $this->fetch();
         } else {
-            throw new InvalidArgumentException('The $index parameter must be either an integer or a string');
+            throw new \InvalidArgumentException('The $index parameter must be either an integer or a string');
         }
 
         if (isset($row[$index])) {
@@ -66,7 +70,7 @@ class Database_MySQL_Result extends Database_Base_Result
         } elseif (is_string($index)) {
             $rows = $this->fetchAll();
         } else {
-            throw new InvalidArgumentException('The $index parameter must be either an integer or a string');
+            throw new \InvalidArgumentException('The $index parameter must be either an integer or a string');
         }
 
         return array_column($rows, $index);

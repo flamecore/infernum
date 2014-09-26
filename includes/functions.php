@@ -21,6 +21,8 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork;
+
 /**
  * Core functions
  *
@@ -34,7 +36,7 @@
  * @param mixed $default Custom default value (optional)
  * @return mixed
  */
-function ww_config($confkey, $default = false)
+function config($confkey, $default = false)
 {
     if (isset($GLOBALS['CONFIG'][$confkey])) {
         return $GLOBALS['CONFIG'][$confkey];

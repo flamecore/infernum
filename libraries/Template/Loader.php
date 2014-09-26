@@ -21,12 +21,17 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork\Template;
+
+use FlameCore\Webwork\Template\Exception\BadNameError;
+use FlameCore\Webwork\Template\Exception\NotFoundError;
+
 /**
  * Loader for the Twig template engine
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Template_Loader implements Twig_LoaderInterface, Twig_ExistsLoaderInterface
+class Loader implements Twig_LoaderInterface, Twig_ExistsLoaderInterface
 {
     private $localPath;
 
@@ -132,7 +137,7 @@ class Template_Loader implements Twig_LoaderInterface, Twig_ExistsLoaderInterfac
         $template = preg_replace('#/{2,}#', '/', strtr((string) $template, '\\', '/'));
 
         if (strpos($template, "\0") !== false)
-            throw new Template_Exception_BadNameError('A template name cannot contain NUL bytes.');
+            throw new BadNameError('A template name cannot contain NUL bytes.');
 
         $template = ltrim($template, '/');
         $parts = explode('/', $template);
@@ -145,23 +150,23 @@ class Template_Loader implements Twig_LoaderInterface, Twig_ExistsLoaderInterfac
             }
 
             if ($level < 0)
-                throw new Template_Exception_BadNameError(sprintf('Looks like you try to load a template outside configured directories. (%s)', $template));
+                throw new BadNameError(sprintf('Looks like you try to load a template outside configured directories. (%s)', $template));
         }
 
         if ($template[0] == '@') {
             if (false === $pos = strpos($template, '/'))
-                throw new Template_Exception_BadNameError(sprintf('Malformed namespaced template name "%s". (expecting "@namespace/template_name")', $template));
+                throw new BadNameError(sprintf('Malformed namespaced template name "%s". (expecting "@namespace/template_name")', $template));
 
             $namespace = substr($template, 1, $pos - 1);
 
             if (!$this->isNamespaceDefined($namespace))
-                throw new Template_Exception_BadNameError(sprintf('Cannot find template "%s": The template namespace "%s" is not defined.', $template, $namespace));
+                throw new BadNameError(sprintf('Cannot find template "%s": The template namespace "%s" is not defined.', $template, $namespace));
 
             $name = substr($template, $pos + 1);
             $path = $this->getNamespace($namespace);
         } else {
             if (!$this->isLocalPathDefined())
-                throw new Template_Exception_BadNameError(sprintf('Cannot find template "%s": There is no local template path defined.', $template));
+                throw new BadNameError(sprintf('Cannot find template "%s": There is no local template path defined.', $template));
 
             $name = $template;
             $path = $this->getLocalPath();
@@ -170,7 +175,7 @@ class Template_Loader implements Twig_LoaderInterface, Twig_ExistsLoaderInterfac
         $filename = "$path/$name.twig";
 
         if (!file_exists($filename))
-            throw new Template_Exception_NotFoundError(sprintf('Unable to find template "%s". (looked into: %s)', $template, $path));
+            throw new NotFoundError(sprintf('Unable to find template "%s". (looked into: %s)', $template, $path));
 
         return $filename;
     }

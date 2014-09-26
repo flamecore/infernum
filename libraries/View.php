@@ -21,6 +21,8 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork;
+
 /**
  * View manager
  *
@@ -78,7 +80,7 @@ class View
     {
         try {
             return $this->render();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             trigger_error($e->getMessage(), E_USER_WARNING);
             return '';
         }

@@ -21,6 +21,8 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork;
+
 /**
  * Class for managing the basic core features
  *
@@ -92,7 +94,7 @@ class System
         $database = self::$settings['Database']['Database'];
         $prefix = self::$settings['Database']['Prefix'];
 
-        self::$db = new Database_Connection($driver, $host, $user, $password, $database, $prefix);
+        self::$db = new Database\Connection($driver, $host, $user, $password, $database, $prefix);
 
         // All systems are started now and running smoothly
         self::$initialized = true;

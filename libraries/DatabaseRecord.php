@@ -21,6 +21,8 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork;
+
 /**
  * This class represents a Database Record
  *
@@ -104,7 +106,7 @@ abstract class DatabaseRecord
     final protected function setMultiple($values)
     {
         if (!is_array($values))
-            throw new InvalidArgumentException('The $values parameter must be an array');
+            throw new \InvalidArgumentException('The $values parameter must be an array');
 
         $this->data = array_merge($this->data, $values);
 
@@ -136,7 +138,7 @@ abstract class DatabaseRecord
     final protected function setListItems($key, $items)
     {
         if (!is_array($items))
-            throw new InvalidArgumentException('The $items parameter must be an array');
+            throw new \InvalidArgumentException('The $items parameter must be an array');
 
         $this->data[$key] = array_merge($this->data[$key], $items);
 

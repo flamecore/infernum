@@ -21,11 +21,13 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork\Template\Exception;
+
 /**
  * This exception is thrown if a template is not found
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Template_Exception_NotFoundError extends Exception
+class NotFoundError extends Exception
 {
 }

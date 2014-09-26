@@ -21,6 +21,8 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork;
+
 /**
  * Simple user session manager
  *
@@ -85,15 +87,15 @@ class Session
                     if (!empty($info['data']))
                         $this->data = unserialize($info['data']);
                 } else {
-                    throw new Exception();
+                    throw new \Exception();
                 }
 
                 $this->refresh();
             } else {
                 // No cookie found: Theres no session to reopen
-                throw new Exception();
+                throw new \Exception();
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->id = uniqid(time(), true);
             $this->lifetime = System::setting('Session:Lifetime', 3600);
 
@@ -182,8 +184,8 @@ class Session
      */
     public function getExpire()
     {
-        $time = new DateTime();
-        return $time->add(new DateInterval("PT{$this->lifetime}S"));
+        $time = new \DateTime();
+        return $time->add(new \DateInterval("PT{$this->lifetime}S"));
     }
 
     /**

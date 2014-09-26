@@ -21,33 +21,37 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork\Template;
+
+use Twig_Extension, Twig_SimpleFilter, Twig_SimpleFunction;
+
 /**
  * Core Extension for the Twig template engine
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Template_CoreExtension extends Twig_Extension
+class CoreExtension extends Twig_Extension
 {
     public function getFilters()
     {
         return array(
-            new Twig_SimpleFilter('shorten', 'Format::shorten'),
-            new Twig_SimpleFilter('lformat_number', 'Format::number'),
-            new Twig_SimpleFilter('lformat_money', 'Format::money'),
-            new Twig_SimpleFilter('lformat_time', 'Format::time'),
-            new Twig_SimpleFilter('lformat_date', 'Format::date')
+            new Twig_SimpleFilter('shorten', 'FlameCore\Webwork\Format::shorten'),
+            new Twig_SimpleFilter('lformat_number', 'FlameCore\Webwork\Format::number'),
+            new Twig_SimpleFilter('lformat_money', 'FlameCore\Webwork\Format::money'),
+            new Twig_SimpleFilter('lformat_time', 'FlameCore\Webwork\Format::time'),
+            new Twig_SimpleFilter('lformat_date', 'FlameCore\Webwork\Format::date')
         );
     }
 
     public function getFunctions()
     {
         return array(
-            new Twig_SimpleFunction('u', 'Util::makeURL'),
-            new Twig_SimpleFunction('page', 'Util::makePageURL'),
-            new Twig_SimpleFunction('theme', 'Util::makeThemeFileURL'),
-            new Twig_SimpleFunction('t', 'International::translate'),
-            new Twig_SimpleFunction('page_title', 'View::getTitle'),
-            new Twig_SimpleFunction('head_tags', 'View::getHeadTags')
+            new Twig_SimpleFunction('u', 'FlameCore\Webwork\Util::makeURL'),
+            new Twig_SimpleFunction('page', 'FlameCore\Webwork\Util::makePageURL'),
+            new Twig_SimpleFunction('theme', 'FlameCore\Webwork\Util::makeThemeFileURL'),
+            new Twig_SimpleFunction('t', 'FlameCore\Webwork\International::translate'),
+            new Twig_SimpleFunction('page_title', 'FlameCore\Webwork\View::getTitle'),
+            new Twig_SimpleFunction('head_tags', 'FlameCore\Webwork\View::getHeadTags')
         );
     }
 

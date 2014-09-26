@@ -21,12 +21,14 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork\Database\Base;
+
 /**
  * Result set returned by a database query
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-abstract class Database_Base_Result
+abstract class Result
 {
     /**
      * The result object returned by the corresponding query

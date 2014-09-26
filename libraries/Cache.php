@@ -21,6 +21,8 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork;
+
 /**
  * Class for reading and storing cache instances
  *
@@ -57,7 +59,7 @@ class Cache
             trigger_error('Invalid cache name given ("'.$name.'")', E_USER_ERROR);
 
         if (!isset($lifetime))
-            $lifetime = ww_config('cache_lifetime', 86400);
+            $lifetime = config('cache_lifetime', 86400);
 
         $this->name = $name;
         $this->lifetime = (int) $lifetime;
@@ -76,7 +78,7 @@ class Cache
             return;
         }
 
-        if (ww_config('enable_caching') == true) {
+        if (config('enable_caching') == true) {
             // Caching is enabled, so we use a file
             $filename = WW_CACHE_PATH.'/data/'.$this->name.'.dat';
 

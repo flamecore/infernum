@@ -21,12 +21,16 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
+namespace FlameCore\Webwork\Database\MySQL;
+
+use FlameCore\Webwork\Database\Base\Connection as BaseConnection;
+
 /**
  * This class allows you to execute operations in a MySQL database
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Database_MySQL_Connection extends Database_Base_Connection
+class Connection extends BaseConnection
 {
     /**
      * {@inheritdoc}
@@ -58,8 +62,8 @@ class Database_MySQL_Connection extends Database_Base_Connection
         if ($result) {
             $this->queryCount++;
 
-            if ($result instanceof MySQLi_Result)
-                return new Database_MySQL_Result($result);
+            if ($result instanceof \MySQLi_Result)
+                return new Result($result);
 
             return true;
         }
