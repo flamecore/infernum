@@ -24,51 +24,95 @@
 namespace FlameCore\Webwork;
 
 /**
- * Autoloader for classes
+ * Loader for classes
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Autoloader
+class ClassLoader
 {
     /**
-     * Registers the autoloader
+     * List of source paths for namespace prefixes
+     *
+     * @var array
+     */
+    protected $sources = array();
+
+    /**
+     * Creates a ClassLoader instance.
+     *
+     * @param string $prefix The primary namespace prefix
+     * @param string $path The source path for the primary namespace
+     */
+    public function __construct($prefix, $path)
+    {
+        $this->addSource($prefix, $path);
+    }
+
+    /**
+     * Registers the ClassLoader as autoloader.
      *
      * @return void
      */
-    public static function register()
+    public function register()
     {
-        spl_autoload_register([__CLASS__, 'loadClass']);
+        spl_autoload_register([$this, 'loadClass']);
     }
 
     /**
-     * Gets a list of possible source paths
+     * Checks whether a source path for the given namespace is defined.
      *
-     * @return array Returns an array of source paths
+     * @param string $prefix The namespace prefix
+     * @return bool Returns TRUE if a source path for the given namespace is defined for the given namespace.
      */
-    public static function getSources()
+    public function hasSource($prefix)
     {
-        $sources = array(WW_ENGINE_PATH);
-
-        if (defined('WW_MODULE_PATH'))
-            array_push($sources, WW_MODULE_PATH);
-
-        array_push($sources, WW_SITE_PATH, WW_SHARED_PATH);
-
-        return $sources;
+        $prefix = $this->normalize($prefix);
+        return isset($this->sources[$prefix]);
     }
 
     /**
-     * Loads the given class
+     * Gets the source path for the given namespace.
+     *
+     * @param string $prefix The namespace prefix
+     * @return string Returns the source path of the namespace or NULL if no source is defined for the namespace.
+     */
+    public function getSource($prefix)
+    {
+        $prefix = $this->normalize($prefix);
+        return isset($this->sources[$prefix]) ? $this->sources[$prefix] : null;
+    }
+
+    /**
+     * Defines the source path for the given namespace.
+     *
+     * @param string $prefix The namespace prefix
+     * @param string $path The source path
+     * @param string $base Pattern of base path and filename (relative to source path).
+     */
+    public function addSource($prefix, $path, $base = 'libraries/*.php')
+    {
+        if ($this->hasSource($prefix))
+            return;
+
+        if (!is_dir($path))
+            throw new \DomainException(sprintf('The path "%s" does not exist.', $path));
+
+        if (strpos($base, '*') === false)
+            throw new \InvalidArgumentException(sprintf('The base path does not contain a filename wildcard.', $prefix));
+
+        $prefix = $this->normalize($prefix);
+        $this->sources[$prefix] = $path.'/'.$base;
+    }
+
+    /**
+     * Loads the given class.
      *
      * @param string $name Name of the class to load
-     * @return bool Returns FALSE if the class could not be loaded, TRUE otherwise
+     * @return bool Returns FALSE if the class could not be loaded, TRUE otherwise.
      */
-    public static function loadClass($name)
+    public function loadClass($name)
     {
-        $name = str_replace('_', '/', $name);
-        $classfile = self::find($name, 'libraries/*.php');
-
-        if ($classfile) {
+        if ($classfile = $this->findFile($name)) {
             require_once $classfile;
             return true;
         }
@@ -77,37 +121,39 @@ class Autoloader
     }
 
     /**
-     * Searches all source paths for a script with given name. By default the filepath of the script that is found at first is returned.
-     *   If $findall is set to TRUE an array of all found scripts (not just the first one) is returned.
+     * Searches all source paths for a class file with given name.
      *
-     * @param string $name Name of the script
-     * @param string $path Path pattern of the file (appended to source path)
-     * @param string $findall Search for all scripts inclusively (Default: FALSE)
-     * @return mixed Returns the filepath of the script that is found at first (string) by default. If $findall is set to TRUE an array
-     *   of all found scripts is returned. If no script is found FALSE is returned.
+     * @param string $class Name of the class
+     * @return string|bool Returns the full filename of the found file. If no file is found FALSE is returned.
      */
-    public static function find($name, $path, $findall = false)
+    public function findFile($class)
     {
-        if ($findall)
-            $results = array();
+        $class = $this->normalize($class);
 
-        foreach (self::getSources() as $source) {
-            $file = str_replace('*', str_replace('\\', '/', $class), $source.'/'.$path);
+        foreach ($this->sources as $prefix => $pattern) {
+            if (strpos($class, $prefix) === 0) {
+                $name_without_prefix = substr($class, strlen($prefix));
+                $file = str_replace('*', str_replace('\\', '/', $name_without_prefix), $pattern);
 
-            if (file_exists($file)) {
-                if (!$findall) {
+                if (file_exists($file))
                     return $file;
-                } else {
-                    $results[] = $file;
-                }
             }
         }
 
-        if ($findall && !empty($results))
-            return $results;
-
         return false;
+    }
+
+    /**
+     * Normalizes the given name.
+     *
+     * @param string $name The name to normalize
+     * @return string Returns the normalized name.
+     */
+    protected function normalize($name)
+    {
+        return trim($name, '\\');
     }
 }
 
-Autoloader::register();
+$loader = new ClassLoader(__NAMESPACE__, WW_ENGINE_PATH);
+$loader->register();
