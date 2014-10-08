@@ -59,6 +59,28 @@ class Connection
     }
 
     /**
+     * Opens a new database connection using the given DSN.
+     *
+     * @param string $dsn The Data Source Name (driver://user:password@host/database?prefix=prefix)
+     * @return \FlameCore\Webwork\Database\Base\Connection Returns the Connection object.
+     */
+    public static function createFromDsn($dsn)
+    {
+        $params = parse_url($dsn);
+        parse_str($params['query'], $options);
+
+        $driver = isset($params['scheme']) ? $params['scheme'] : false;
+        $host = isset($params['host']) ? $params['host'] : null;
+        $user = isset($params['user']) ? $params['user'] : null;
+        $password = isset($params['pass']) ? $params['pass'] : null;
+        $database = isset($params['path']) ? trim($params['path'], '/') : false;
+
+        $prefix = isset($options['prefix']) ? $options['prefix'] : '';
+
+        return self::create($driver, $host, $user, $password, $database, $prefix);
+    }
+
+    /**
      * Gets the name of the driver class.
      *
      * @param string $driver The name of the driver
