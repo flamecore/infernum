@@ -94,7 +94,7 @@ class System
         $database = self::$settings['Database']['Database'];
         $prefix = self::$settings['Database']['Prefix'];
 
-        self::$db = new Database\Connection($driver, $host, $user, $password, $database, $prefix);
+        self::$db = Database\Connection::create($driver, $host, $user, $password, $database, $prefix);
 
         // All systems are started now and running smoothly
         self::$initialized = true;
