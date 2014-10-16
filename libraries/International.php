@@ -33,14 +33,14 @@ class International
     /**
      * The currently used locale pack
      *
-     * @var string
+     * @var \FlameCore\Webwork\Localization
      */
     private static $locale;
 
     /**
      * The translation engine object
      *
-     * @var Translations
+     * @var \FlameCore\Webwork\Translations
      */
     private static $translations;
 
@@ -52,40 +52,36 @@ class International
     public static function init()
     {
         $locales = Localization::getAvailable();
-        $default_lang = (string) System::setting('I18n:Language');
+        $defaultLang = (string) System::setting('I18n:Language');
 
-        if (!in_array($default_lang, $locales))
-            trigger_error('The default language is invalid or undefined', E_USER_ERROR);
+        if (!in_array($defaultLang, $locales))
+            throw new \DomainException('The default language is invalid or undefined');
 
         // Detect the user's preferred language
-        if ($session_lang = SessionManager::read('language')) {
+        if ($sessionLang = System::getSession()->read('language')) {
             // There was found a language setting in the user's session
-            $detected_lang = $session_lang;
-        } elseif ($browser_lang = self::findBestBrowserLanguage($locales)) {
+            $detectedLang = $sessionLang;
+        } elseif ($browserLang = self::findBestBrowserLanguage($locales)) {
             // Try to find out the language using browser information
-            $detected_lang = $browser_lang;
+            $detectedLang = $browserLang;
         }
 
         // If the preferred language is not supported, fall back to the default language
-        if (in_array($detected_lang, $locales)) {
-            $locale = $detected_lang;
-        } else {
-            $locale = $default_lang;
-        }
+        $locale = in_array($detectedLang, $locales) ? $detectedLang : $defaultLang;
 
         self::$locale = new Localization($locale);
         self::$translations = new Translations($locale);
     }
 
     /**
-     * Returns the name of the currently used locale pack
+     * Returns the used locale
      *
-     * @return string
+     * @return \FlameCore\Webwork\Localization
      */
     public static function getLocale()
     {
         if (!isset(self::$locale) || !(self::$locale instanceof Localization))
-            trigger_error('The I18n system is not yet initialized', E_USER_ERROR);
+            throw new \LogicException('The I18n system is not yet initialized');
 
         return self::$locale;
     }
@@ -100,7 +96,7 @@ class International
     public static function translate($string, $vars = null)
     {
         if (!isset(self::$translations) || !(self::$translations instanceof Translations))
-            trigger_error('The I18n system is not yet initialized', E_USER_ERROR);
+            throw new \LogicException('The I18n system is not yet initialized');
 
         return self::$translations->get($string, $vars);
     }
