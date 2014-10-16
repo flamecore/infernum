@@ -73,4 +73,4 @@ define('WW_CACHE_PATH', WW_ENGINE_PATH.'/cache/'.WW_SITE_NAME);
 
 System::startup();
 
-International::init();
+International::init($request);

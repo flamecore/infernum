@@ -23,6 +23,8 @@
 
 namespace FlameCore\Webwork;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Simple internationalization system
  *
@@ -47,9 +49,9 @@ class International
     /**
      * Initializes the internationalization system
      *
-     * @return void
+     * @param \Symfony\Component\HttpFoundation\Request $request The request
      */
-    public static function init()
+    public static function init(Request $request)
     {
         $locales = Localization::getAvailable();
         $defaultLang = (string) System::setting('I18n:Language');
@@ -61,7 +63,7 @@ class International
         if ($sessionLang = System::getSession()->read('language')) {
             // There was found a language setting in the user's session
             $detectedLang = $sessionLang;
-        } elseif ($browserLang = self::findBestBrowserLanguage($locales)) {
+        } elseif ($browserLang = $request->getPreferredLanguage($locales)) {
             // Try to find out the language using browser information
             $detectedLang = $browserLang;
         }
@@ -99,23 +101,5 @@ class International
             throw new \LogicException('The I18n system is not yet initialized');
 
         return self::$translations->get($string, $vars);
-    }
-
-    /**
-     * Tries to find an available language that can best satisfy the browser languages list
-     *
-     * @param array $supported The list of supported languages
-     * @return string
-     */
-    private static function findBestBrowserLanguage($supported)
-    {
-        $languages = Util::getBrowserLanguages();
-
-        foreach ($languages as $language) {
-            if (in_array($language, $supported))
-                return $language;
-        }
-
-        return false;
     }
 }
