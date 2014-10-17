@@ -21,14 +21,14 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Webwork;
+namespace FlameCore\Webwork\Entity;
 
 /**
  * Object describing a registered user
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class User extends DatabaseRecord
+class User extends Entity
 {
     /**
      * Fetches the data of the user
@@ -49,7 +49,7 @@ class User extends DatabaseRecord
         $result = System::db()->query($sql, [$identifier]);
 
         if ($result->hasRows()) {
-            $this->setData($result->fetch(), [
+            $this->loadData($result->fetch(), [
                 'id' => 'int',
                 'username' => 'string',
                 'email' => 'string',

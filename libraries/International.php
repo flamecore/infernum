@@ -23,6 +23,7 @@
 
 namespace FlameCore\Webwork;
 
+use FlameCore\Webwork\Resource\Localization;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

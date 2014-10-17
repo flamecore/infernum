@@ -21,14 +21,14 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Webwork;
+namespace FlameCore\Webwork\Resource;
 
 /**
  * Object describing a locale
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Localization extends DatabaseRecord
+class Localization extends DatabaseResource
 {
     /**
      * Fetches the data of the locale
@@ -41,7 +41,7 @@ class Localization extends DatabaseRecord
         $result = System::db()->query($sql, [$identifier]);
 
         if ($result->hasRows()) {
-            $this->setData($result->fetch(), [
+            $this->loadData($result->fetch(), [
                 'id' => 'string',
                 'name' => 'string',
                 'text_direction' => 'string',

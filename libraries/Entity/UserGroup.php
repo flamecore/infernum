@@ -21,14 +21,14 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Webwork;
+namespace FlameCore\Webwork\Entity;
 
 /**
  * Object describing a user group
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class UserGroup extends DatabaseRecord
+class UserGroup extends Entity
 {
     /**
      * Fetches the data of the user group
@@ -49,7 +49,7 @@ class UserGroup extends DatabaseRecord
         $result = System::db()->query($sql, [$identifier]);
 
         if ($result->hasRows()) {
-            $this->setData($result->fetch(), [
+            $this->loadData($result->fetch(), [
                 'id' => 'int',
                 'name' => 'string',
                 'title' => 'string',
@@ -128,7 +128,7 @@ class UserGroup extends DatabaseRecord
      */
     public function isAuthorized($mingroup)
     {
-        $mingroup = new UserGroup($mingroup);
+        $mingroup = new self($mingroup);
         $minlevel = $mingroup->getAccessLevel();
 
         return $this->get('accesslevel') >= $minlevel;

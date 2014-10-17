@@ -23,6 +23,7 @@
 
 namespace FlameCore\Webwork;
 
+use FlameCore\Webwork\Entity\User;
 /**
  * Simple user session manager
  *
