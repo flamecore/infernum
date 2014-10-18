@@ -100,7 +100,7 @@ class System
         self::$initialized = true;
 
         // Start user session
-        self::$session = new Session();
+        self::$session = Session::init();
     }
 
     /**

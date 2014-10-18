@@ -59,52 +59,54 @@ class Session
     private $lifetime = 3600;
 
     /**
-     * Initializes the session system
+     * Initializes the session system.
      *
-     * @return void
+     * @return \FlameCore\Webwork\Session Returns the new Session object.
      */
-    public function __construct()
+    public static function init()
     {
         // Clean up sessions table from expired sessions before proceeding
-        $this->cleanup();
+        $sql = 'DELETE FROM @PREFIX@sessions WHERE expire <= {0}';
+        System::db()->query($sql, [date('Y-m-d H:i:s')]);
 
-        try {
-            // Check if the user has a session cookie
-            if ($sid = Util::getCookie('session')) {
-                // Cookie found: Try to reopen the session
-                $sql = 'SELECT * FROM @PREFIX@sessions WHERE id = {0} AND expire > {1} LIMIT 1';
-                $result = System::db()->query($sql, [$sid, date('Y-m-d H:i:s')]);
+        $sid = Util::getCookie('session') ?: uniqid(time(), true);
 
-                if ($result->hasRows()) {
-                    $info = $result->fetch();
+        $session = new self($sid);
+        $session->refresh();
 
-                    $this->id = $info['id'];
-                    $this->lifetime = (int) $info['lifetime'];
+        Util::setCookie('session', $sid, $session->getExpire());
 
-                    if ($info['user'] > 0)
-                        $this->user = new User((int) $info['user']);
+        return $session;
+    }
 
-                    if (!empty($info['data']))
-                        $this->data = unserialize($info['data']);
-                } else {
-                    throw new \Exception();
-                }
+    /**
+     * Generates a Session object.
+     *
+     * @param string $sid The ID of the session
+     */
+    public function __construct($sid)
+    {
+        $sql = 'SELECT * FROM @PREFIX@sessions WHERE id = {0} AND expire > {1} LIMIT 1';
+        $result = System::db()->query($sql, [$sid, date('Y-m-d H:i:s')]);
 
-                $this->refresh();
-            } else {
-                // No cookie found: Theres no session to reopen
-                throw new \Exception();
-            }
-        } catch (\Exception $e) {
-            $this->id = uniqid(time(), true);
-            $this->lifetime = System::setting('Session:Lifetime', 3600);
+        if ($result->hasRows()) {
+            $info = $result->fetch();
+
+            $this->id = $info['id'];
+            $this->lifetime = (int) $info['lifetime'];
+
+            if ($info['user'] > 0)
+                $this->user = new User((int) $info['user']);
+
+            if (!empty($info['data']))
+                $this->data = unserialize($info['data']);
+        } else {
+            $this->id = $sid;
+            $this->lifetime = System::setting('Session:Lifetime', $this->lifetime);
 
             // Create a new session
             $sql = 'INSERT INTO @PREFIX@sessions (id, expire) VALUES({0}, {1})';
             System::db()->query($sql, [$this->id, $this->getExpire()->format('Y-m-d H:i:s')]);
-
-            // Set the session cookie
-            Util::setCookie('session', $this->id);
         }
     }
 
@@ -247,13 +249,12 @@ class Session
     }
 
     /**
-     * Deletes all expired session
+     * Returns whether the session is active
      *
-     * @return void
+     * @return bool
      */
-    public function cleanup()
+    public function isActive()
     {
-        $sql = 'DELETE FROM @PREFIX@sessions WHERE expire <= {0}';
-        System::db()->query($sql, [date('Y-m-d H:i:s')]);
+        return isset($this->id);
     }
 }
