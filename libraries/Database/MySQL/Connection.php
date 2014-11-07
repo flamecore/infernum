@@ -76,6 +76,9 @@ class Connection extends BaseConnection
      */
     public function select($table, $columns = '*', $params = array())
     {
+        if (is_array($columns))
+            $columns = '`' . join('`, `', $columns) . '`';
+
         $sql = 'SELECT '.$columns.' FROM `'.$table.'`';
 
         if (isset($params['where']))
@@ -95,6 +98,9 @@ class Connection extends BaseConnection
      */
     public function insert($table, $data)
     {
+        $columns = array();
+        $values = array();
+
         foreach ($data as $column => $value) {
             $columns[] = '`'.$column.'`';
             $values[]  = $this->prepareValue($value);
@@ -109,6 +115,8 @@ class Connection extends BaseConnection
      */
     public function update($table, $data, $params = array())
     {
+        $dataset = array();
+
         foreach ($data as $key => $value) {
             $value = $this->prepareValue($value);
             $dataset[] = '`'.$key.'` = '.$value;
