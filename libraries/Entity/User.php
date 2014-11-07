@@ -24,45 +24,14 @@
 namespace FlameCore\Infernum\Entity;
 
 /**
- * Object describing a registered user
+ * Object describing a registered user.
+ *
+ * The identifier can be the ID (int) or username (string) of the user.
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
 class User extends Entity
 {
-    /**
-     * Fetches the data of the user
-     *
-     * @param int|string $identifier The ID (int) or username (string) of the user
-     */
-    public function __construct($identifier)
-    {
-        if (is_string($identifier)) {
-            $selector = 'username';
-        } elseif (is_int($identifier)) {
-            $selector = 'id';
-        } else {
-            trigger_error('Invalid user identifier given', E_USER_ERROR);
-        }
-
-        $sql = sprintf('SELECT * FROM @PREFIX@users WHERE `%s` = {0} LIMIT 1', $selector);
-        $result = System::db()->query($sql, [$identifier]);
-
-        if ($result->hasRows()) {
-            $this->loadData($result->fetch(), [
-                'id' => 'int',
-                'username' => 'string',
-                'email' => 'string',
-                'password' => 'string',
-                'group' => 'int',
-                'lastactive' => 'datetime',
-                'profile' => 'array'
-            ]);
-        } else {
-            throw new \Exception(sprintf('User does not exist (%s = %s)', $selector, $identifier));
-        }
-    }
-
     /**
      * Returns the user's ID
      *
@@ -237,30 +206,53 @@ class User extends Entity
     }
 
     /**
-     * Updates the given columns in the database table
+     * Parses the user identifier.
      *
-     * @param array $columns Names and values of columns to be updated (Format:  [name => value, ...]`)
-     * @return bool
+     * @param int|string $identifier The ID (int) or username (string) of the user
+     * @return array
      */
-    protected function update($columns)
+    protected static function parseIdentifier($identifier)
     {
-        return System::db()->update('@PREFIX@users', $columns, [
-            'where' => 'id = {0}',
-            'vars' => [$this->get('id')]
-        ]);
+        if (is_string($identifier)) {
+            $selector = 'username';
+        } elseif (is_int($identifier)) {
+            $selector = 'id';
+        } else {
+            throw new \InvalidArgumentException('Invalid user identifier given.');
+        }
+
+        return array($selector, $identifier);
     }
 
     /**
-     * Checks whether a user with given ID exists
-     *
-     * @param int $id The ID of the user
-     * @return bool
+     * {@inheritdoc}
      */
-    public static function exists($id)
+    protected static function getTable()
     {
-        $sql = 'SELECT id FROM @PREFIX@users WHERE id = {0} LIMIT 1';
-        $result = System::db()->query($sql, [$id]);
+        return '@PREFIX@users';
+    }
 
-        return $result->hasRows();
+    /**
+     * {@inheritdoc}
+     */
+    protected static function getKeyName()
+    {
+        return 'id';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected static function getFields()
+    {
+        return array(
+            'id' => 'int',
+            'username' => 'string',
+            'email' => 'string',
+            'password' => 'string',
+            'group' => 'int',
+            'lastactive' => 'datetime',
+            'profile' => 'array'
+        );
     }
 }

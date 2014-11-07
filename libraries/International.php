@@ -54,7 +54,7 @@ class International
      */
     public static function init(Request $request)
     {
-        $locales = Localization::getAvailable();
+        $locales = Localization::listAll();
         $defaultLang = (string) System::setting('I18n:Language');
 
         if (!in_array($defaultLang, $locales))

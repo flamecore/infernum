@@ -24,40 +24,14 @@
 namespace FlameCore\Infernum\Resource;
 
 /**
- * Object describing a locale
+ * Object describing a locale.
+ *
+ * The identifier must be the ID of the locale.
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Localization extends DatabaseResource
+class Localization extends Resource
 {
-    /**
-     * Fetches the data of the locale
-     *
-     * @param string $identifier The ID of the locale
-     */
-    public function __construct($identifier)
-    {
-        $sql = 'SELECT * FROM @PREFIX@locales WHERE id = {0} LIMIT 1';
-        $result = System::db()->query($sql, [$identifier]);
-
-        if ($result->hasRows()) {
-            $this->loadData($result->fetch(), [
-                'id' => 'string',
-                'name' => 'string',
-                'text_direction' => 'string',
-                'number_sep_decimal' => 'string',
-                'number_sep_thousand' => 'string',
-                'fmt_money' => 'string',
-                'fmt_time' => 'string',
-                'fmt_date_short' => 'string',
-                'fmt_date_medium' => 'string',
-                'fmt_date_long' => 'string'
-            ]);
-        } else {
-            throw new \Exception(sprintf('Locale does not exist (id = %s)', $identifier));
-        }
-    }
-
     /**
      * Returns the locale's ID
      *
@@ -76,17 +50,6 @@ class Localization extends DatabaseResource
     public function getName()
     {
         return $this->get('name');
-    }
-
-    /**
-     * Sets the name of the locale
-     *
-     * @param string $name The new name
-     * @return bool
-     */
-    public function setName($name)
-    {
-        return $this->set('name', $name);
     }
 
     /**
@@ -150,43 +113,37 @@ class Localization extends DatabaseResource
     }
 
     /**
-     * Updates the given columns in the database table
-     *
-     * @param array $columns Names and values of columns to be updated (Format: [name => value, ...])
-     * @return bool
+     * {@inheritdoc}
      */
-    protected function update($columns)
+    protected static function getTable()
     {
-        return System::db()->update('@PREFIX@locales', $columns, [
-            'where' => 'id = {0}',
-            'vars' => [$this->get('id')]
-        ]);
+        return '@PREFIX@locales';
     }
 
     /**
-     * Checks whether or not a locale with given ID exists
-     *
-     * @param string $id The ID of the locale
-     * @return bool
+     * {@inheritdoc}
      */
-    public static function exists($id)
+    protected static function getKeyName()
     {
-        $sql = 'SELECT id FROM @PREFIX@locales WHERE id = {0} LIMIT 1';
-        $result = System::db()->query($sql, [$id]);
-
-        return $result->hasRows();
+        return 'id';
     }
 
     /**
-     * Returns a list of available locales
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public static function getAvailable()
+    protected static function getFields()
     {
-        $cache = new Cache('locales/list');
-        return $cache->data(function () {
-            return System::db()->select('@PREFIX@locales', 'id')->fetchColumn();
-        });
+        return array(
+            'id' => 'string',
+            'name' => 'string',
+            'text_direction' => 'string',
+            'number_sep_decimal' => 'string',
+            'number_sep_thousand' => 'string',
+            'fmt_money' => 'string',
+            'fmt_time' => 'string',
+            'fmt_date_short' => 'string',
+            'fmt_date_medium' => 'string',
+            'fmt_date_long' => 'string'
+        );
     }
 }

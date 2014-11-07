@@ -24,42 +24,14 @@
 namespace FlameCore\Infernum\Entity;
 
 /**
- * Object describing a user group
+ * Object describing a user group.
+ *
+ * The identifier can be the ID (int) or name (string) of the user group.
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
 class UserGroup extends Entity
 {
-    /**
-     * Fetches the data of the user group
-     *
-     * @param int|string $identifier The ID (int) or name (string) of the user group
-     */
-    public function __construct($identifier)
-    {
-        if (is_string($identifier)) {
-            $selector = 'name';
-        } elseif (is_int($identifier)) {
-            $selector = 'id';
-        } else {
-            trigger_error('Invalid user group identifier given', E_USER_ERROR);
-        }
-
-        $sql = sprintf('SELECT * FROM @PREFIX@usergroups WHERE %s = {0} LIMIT 1', $selector);
-        $result = System::db()->query($sql, [$identifier]);
-
-        if ($result->hasRows()) {
-            $this->loadData($result->fetch(), [
-                'id' => 'int',
-                'name' => 'string',
-                'title' => 'string',
-                'accesslevel' => 'int'
-            ]);
-        } else {
-            throw new \Exception(sprintf('User group does not exist (%s = %s)', $selector, $identifier));
-        }
-    }
-
     /**
      * Returns the groups's ID
      *
@@ -135,30 +107,50 @@ class UserGroup extends Entity
     }
 
     /**
-     * Updates the given columns in the database table
+     * Parses the user group identifier.
      *
-     * @param array $columns Names and values of columns to be updated (Format:  [name => value, ...]`)
-     * @return bool
+     * @param int|string $identifier The ID (int) or name (string) of the user group
+     * @return array
      */
-    protected function update($columns)
+    protected static function parseIdentifier($identifier)
     {
-        return System::db()->update('@PREFIX@usergroups', $columns, [
-            'where' => 'id = {0}',
-            'vars' => [$this->get('id')]
-        ]);
+        if (is_string($identifier)) {
+            $selector = 'name';
+        } elseif (is_int($identifier)) {
+            $selector = 'id';
+        } else {
+            throw new \InvalidArgumentException('Invalid user group identifier given.');
+        }
+
+        return array($selector, $identifier);
     }
 
     /**
-     * Checks whether a user group with given ID exists
-     *
-     * @param    int      $id   The ID of the user group
-     * @return   bool
+     * {@inheritdoc}
      */
-    public static function exists($id)
+    protected static function getTable()
     {
-        $sql = 'SELECT id FROM @PREFIX@usergroups WHERE id = {0} LIMIT 1';
-        $result = System::db()->query($sql, [$id]);
+        return '@PREFIX@usergroups';
+    }
 
-        return $result->hasRows();
+    /**
+     * {@inheritdoc}
+     */
+    protected static function getKeyName()
+    {
+        return 'id';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected static function getFields()
+    {
+        return array(
+            'id' => 'int',
+            'name' => 'string',
+            'title' => 'string',
+            'accesslevel' => 'int'
+        );
     }
 }

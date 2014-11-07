@@ -23,22 +23,40 @@
 
 namespace FlameCore\Infernum\Entity;
 
-use FlameCore\Infernum\Resource\DatabaseResource;
+use FlameCore\Infernum\System;
+use FlameCore\Infernum\Resource\Resource;
 
 /**
  * The abstract Entity class
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-abstract class Entity extends DatabaseResource
+abstract class Entity extends Resource
 {
     /**
-     * Updates the given columns in the database table.
+     * Updates the given columns of the record.
      *
-     * @param array $columns Names and values of columns to be updated (Format: [name => value, ...])
+     * @param mixed $identifier The identifier of the record
+     * @param array $columns Names and values of columns to be updated (Format: `[name => value, ...]`)
      * @return bool
      */
-    abstract protected function update($columns);
+    protected function update($identifier, $columns)
+    {
+        $table = static::getTable();
+        $fields = static::getFields();
+
+        list($selector, $identifier) = static::parseIdentifier($identifier);
+
+        if (!isset($fields[$selector]))
+            throw new \DomainException(sprintf('Cannot select by "%s.%s" field as it is not defined.', $table, $selector));
+
+        $columns = array_map([__CLASS__, 'encode'], $columns);
+        return System::db()->update($table, $columns, [
+            'where' => "`$selector` = {0}",
+            'vars' => [$identifier],
+            'limit' => 1
+        ]);
+    }
 
     /**
      * Sets the value of a data entry.
@@ -51,7 +69,7 @@ abstract class Entity extends DatabaseResource
     {
         $this->data[$key] = $value;
 
-        return $this->update([$key => $this->encode($value)]);
+        return $this->update([$key => $value]);
     }
 
     /**
@@ -67,7 +85,7 @@ abstract class Entity extends DatabaseResource
 
         $this->data = array_merge($this->data, $values);
 
-        return $this->update(array_map([$this, 'encode'], $values));
+        return $this->update($values);
     }
 
     /**
@@ -82,7 +100,7 @@ abstract class Entity extends DatabaseResource
     {
         $this->data[$key][$subkey] = $value;
 
-        return $this->update([$key => $this->encode($this->data[$key])]);
+        return $this->update([$key => $this->data[$key]]);
     }
 
     /**
@@ -99,23 +117,6 @@ abstract class Entity extends DatabaseResource
 
         $this->data[$key] = array_merge($this->data[$key], $items);
 
-        return $this->update([$key => $this->encode($this->data[$key])]);
-    }
-
-    /**
-     * Encodes the given value for usage in a database statement.
-     *
-     * @param mixed $value The value
-     * @return mixed
-     */
-    protected function encode($value)
-    {
-        if (is_object($value) && $value instanceof DateTime) {
-            return $value->format('Y-m-d H:i:s');
-        } elseif (is_array($value)) {
-            return serialize($value);
-        } else {
-            return $value;
-        }
+        return $this->update([$key => $this->data[$key]]);
     }
 }
