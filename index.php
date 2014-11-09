@@ -32,18 +32,30 @@ namespace FlameCore\Infernum;
 define('DS', DIRECTORY_SEPARATOR);
 define('INFERNUM_ENGINE_PATH', DS != '/' ? str_replace(DS, '/', __DIR__) : __DIR__);
 
-require INFERNUM_ENGINE_PATH.'/includes/bootstrap.php';
+try {
+    require INFERNUM_ENGINE_PATH.'/includes/bootstrap.php';
 
-View::setTitle(System::setting('Main:SiteName'));
+    View::setTitle(System::setting('Main:SiteName'));
 
-if (is_readable(INFERNUM_SITE_PATH.'/setup.php'))
-    include INFERNUM_SITE_PATH.'/setup.php';
+    if (is_readable(INFERNUM_SITE_PATH.'/setup.php'))
+        include INFERNUM_SITE_PATH.'/setup.php';
 
-$path = $request->query->get('p') ?: '';
+    $path = $request->query->get('p') ?: '';
 
-// Split the path into its parts. Use frontpage path if no path is specified.
-if (!empty($path)) {
-    System::loadModuleFromPath($path);
-} else {
-    System::loadModule(System::setting('Main:Frontpage'));
+    // Split the path into its parts. Use frontpage path if no path is specified.
+    if (!empty($path)) {
+        System::loadModuleFromPath($path);
+    } else {
+        System::loadModule(System::setting('Main:Frontpage'));
+    }
+} catch (\Exception $exception) {
+    if (function_exists('FlameCore\Infernum\infernum_config')) {
+        infernum_log($exception->getMessage(), 2);
+        $verbosity = infernum_config('enable_debugmode') ? infernum_config('debug_verbosity', 1) : 0;
+    } else {
+        $verbosity = 1;
+    }
+
+    require INFERNUM_ENGINE_PATH.'/includes/errorpage.php';
+    exit();
 }

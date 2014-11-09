@@ -32,10 +32,10 @@ use Symfony\Component\HttpFoundation\Request;
  */
 
 if (!is_readable(INFERNUM_ENGINE_PATH.'/config.php'))
-    exit('No configuration file found. Please copy the file "config.php.dist" to "config.php".');
+    throw new \LogicException('No configuration file found. Please copy the file "config.php.dist" to "config.php".');
 
 if (!is_readable(INFERNUM_ENGINE_PATH.'/vendor/autoload.php'))
-    exit('No vendor autoloader found. Please make sure that you have installed the required libraries using Composer.');
+    throw new \LogicException('No vendor autoloader found. Please make sure that you have installed the required libraries using Composer.');
 
 $CONFIG = array();
 

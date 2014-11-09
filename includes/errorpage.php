@@ -47,14 +47,12 @@
     <body>
         <div id="content">
             <h1>System Error</h1>
-            <p>We are sorry, an unexpected system error occurred.</p>
-<?php if (isset($GLOBALS['CONFIG']['enable_debugmode']) && $GLOBALS['CONFIG']['enable_debugmode']): ?>
+<?php if ($verbosity > 0): ?>
+            <p><strong><?php echo $exception->getMessage() ?></strong></p>
+<?php if ($verbosity > 1): ?>
             <fieldset>
                 <legend>Debug Information</legend>
                 <table width="100%">
-                    <tr>
-                        <td colspan="2"><strong><?php echo $exception->getMessage() ?></strong></td>
-                    </tr>
                     <tr>
                         <td>Type:</td>
                         <td><?php echo get_class($exception) ?></td>
@@ -73,6 +71,9 @@
                 <legend>Stack Trace</legend>
                 <pre><?php echo str_replace(INFERNUM_ENGINE_PATH, '.', $exception->getTraceAsString()) ?></pre>
             </fieldset>
+<?php endif; ?>
+<?php else: ?>
+            <p>We are sorry, an unexpected system error occurred.</p>
 <?php endif; ?>
         </div>
     </body>

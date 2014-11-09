@@ -24,7 +24,6 @@
 namespace FlameCore\Infernum;
 
 set_error_handler('FlameCore\Infernum\handle_error');
-set_exception_handler('FlameCore\Infernum\handle_exception');
 
 function handle_error($code, $message, $file, $line)
 {
@@ -41,15 +40,6 @@ function handle_error($code, $message, $file, $line)
     }
 
     return true;
-}
-
-function handle_exception($exception)
-{
-    $severity = is_a($exception, '\ErrorException') ? $exception->getSeverity() : 2;
-    infernum_log($exception->getMessage(), $severity);
-
-    include INFERNUM_ENGINE_PATH.'/includes/errorpage.php';
-    exit();
 }
 
 function infernum_log($message, $severity = 0, $logfile = 'system')
