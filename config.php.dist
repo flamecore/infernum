@@ -1,6 +1,0 @@
-<?php
-$CONFIG['enable_debugmode'] = false;
-$CONFIG['enable_logging'] = false
-$CONFIG['enable_caching'] = false;
-
-$CONFIG['enable_multisite'] = false;

@@ -1,0 +1,5 @@
+enable_debugmode: false
+enable_logging: false
+enable_caching: false
+
+enable_multisite: false

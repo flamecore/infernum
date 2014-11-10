@@ -23,6 +23,7 @@
 
 namespace FlameCore\Infernum;
 
+use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -31,20 +32,22 @@ use Symfony\Component\HttpFoundation\Request;
  * @author   Christian Neff <christian.neff@gmail.com>
  */
 
-if (!is_readable(INFERNUM_ENGINE_PATH.'/config.php'))
+if (!is_readable(INFERNUM_ENGINE_PATH.'/config.yml'))
     throw new \LogicException('No configuration file found. Please copy the file "config.php.dist" to "config.php".');
 
 if (!is_readable(INFERNUM_ENGINE_PATH.'/vendor/autoload.php'))
     throw new \LogicException('No vendor autoloader found. Please make sure that you have installed the required libraries using Composer.');
 
-$CONFIG = array();
+require_once INFERNUM_ENGINE_PATH.'/vendor/autoload.php';
 
-require_once INFERNUM_ENGINE_PATH.'/config.php';
+try {
+    $CONFIG = (array) Yaml::parse(INFERNUM_ENGINE_PATH.'/config.yml');
+} catch (\Exception $e) {
+    throw new \LogicException(sprintf('Unable to load system configuration: %s', $e->getMessage()));
+}
 
 require_once INFERNUM_ENGINE_PATH.'/includes/errorhandler.php';
 require_once INFERNUM_ENGINE_PATH.'/includes/autoloader.php';
-
-require_once INFERNUM_ENGINE_PATH.'/vendor/autoload.php';
 
 require_once INFERNUM_ENGINE_PATH.'/includes/functions.php';
 
