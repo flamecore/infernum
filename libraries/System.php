@@ -23,6 +23,8 @@
 
 namespace FlameCore\Infernum;
 
+use Symfony\Component\Yaml\Yaml;
+
 /**
  * Class for managing the basic core features
  *
@@ -78,9 +80,7 @@ class System
 
         // At first we have to load the settings
         $cache = new Cache('settings');
-        self::$settings = $cache->data(function () {
-            return Util::parseSettings(INFERNUM_SITE_PATH.'/settings.yml');
-        });
+        self::$settings = $cache->data([__CLASS__, 'loadSettings']);
 
         // Make sure that the required settings are available and shut down the system otherwise
         if (!isset(self::$settings['Main']) || !isset(self::$settings['Database']))
@@ -271,6 +271,20 @@ class System
             return self::loadModule($modules[$mount], $action, $arguments);
         } else {
             return false;
+        }
+    }
+
+    public static function loadSettings()
+    {
+        $file = INFERNUM_SITE_PATH.'/settings.yml';
+
+        if (!file_exists($file))
+            throw new \LogicException(sprintf('File "%s" does not exist.', $file));
+
+        try {
+            return (array) Yaml::parse($file);
+        } catch (\Exception $e) {
+            throw new \LogicException(sprintf('Unable to load settings: %s', $e->getMessage()));
         }
     }
 }

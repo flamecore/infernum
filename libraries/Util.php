@@ -235,18 +235,4 @@ class Util
             }
         }
     }
-
-    /**
-     * Parses a Infernum settings file.
-     *
-     * @param string $filename The filename of the YAML file being parsed
-     * @return array Returns a multidimensional array, with the section names and settings included.
-     */
-    public static function parseSettings($filename)
-    {
-        if (!is_readable($filename))
-            trigger_error('File "'.$filename.'" does not exist or is not readable', E_USER_ERROR);
-
-        return \Symfony\Component\Yaml\Yaml::parse($filename);
-    }
 }
