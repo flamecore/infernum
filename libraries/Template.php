@@ -15,14 +15,14 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package     Webwork
- * @version     0.1-dev
- * @link        http://www.iceflame.net
- * @license     ISC License (http://www.opensource.org/licenses/ISC)
+ * @package  FlameCore\Webwork
+ * @version  0.1-dev
+ * @link     http://www.flamecore.org
+ * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
 /**
- * Template parser class
+ * Template object
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  * @author   Martin Lantzsch <martin@linux-doku.de>
@@ -31,30 +31,35 @@ class Template
 {
     /**
      * Name of the template to load (without file extension)
-     * @var   string
+     *
+     * @var string
      */
     private $name;
 
     /**
      * Twig Environment instance
-     * @var   Twig_Environment
+     *
+     * @var Twig_Environment
      */
     private $twig;
 
     /**
      * All assigned template variables
-     * @var   array
+     *
+     * @var array
      */
     private $variables = array();
 
     /**
      * All assigned global template variables
-     * @var   array
+     *
+     * @var array
      */
     private static $globals = array();
 
     /**
-     * Generates a new Template object
+     * Generates a new Template object.
+     *
      * @param    string   $source    Module or template @namespace where the template is loaded from
      * @param    string   $name      Name of the template to load (without file extension)
      * @param    array    $options   An optional array of one or more of the following options:
@@ -98,8 +103,9 @@ class Template
     }
 
     /**
-     * Returns the rendered template
-     * @return   string
+     * Returns the rendered template.
+     *
+     * @return string
      */
     public function __toString()
     {
@@ -113,7 +119,8 @@ class Template
 
     /**
      * Renders the template
-     * @return   string
+     *
+     * @return string
      */
     public function render()
     {
@@ -125,6 +132,8 @@ class Template
 
     /**
      * Displays the template
+     *
+     * @return void
      */
     public function display()
     {
@@ -133,9 +142,10 @@ class Template
 
     /**
      * Sets one or more template variables
-     * @param    mixed    $param1   The name of the variable (string) or pairs of names and values of multiple
-     *                                variables (array in the format [name => value, ...]) to be set
-     * @param    mixed    $param2   The value of the variable (only if parameter 1 is used for the variable name)
+     *
+     * @param mixed $param1 The name of the variable (string) or pairs of names and values of multiple
+     *   variables (array in the format `[name => value, ...]`) to be set
+     * @param mixed $param2 The value of the variable (only if parameter 1 is used for the variable name)
      */
     public function set($param1, $param2 = null)
     {
@@ -150,9 +160,10 @@ class Template
 
     /**
      * Sets one or more global template variables
-     * @param    mixed    $param1   The name of the variable (string) or pairs of names and values of multiple
-     *                                variables (array in the format [name => value, ...]) to be set
-     * @param    mixed    $param2   The value of the variable (only if parameter 1 is used for the variable name)
+     *
+     * @param mixed $param1 The name of the variable (string) or pairs of names and values of multiple
+     *   variables (array in the format `[name => value, ...]`) to be set
+     * @param mixed $param2 The value of the variable (only if parameter 1 is used for the variable name)
      */
     public static function setGlobal($param1, $param2 = null)
     {

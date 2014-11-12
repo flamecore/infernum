@@ -6,7 +6,7 @@
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE
@@ -15,10 +15,10 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package     Webwork
- * @version     0.1-dev
- * @link        http://www.iceflame.net
- * @license     ISC License (http://www.opensource.org/licenses/ISC)
+ * @package  FlameCore\Webwork
+ * @version  0.1-dev
+ * @link     http://www.flamecore.org
+ * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
 /**
@@ -26,13 +26,15 @@
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Localization extends DatabaseRecord {
-
+class Localization extends DatabaseRecord
+{
     /**
      * Fetches the data of the locale
-     * @param    string   $identifier   The ID of the locale
+     *
+     * @param string $identifier The ID of the locale
      */
-    public function __construct($identifier) {
+    public function __construct($identifier)
+    {
         $sql = 'SELECT * FROM @PREFIX@locales WHERE id = {0} LIMIT 1';
         $result = System::db()->query($sql, [$identifier]);
 
@@ -50,48 +52,58 @@ class Localization extends DatabaseRecord {
                 'fmt_date_long' => 'string'
             ]);
         } else {
-            throw new Exception(sprintf('Locale does not exist (id = %s)', $identifier));
+            throw new \Exception(sprintf('Locale does not exist (id = %s)', $identifier));
         }
     }
 
     /**
      * Returns the locale's ID
-     * @return   int
+     *
+     * @return int
      */
-    public function getID() {
+    public function getID()
+    {
         return $this->get('id');
     }
 
     /**
      * Returns the name of the locale
-     * @return   string
+     *
+     * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->get('name');
     }
 
     /**
      * Sets the name of the locale
-     * @param    string   $name   The new name
-     * @return   bool
+     *
+     * @param string $name The new name
+     * @return bool
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         return $this->set('name', $name);
     }
 
     /**
      * Returns the text direction of the locale
-     * @return   string
+     *
+     * @return string
      */
-    public function getTextDirection() {
+    public function getTextDirection()
+    {
         return $this->get('text_direction');
     }
 
     /**
      * Returns the number separators of the locale
-     * @return   array
+     *
+     * @return array
      */
-    public function getNumberSeparators() {
+    public function getNumberSeparators()
+    {
         return [
             'decimal'  => $this->get('number_sep_decimal'),
             'thousand' => $this->get('number_sep_thousand')
@@ -100,26 +112,32 @@ class Localization extends DatabaseRecord {
 
     /**
      * Returns the money format of the locale
-     * @return   string
+     *
+     * @return string
      */
-    public function getMoneyFormat() {
+    public function getMoneyFormat()
+    {
         return $this->get('fmt_money');
     }
 
     /**
      * Returns the time format of the locale
-     * @return   string
+     *
+     * @return string
      */
-    public function getTimeFormat() {
+    public function getTimeFormat()
+    {
         return $this->get('fmt_time');
     }
 
     /**
      * Returns the date format of the locale
-     * @param    int      $length   The date length (1 = short [default], 2 = medium, 3 = long)
-     * @return   string
+     *
+     * @param int $length The date length (1 = short [default], 2 = medium, 3 = long)
+     * @return string
      */
-    public function getDateFormat($length = 1) {
+    public function getDateFormat($length = 1)
+    {
         if ($length >= 3) {
             return $this->get('fmt_date_long');
         } elseif ($length == 2) {
@@ -131,10 +149,12 @@ class Localization extends DatabaseRecord {
 
     /**
      * Updates the given columns in the database table
-     * @param    array    $columns   Names and values of columns to be updated (Format: [name => value, ...])
-     * @return   bool
+     *
+     * @param array $columns Names and values of columns to be updated (Format: [name => value, ...])
+     * @return bool
      */
-    protected function update($columns) {
+    protected function update($columns)
+    {
         return System::db()->update('@PREFIX@locales', $columns, [
             'where' => 'id = {0}',
             'vars' => [$this->get('id')]
@@ -143,25 +163,28 @@ class Localization extends DatabaseRecord {
 
     /**
      * Checks whether or not a locale with given ID exists
-     * @param    string   $id   The ID of the locale
-     * @return   bool
+     *
+     * @param string $id The ID of the locale
+     * @return bool
      */
-    static public function exists($id) {
+    public static function exists($id)
+    {
         $sql = 'SELECT id FROM @PREFIX@locales WHERE id = {0} LIMIT 1';
         $result = System::db()->query($sql, [$id]);
-        
+
         return $result->hasRows();
     }
 
     /**
      * Returns a list of available locales
-     * @return   array
+     *
+     * @return array
      */
-    static public function getAvailable() {
+    public static function getAvailable()
+    {
         $cache = new Cache('locales/list');
         return $cache->data(function () {
             return System::db()->select('@PREFIX@locales', 'id')->fetchColumn();
         });
     }
-
 }

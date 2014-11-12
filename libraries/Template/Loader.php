@@ -15,10 +15,10 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package     Webwork
- * @version     0.1-dev
- * @link        http://www.iceflame.net
- * @license     ISC License (http://www.opensource.org/licenses/ISC)
+ * @package  FlameCore\Webwork
+ * @version  0.1-dev
+ * @link     http://www.flamecore.org
+ * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
 /**

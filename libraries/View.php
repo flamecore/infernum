@@ -6,7 +6,7 @@
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE
@@ -15,10 +15,10 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package     Webwork
- * @version     0.1-dev
- * @link        http://www.iceflame.net
- * @license     ISC License (http://www.opensource.org/licenses/ISC)
+ * @package  FlameCore\Webwork
+ * @version  0.1-dev
+ * @link     http://www.flamecore.org
+ * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
 /**
@@ -26,55 +26,56 @@
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class View {
-    
+class View
+{
     /**
      * The loaded template object
-     * @var      object
-     * @access   private
+     *
+     * @var object
      */
     private $template;
-    
+
     /**
      * The name of the theme to use (Default: value given in settings)
-     * @var      string
-     * @access   private
-     * @static
+     *
+     * @var string
      */
-    static private $theme;
+    private static $theme;
 
     /**
      * The title of the page
-     * @var      string
-     * @access   private
-     * @static
+     *
+     * @var string
      */
-    static private $title;
+    private static $title;
 
     /**
      * The list of all head tags
-     * @var      array
-     * @access   private
-     * @static
+     *
+     * @var array
      */
-    static private $headTags = array();
+    private static $headTags = array();
 
     /**
-     * Generates a new template object
-     * @param    string   $source     Module or template @namespace where the template is loaded from
-     * @param    string   $template   Name of the template to load
+     * Generates a View object
+     *
+     * @param string $source Module or template `@namespace` where the template is loaded from
+     * @param string $template Name of the template to load
      */
-    public function __construct($source, $template) {
+    public function __construct($source, $template)
+    {
         $this->template = new Template($source, $template, [
             'theme' => self::getTheme()
         ]);
     }
-    
+
     /**
      * Returns the rendered view
-     * @return   string
+     *
+     * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         try {
             return $this->render();
         } catch (Exception $e) {
@@ -84,72 +85,75 @@ class View {
     }
 
     /**
-     * Sets one or more template variables
-     * @param    mixed    $param1   The name of the variable (string) or pairs of names and values of multiple
-     *                                variables (array in the format [name => value, ...]) to be set
-     * @param    mixed    $param2   The value of the variable (only if parameter 1 is used for the variable name)
-     * @return   void
-     * @access   public
-     */
-    public function set($param1, $param2 = null) {
-        $this->template->set($param1, $param2);
-    }
-
-    /**
      * Renders the view
-     * @return   string
+     *
+     * @return string
      */
-    public function render() {
+    public function render()
+    {
         return $this->template->render();
     }
 
     /**
      * Displays the view
+     *
+     * @return void
      */
-    public function display() {
+    public function display()
+    {
         $this->template->display();
     }
-    
+
+    /**
+     * Sets one or more template variables for this view
+     *
+     * @param mixed $param1 The name of the variable (string) or pairs of names and values of multiple
+     *   variables (array in the format `[name => value, ...]`) to be set
+     * @param mixed $param2 The value of the variable (only if parameter 1 is used for the variable name)
+     */
+    public function set($param1, $param2 = null)
+    {
+        $this->template->set($param1, $param2);
+    }
+
     /**
      * Returns the used theme
-     * @return   string
-     * @access   public
-     * @static
+     *
+     * @return string
      */
-    static public function getTheme() {
+    public static function getTheme()
+    {
         return isset(self::$theme) ? self::$theme : System::setting('View:Theme', 'default');
     }
-    
+
     /**
      * Sets the used theme
-     * @param    string   $theme   The theme to use
-     * @return   void
-     * @access   public
-     * @static
+     *
+     * @param string $theme The theme to use
      */
-    static public function setTheme($theme) {
+    public static function setTheme($theme)
+    {
         self::$theme = (string) $theme;
     }
-    
+
     /**
      * Returns the page title
-     * @return   string
-     * @access   public
-     * @static
+     *
+     * @return string
      */
-    static public function getTitle($title = null, $append = true) {
+    public static function getTitle($title = null, $append = true)
+    {
         return self::$title;
     }
-    
+
     /**
      * Sets the page title
-     * @param    string   $title    The text to set as title or append to the title
-     * @param    bool     $append   Should the given text be appended to the currently set title? (Default: TRUE)
-     * @return   void
-     * @access   public
-     * @static
+     *
+     * @param string $title The text to set as title or append to the title
+     * @param bool $append Should the given text be appended to the currently set title? (Default: TRUE)
      */
-    static public function setTitle($title, $append = true) {
+    public static function setTitle($title, $append = true)
+    {
         if ($append && self::$title != '') {
             self::$title = $title.' &bull; '.self::$title;
         } else {
@@ -159,13 +163,12 @@ class View {
 
     /**
      * Adds a meta tag to the head tags
-     * @param    string   $name      The name of the meta tag
-     * @param    string   $content   The value of the meta tag
-     * @return   void
-     * @access   public
-     * @static
+     *
+     * @param string $name The name of the meta tag
+     * @param string $content The value of the meta tag
      */
-    static public function addMetaTag($name, $content) {
+    public static function addMetaTag($name, $content)
+    {
         self::$headTags['meta'][] = array(
             'name'    => $name,
             'content' => $content
@@ -174,14 +177,13 @@ class View {
 
     /**
      * Adds a link tag to the head tags
-     * @param    string   $rel    The relation attribute
-     * @param    string   $url    The URL to the file
-     * @param    string   $type   The type attribute
-     * @return   void
-     * @access   public
-     * @static
+     *
+     * @param string $rel The relation attribute
+     * @param string $url The URL to the file
+     * @param string $type The type attribute
      */
-    static public function addLinkTag($rel, $url, $type) {
+    public static function addLinkTag($rel, $url, $type)
+    {
         self::$headTags['link'][] = array(
             'rel'  => $rel,
             'href' => $url,
@@ -191,13 +193,12 @@ class View {
 
     /**
      * Adds a stylesheet link to the head tags
-     * @param    string   $url     The URL to the file
-     * @param    string   $media   Only for this media types. Defaults to 'all'.
-     * @return   void
-     * @access   public
-     * @static
+     *
+     * @param string $url The URL to the file
+     * @param string $media Only for this media types (Default: 'all')
      */
-    static public function addCSS($url, $media = 'all') {
+    public static function addCSS($url, $media = 'all')
+    {
         self::$headTags['css'][] = array(
             'url'   => $url,
             'media' => $media
@@ -206,13 +207,12 @@ class View {
 
     /**
      * Adds a JavaScript to the head tags
-     * @param    string   $url    The URL to the file
-     * @param    string   $type   The content type of the script. Defaults to 'text/javascript'.
-     * @return   void
-     * @access   public
-     * @static
+     *
+     * @param string $url The URL to the file
+     * @param string $type The content type of the script (Default: 'text/javascript')
      */
-    static public function addScript($url, $type = 'application/javascript') {
+    public static function addScript($url, $type = 'application/javascript')
+    {
         self::$headTags['script'][] = array(
             'url'  => $url,
             'type' => $type
@@ -221,17 +221,16 @@ class View {
 
     /**
      * Lists all registered head tags of a given group
-     * @param    string   $group   The group of head tags to return
-     * @return   array
-     * @access   public
-     * @static
+     *
+     * @param string $group The group of head tags to return
+     * @return array
      */
-    static public function getHeadTags($group) {
+    public static function getHeadTags($group)
+    {
         if (isset(self::$headTags[$group])) {
             return self::$headTags[$group];
         } else {
             return array();
         }
     }
-
 }

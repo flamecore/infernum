@@ -6,7 +6,7 @@
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE
@@ -15,10 +15,10 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package     Webwork
- * @version     0.1-dev
- * @link        http://www.iceflame.net
- * @license     ISC License (http://www.opensource.org/licenses/ISC)
+ * @package  FlameCore\Webwork
+ * @version  0.1-dev
+ * @link     http://www.flamecore.org
+ * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
 /**
@@ -26,30 +26,30 @@
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Cache {
-
+class Cache
+{
     /**
      * The name of the cache instance
-     * @var      string
-     * @access   private
+     *
+     * @var string
      */
     private $name;
 
     /**
      * The lifetime of the cache instance in seconds
-     * @var      int
-     * @access   private
+     *
+     * @var int
      */
     private $lifetime;
 
     /**
      * Constructor
-     * @param    string   $name       The name of the cache instance
-     * @param    int      $lifetime   The lifetime of the cache instance in seconds (0 = infinite)
-     * @return   void
-     * @access   public
+     *
+     * @param string $name The name of the cache instance
+     * @param int $lifetime The lifetime of the cache instance in seconds (0 = infinite)
      */
-    public function __construct($name, $lifetime = null) {
+    public function __construct($name, $lifetime = null)
+    {
         if (!is_dir(WW_CACHE_PATH.'/data'))
             mkdir(WW_CACHE_PATH.'/data', 0777, true);
 
@@ -65,11 +65,12 @@ class Cache {
 
     /**
      * Reads data from cache. The $callback is used to generate the data if missing or expired.
-     * @param    callable   $callback   The callback function that returns the data to store
-     * @return   mixed
-     * @access   public
+     *
+     * @param callable $callback The callback function that returns the data to store
+     * @return mixed
      */
-    public function data($callback) {
+    public function data($callback)
+    {
         if (!is_callable($callback)) {
             trigger_error('Invalid callback given for cache instance "'.$this->name.'"', E_USER_WARNING);
             return;
@@ -106,5 +107,4 @@ class Cache {
             return $callback();
         }
     }
-
 }

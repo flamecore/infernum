@@ -6,7 +6,7 @@
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE
@@ -15,20 +15,21 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package     Webwork
- * @version     0.1-dev
- * @link        http://www.iceflame.net
- * @license     ISC License (http://www.opensource.org/licenses/ISC)
+ * @package  FlameCore\Webwork
+ * @version  0.1-dev
+ * @link     http://www.flamecore.org
+ * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
 set_error_handler('ww_handle_error');
 set_exception_handler('ww_handle_exception');
 
-function ww_handle_error($code, $message, $file, $line) {
+function ww_handle_error($code, $message, $file, $line)
+{
     switch ($code) {
         case E_ERROR:
         case E_USER_ERROR:
-            throw new ErrorException($message, $code, 2, $file, $line);
+            throw new \ErrorException($message, $code, 2, $file, $line);
             break;
 
         case E_WARNING:
@@ -36,23 +37,25 @@ function ww_handle_error($code, $message, $file, $line) {
             ww_log($message, 1);
             break;
     }
-    
+
     return true;
 }
 
-function ww_handle_exception($exception) {
-    $severity = is_a($exception, 'ErrorException') ? $exception->getSeverity() : 2;
+function ww_handle_exception($exception)
+{
+    $severity = is_a($exception, '\ErrorException') ? $exception->getSeverity() : 2;
     ww_log($exception->getMessage(), $severity);
 
     include WW_ENGINE_PATH.'/includes/errorpage.php';
     exit();
 }
 
-function ww_log($message, $severity = 0, $logfile = 'system') {
+function ww_log($message, $severity = 0, $logfile = 'system')
+{
     $enabled = isset($GLOBALS['CONFIG']['enable_logging']) ? $GLOBALS['CONFIG']['enable_logging'] : false;
-	
+
     if (!$enabled) return false;
-    
+
     if ($severity >= 4) {
         $severity_tag = 'ALERT';
     } elseif ($severity == 3) {
@@ -66,6 +69,6 @@ function ww_log($message, $severity = 0, $logfile = 'system') {
     }
 
     $logtext = date('Y-m-d H:i:s').' ['.$severity_tag.'] '.$message;
-    
+
     return error_log($logtext.PHP_EOL, 3, WW_ENGINE_PATH.'/logs/'.$logfile.'.log');
 }

@@ -6,7 +6,7 @@
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE
@@ -15,15 +15,15 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package     Webwork
- * @version     0.1-dev
- * @link        http://www.iceflame.net
- * @license     ISC License (http://www.opensource.org/licenses/ISC)
+ * @package  FlameCore\Webwork
+ * @version  0.1-dev
+ * @link     http://www.flamecore.org
+ * @license  ISC License <http://opensource.org/licenses/ISC>
  */
- 
+
 /**
  * Class for managing a database connection
- * 
+ *
  * @method   bool connect()
  *             Connects to the database server and selects the database using the given configuration
  * @method   void disconnect()
@@ -60,69 +60,68 @@
  * @see      Database_Base_Connection
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Database_Connection {
-    
+class Database_Connection
+{
     /**
      * Name of the used driver
-     * @var      string
-     * @access   private
+     *
+     * @var string
      */
-    private $_driverName;
+    private $driverName;
 
     /**
      * The driver instance
-     * @var      object
-     * @access   private
+     *
+     * @var object
      */
-    private $_instance;
+    private $instance;
 
     /**
      * Opens a new database connection
-     * @param    string   $driver     The database driver to use
-     * @param    string   $host       The database server host, mostly 'localhost'
-     * @param    string   $user       The username for authenticating at the database server
-     * @param    string   $password   The password for authenticating at the database server
-     * @param    string   $database   The name of the database
-     * @param    string   $prefix     The prefix of the database tables
-     * @return   void
-     * @access   public
+     *
+     * @param string $driver The database driver to use
+     * @param string $host The database server host (Default: 'localhost')
+     * @param string $user The username for authenticating at the database server (Default: 'root')
+     * @param string $password The password for authenticating at the database server (Default: empty)
+     * @param string $database The name of the database
+     * @param string $prefix The prefix of the database tables (Default: empty)
      */
-    public function __construct($driver, $host, $user, $password, $database, $prefix) {
+    public static function create($driver, $host = 'localhost', $user = 'root', $password = '', $database, $prefix = '')
+    {
         if (!is_string($driver) || empty($driver))
-            trigger_error('Database driver name invalid', E_USER_ERROR);
+            throw new \InvalidArgumentException('Database driver name is invalid', E_USER_ERROR);
 
         $driver_class = "Database_{$driver}_Connection";
 
-        if (!class_exists($driver_class))
-            trigger_error('Database driver "'.$driver.'" not available', E_USER_ERROR);
+        if (!$driver_class || !class_exists($driver_class))
+            throw new \DomainException('Database driver "'.$driver.'" is not available', E_USER_ERROR);
 
-        $this->_driverName = $driver;
-        
-        $this->_instance = new $driver_class($host, $user, $password, $database, $prefix);
+        return new $driver_class($host, $user, $password, $database, $prefix);
     }
 
     /**
      * Magically calls driver methods
-     * @method   string   $method      The called method
-     * @method   array    $arguments   The method arguments
-     * @return   mixed
-     * @access   public
+     *
+     * @method string $method The called method
+     * @method array $arguments The method arguments
+     * @return mixed
      */
-    public function __call($method, $arguments) {
-        if (method_exists($this->_instance, $method)) {
-            return call_user_func_array([$this->_instance, $method], $arguments);
+    public function __call($method, $arguments)
+    {
+        if (method_exists($this->instance, $method)) {
+            return call_user_func_array([$this->instance, $method], $arguments);
         } else {
-            throw new BadMethodCallException('Database driver "'.$this->_driverName.'" does not support the '.$method.'() method');
+            throw new BadMethodCallException('Database driver "'.$this->driverName.'" does not support the '.$method.'() method');
         }
     }
-    
+
     /**
      * Returns the name of the used driver
-     * @return   string
-     * @access   public
+     *
+     * @return string
      */
-    public function getDriverName() {
-        return $this->_driverName;
+    public function getDriverName()
+    {
+        return $this->driverName;
     }
-
 }

@@ -6,7 +6,7 @@
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE
@@ -15,10 +15,10 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package     Webwork
- * @version     0.1-dev
- * @link        http://www.iceflame.net
- * @license     ISC License (http://www.opensource.org/licenses/ISC)
+ * @package  FlameCore\Webwork
+ * @version  0.1-dev
+ * @link     http://www.flamecore.org
+ * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
 /**
@@ -26,45 +26,35 @@
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class International {
-    
+class International
+{
     /**
      * The currently used locale pack
-     * @var      string
-     * @access   private
-     * @static
+     *
+     * @var string
      */
-    static private $locale;
-    
-    /**
-     * The data of the current locale
-     * @var      array
-     * @access   private
-     * @static
-     */
-    static private $localeData;
+    private static $locale;
 
     /**
      * The translation engine object
-     * @var      Translations
-     * @access   private
-     * @static
+     *
+     * @var Translations
      */
-    static private $translations;
+    private static $translations;
 
     /**
      * Initializes the internationalization system
-     * @return   void
-     * @access   public
-     * @static
+     *
+     * @return void
      */
-    static public function init() {
+    public static function init()
+    {
         $locales = Localization::getAvailable();
         $default_lang = (string) System::setting('I18n:Language');
 
         if (!in_array($default_lang, $locales))
             trigger_error('The default language is invalid or undefined', E_USER_ERROR);
-        
+
         // Detect the user's preferred language
         if ($session_lang = SessionManager::read('language')) {
             // There was found a language setting in the user's session
@@ -80,53 +70,54 @@ class International {
         } else {
             $locale = $default_lang;
         }
-        
+
         self::$locale = new Localization($locale);
         self::$translations = new Translations($locale);
     }
-    
+
     /**
      * Returns the name of the currently used locale pack
-     * @return   string
-     * @access   public
-     * @static
+     *
+     * @return string
      */
-    static public function getLocale() {
+    public static function getLocale()
+    {
         if (!isset(self::$locale) || !(self::$locale instanceof Localization))
             trigger_error('The I18n system is not yet initialized', E_USER_ERROR);
-        
+
         return self::$locale;
     }
 
     /**
-     * Returns the translation engine object
-     * @return   Translations
-     * @access   public
-     * @static
+     * Gets the translation of a string
+     *
+     * @param string $string The string to translate
+     * @param array $vars Variables (`%var%`) to replace as array. The key is the name of the variable.
+     * @return string
      */
-    static public function translate($string, $vars = null) {
+    public static function translate($string, $vars = null)
+    {
         if (!isset(self::$translations) || !(self::$translations instanceof Translations))
             trigger_error('The I18n system is not yet initialized', E_USER_ERROR);
-        
+
         return self::$translations->get($string, $vars);
     }
-    
+
     /**
      * Tries to find an available language that can best satisfy the browser languages list
-     * @param    array    $supported_langs   The list of supported languages
-     * @return   string
-     * @access   private
-     * @static
+     *
+     * @param array $supported The list of supported languages
+     * @return string
      */
-    static private function findBestBrowserLanguage($supported_langs) {
-        $browser_langs = Util::getBrowserLanguages();
-        
-        foreach ($browser_langs as $browser_lang) {
-            if (in_array($browser_lang, $supported_langs))
-                return $browser_lang;
+    private static function findBestBrowserLanguage($supported)
+    {
+        $languages = Util::getBrowserLanguages();
+
+        foreach ($languages as $language) {
+            if (in_array($language, $supported))
+                return $language;
         }
-        
+
         return false;
     }
-    
 }
