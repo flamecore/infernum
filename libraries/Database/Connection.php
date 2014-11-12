@@ -1,6 +1,6 @@
 <?php
 /**
- * Webwork
+ * Infernum
  * Copyright (C) 2011 IceFlame.net
  *
  * Permission to use, copy, modify, and/or distribute this software for
@@ -15,13 +15,13 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package  FlameCore\Webwork
+ * @package  FlameCore\Infernum
  * @version  0.1-dev
  * @link     http://www.flamecore.org
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Webwork\Database;
+namespace FlameCore\Infernum\Database;
 
 /**
  * Class for managing a database connection
@@ -43,7 +43,7 @@ class Connection
      * @param string $password The password for authenticating at the database server (Default: empty)
      * @param string $database The name of the database
      * @param string $prefix The prefix of the database tables (Default: empty)
-     * @return \FlameCore\Webwork\Database\Base\Connection Returns the Connection object.
+     * @return \FlameCore\Infernum\Database\Base\Connection Returns the Connection object.
      */
     public static function create($driver, $host = 'localhost', $user = 'root', $password = '', $database, $prefix = '')
     {
@@ -62,7 +62,7 @@ class Connection
      * Opens a new database connection using the given DSN.
      *
      * @param string $dsn The Data Source Name (driver://user:password@host/database?prefix=prefix)
-     * @return \FlameCore\Webwork\Database\Base\Connection Returns the Connection object.
+     * @return \FlameCore\Infernum\Database\Base\Connection Returns the Connection object.
      */
     public static function createFromDsn($dsn)
     {

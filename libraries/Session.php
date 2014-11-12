@@ -1,6 +1,6 @@
 <?php
 /**
- * Webwork
+ * Infernum
  * Copyright (C) 2011 IceFlame.net
  *
  * Permission to use, copy, modify, and/or distribute this software for
@@ -15,15 +15,15 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package  FlameCore\Webwork
+ * @package  FlameCore\Infernum
  * @version  0.1-dev
  * @link     http://www.flamecore.org
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Webwork;
+namespace FlameCore\Infernum;
 
-use FlameCore\Webwork\Entity\User;
+use FlameCore\Infernum\Entity\User;
 /**
  * Simple user session manager
  *
@@ -62,7 +62,7 @@ class Session
     /**
      * Initializes the session system.
      *
-     * @return \FlameCore\Webwork\Session Returns the new Session object.
+     * @return \FlameCore\Infernum\Session Returns the new Session object.
      */
     public static function init()
     {

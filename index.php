@@ -1,6 +1,6 @@
 <?php
 /**
- * Webwork
+ * Infernum
  * Copyright (C) 2011 IceFlame.net
  *
  * Permission to use, copy, modify, and/or distribute this software for
@@ -15,29 +15,29 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package  FlameCore\Webwork
+ * @package  FlameCore\Infernum
  * @version  0.1-dev
  * @link     http://www.flamecore.org
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Webwork;
+namespace FlameCore\Infernum;
 
 /**
- * Webwork Core
+ * Infernum Core
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
 
 define('DS', DIRECTORY_SEPARATOR);
-define('WW_ENGINE_PATH', DS != '/' ? str_replace(DS, '/', __DIR__) : __DIR__);
+define('INFERNUM_ENGINE_PATH', DS != '/' ? str_replace(DS, '/', __DIR__) : __DIR__);
 
-require WW_ENGINE_PATH.'/includes/bootstrap.php';
+require INFERNUM_ENGINE_PATH.'/includes/bootstrap.php';
 
 View::setTitle(System::setting('Main:SiteName'));
 
-if (is_readable(WW_SITE_PATH.'/setup.php'))
-    include WW_SITE_PATH.'/setup.php';
+if (is_readable(INFERNUM_SITE_PATH.'/setup.php'))
+    include INFERNUM_SITE_PATH.'/setup.php';
 
 $path = $request->query->get('p') ?: '';
 

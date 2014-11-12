@@ -1,6 +1,6 @@
 <?php
 /**
- * Webwork
+ * Infernum
  * Copyright (C) 2011 IceFlame.net
  *
  * Permission to use, copy, modify, and/or distribute this software for
@@ -15,16 +15,16 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package  FlameCore\Webwork
+ * @package  FlameCore\Infernum
  * @version  0.1-dev
  * @link     http://www.flamecore.org
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Webwork;
+namespace FlameCore\Infernum;
 
-use FlameCore\Webwork\Template\Loader;
-use FlameCore\Webwork\Template\CoreExtension;
+use FlameCore\Infernum\Template\Loader;
+use FlameCore\Infernum\Template\CoreExtension;
 use Twig_Environment;
 
 /**
@@ -93,10 +93,10 @@ class Template
             $engine_options['debug'] = true;
 
         $loader = new Loader();
-        $loader->setNamespace('global', WW_ENGINE_PATH.'/themes/'.$theme.'/templates');
+        $loader->setNamespace('global', INFERNUM_ENGINE_PATH.'/themes/'.$theme.'/templates');
 
         if ($source[0] != '@') {
-            $loader->setLocalPath(WW_ENGINE_PATH.'/modules/'.$source.'/themes/'.$theme.'/templates');
+            $loader->setLocalPath(INFERNUM_ENGINE_PATH.'/modules/'.$source.'/themes/'.$theme.'/templates');
             $this->name = $name;
         } else {
             $this->name = $source.'/'.$name;

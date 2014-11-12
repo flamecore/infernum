@@ -1,6 +1,6 @@
 <?php
 /**
- * Webwork
+ * Infernum
  * Copyright (C) 2011 IceFlame.net
  *
  * Permission to use, copy, modify, and/or distribute this software for
@@ -15,16 +15,17 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package  FlameCore\Webwork
+ * @package  FlameCore\Infernum
  * @version  0.1-dev
  * @link     http://www.flamecore.org
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Webwork\Template;
+namespace FlameCore\Infernum\Template;
 
-use FlameCore\Webwork\Template\Exception\BadNameError;
-use FlameCore\Webwork\Template\Exception\NotFoundError;
+use FlameCore\Infernum\Template\Exception\BadNameError;
+use FlameCore\Infernum\Template\Exception\NotFoundError;
+use Twig_LoaderInterface, Twig_ExistsLoaderInterface;
 
 /**
  * Loader for the Twig template engine

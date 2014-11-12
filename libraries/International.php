@@ -1,6 +1,6 @@
 <?php
 /**
- * Webwork
+ * Infernum
  * Copyright (C) 2011 IceFlame.net
  *
  * Permission to use, copy, modify, and/or distribute this software for
@@ -15,15 +15,15 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package  FlameCore\Webwork
+ * @package  FlameCore\Infernum
  * @version  0.1-dev
  * @link     http://www.flamecore.org
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Webwork;
+namespace FlameCore\Infernum;
 
-use FlameCore\Webwork\Resource\Localization;
+use FlameCore\Infernum\Resource\Localization;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -36,14 +36,14 @@ class International
     /**
      * The currently used locale pack
      *
-     * @var \FlameCore\Webwork\Localization
+     * @var \FlameCore\Infernum\Localization
      */
     private static $locale;
 
     /**
      * The translation engine object
      *
-     * @var \FlameCore\Webwork\Translations
+     * @var \FlameCore\Infernum\Translations
      */
     private static $translations;
 
@@ -79,7 +79,7 @@ class International
     /**
      * Returns the used locale
      *
-     * @return \FlameCore\Webwork\Localization
+     * @return \FlameCore\Infernum\Localization
      */
     public static function getLocale()
     {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Webwork
+ * Infernum
  * Copyright (C) 2011 IceFlame.net
  *
  * Permission to use, copy, modify, and/or distribute this software for
@@ -15,13 +15,13 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package  FlameCore\Webwork
+ * @package  FlameCore\Infernum
  * @version  0.1-dev
  * @link     http://www.flamecore.org
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Webwork;
+namespace FlameCore\Infernum;
 
 /**
  * Class for reading and storing cache instances
@@ -52,8 +52,8 @@ class Cache
      */
     public function __construct($name, $lifetime = null)
     {
-        if (!is_dir(WW_CACHE_PATH.'/data'))
-            mkdir(WW_CACHE_PATH.'/data', 0777, true);
+        if (!is_dir(INFERNUM_CACHE_PATH.'/data'))
+            mkdir(INFERNUM_CACHE_PATH.'/data', 0777, true);
 
         if (!preg_match('#^[\w-+@\./]+$#', $name))
             trigger_error('Invalid cache name given ("'.$name.'")', E_USER_ERROR);
@@ -80,7 +80,7 @@ class Cache
 
         if (config('enable_caching') == true) {
             // Caching is enabled, so we use a file
-            $filename = WW_CACHE_PATH.'/data/'.$this->name.'.dat';
+            $filename = INFERNUM_CACHE_PATH.'/data/'.$this->name.'.dat';
 
             // Check if the file exists
             if (file_exists($filename)) {

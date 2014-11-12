@@ -1,6 +1,6 @@
 <?php
 /**
- * Webwork
+ * Infernum
  * Copyright (C) 2011 IceFlame.net
  *
  * Permission to use, copy, modify, and/or distribute this software for
@@ -15,16 +15,16 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package  FlameCore\Webwork
+ * @package  FlameCore\Infernum
  * @version  0.1-dev
  * @link     http://www.flamecore.org
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Webwork;
+namespace FlameCore\Infernum;
 
-set_error_handler('FlameCore\Webwork\handle_error');
-set_exception_handler('FlameCore\Webwork\handle_exception');
+set_error_handler('FlameCore\Infernum\handle_error');
+set_exception_handler('FlameCore\Infernum\handle_exception');
 
 function handle_error($code, $message, $file, $line)
 {
@@ -36,7 +36,7 @@ function handle_error($code, $message, $file, $line)
 
         case E_WARNING:
         case E_USER_WARNING:
-            ww_log($message, 1);
+            infernum_log($message, 1);
             break;
     }
 
@@ -46,13 +46,13 @@ function handle_error($code, $message, $file, $line)
 function handle_exception($exception)
 {
     $severity = is_a($exception, '\ErrorException') ? $exception->getSeverity() : 2;
-    ww_log($exception->getMessage(), $severity);
+    infernum_log($exception->getMessage(), $severity);
 
-    include WW_ENGINE_PATH.'/includes/errorpage.php';
+    include INFERNUM_ENGINE_PATH.'/includes/errorpage.php';
     exit();
 }
 
-function ww_log($message, $severity = 0, $logfile = 'system')
+function infernum_log($message, $severity = 0, $logfile = 'system')
 {
     $enabled = isset($GLOBALS['CONFIG']['enable_logging']) ? $GLOBALS['CONFIG']['enable_logging'] : false;
 
@@ -72,5 +72,5 @@ function ww_log($message, $severity = 0, $logfile = 'system')
 
     $logtext = date('Y-m-d H:i:s').' ['.$severity_tag.'] '.$message;
 
-    return error_log($logtext.PHP_EOL, 3, WW_ENGINE_PATH.'/logs/'.$logfile.'.log');
+    return error_log($logtext.PHP_EOL, 3, INFERNUM_ENGINE_PATH.'/logs/'.$logfile.'.log');
 }

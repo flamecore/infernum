@@ -1,6 +1,6 @@
 <?php
 /**
- * Webwork
+ * Infernum
  * Copyright (C) 2011 IceFlame.net
  *
  * Permission to use, copy, modify, and/or distribute this software for
@@ -15,13 +15,13 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package  FlameCore\Webwork
+ * @package  FlameCore\Infernum
  * @version  0.1-dev
  * @link     http://www.flamecore.org
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Webwork;
+namespace FlameCore\Infernum;
 
 /**
  * Common utilities
@@ -91,7 +91,7 @@ class Util
             $theme = View::getTheme();
 
         if (isset($module)) {
-            $path = $rooturl.'/websites/'.WW_SITE_NAME.'/modules/'.$module;
+            $path = $rooturl.'/websites/'.INFERNUM_SITE_NAME.'/modules/'.$module;
         } else {
             $path = $rooturl;
         }
@@ -237,7 +237,7 @@ class Util
     }
 
     /**
-     * Parses a Webwork settings file.
+     * Parses a Infernum settings file.
      *
      * @param string $filename The filename of the YAML file being parsed
      * @return array Returns a multidimensional array, with the section names and settings included.

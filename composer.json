@@ -1,11 +1,11 @@
 {
-    "name": "iceflame-net/Webwork",
-    "description": "Lightweight Web Application Engine written in PHP 5",
+    "name": "flamecore/infernum",
+    "description": "Lightweight Web Application Engine written in PHP 5.5",
     "license": "ISC",
     "require": {
-        "php": ">=5.5.0",
-        "symfony/yaml": "2.4.*",
-        "symfony/http-foundation": "2.5.*",
+        "php": ">=5.5",
+        "symfony/yaml": "~2.5",
+        "symfony/http-foundation": "~2.5",
         "twig/twig": "1.*"
     },
     "minimum-stability": "dev"

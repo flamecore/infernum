@@ -1,6 +1,6 @@
 <?php
 /**
- * Webwork
+ * Infernum
  * Copyright (C) 2011 IceFlame.net
  *
  * Permission to use, copy, modify, and/or distribute this software for
@@ -15,38 +15,38 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package  FlameCore\Webwork
+ * @package  FlameCore\Infernum
  * @version  0.1-dev
  * @link     http://www.flamecore.org
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Webwork;
+namespace FlameCore\Infernum;
 
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Webwork Core
+ * Infernum Core
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
 
-if (!is_readable(WW_ENGINE_PATH.'/config.php'))
+if (!is_readable(INFERNUM_ENGINE_PATH.'/config.php'))
     exit('No configuration file found. Please copy the file "config.php.dist" to "config.php".');
 
-if (!is_readable(WW_ENGINE_PATH.'/vendor/autoload.php'))
+if (!is_readable(INFERNUM_ENGINE_PATH.'/vendor/autoload.php'))
     exit('No vendor autoloader found. Please make sure that you have installed the required libraries using Composer.');
 
 $CONFIG = array();
 
-require_once WW_ENGINE_PATH.'/config.php';
+require_once INFERNUM_ENGINE_PATH.'/config.php';
 
-require_once WW_ENGINE_PATH.'/includes/errorhandler.php';
-require_once WW_ENGINE_PATH.'/includes/autoloader.php';
+require_once INFERNUM_ENGINE_PATH.'/includes/errorhandler.php';
+require_once INFERNUM_ENGINE_PATH.'/includes/autoloader.php';
 
-require_once WW_ENGINE_PATH.'/vendor/autoload.php';
+require_once INFERNUM_ENGINE_PATH.'/vendor/autoload.php';
 
-require_once WW_ENGINE_PATH.'/includes/functions.php';
+require_once INFERNUM_ENGINE_PATH.'/includes/functions.php';
 
 $request = Request::createFromGlobals();
 
@@ -65,11 +65,11 @@ if (config('enable_multisite') && $sites = config('sites')) {
     $active_site = 'default';
 }
 
-define('WW_SITE_NAME', $active_site);
-define('WW_SITE_PATH', WW_ENGINE_PATH.'/websites/'.WW_SITE_NAME);
-define('WW_SHARED_PATH', WW_ENGINE_PATH.'/websites/shared');
+define('INFERNUM_SITE_NAME', $active_site);
+define('INFERNUM_SITE_PATH', INFERNUM_ENGINE_PATH.'/websites/'.INFERNUM_SITE_NAME);
+define('INFERNUM_SHARED_PATH', INFERNUM_ENGINE_PATH.'/websites/shared');
 
-define('WW_CACHE_PATH', WW_ENGINE_PATH.'/cache/'.WW_SITE_NAME);
+define('INFERNUM_CACHE_PATH', INFERNUM_ENGINE_PATH.'/cache/'.INFERNUM_SITE_NAME);
 
 System::startup();
 

@@ -1,12 +1,12 @@
 Main:
   # Name of the website
-  SiteName: "Webwork"
+  SiteName: "Infernum"
   # Module to use as frontpage
   Frontpage: start
 
 Web:
-  # URL of Webwork root
-  Url: "http://localhost/Webwork"
+  # URL of Infernum root
+  Url: "http://localhost/Infernum"
   # Use URL rewriting for page paths
   UrlRewrite: true
 
@@ -28,9 +28,9 @@ Database:
   # Password of database server user
   Password: ""
   # Name of database
-  Database: "webwork"
+  Database: "infernum"
   # Database table prefix
-  Prefix: "ww_"
+  Prefix: "infernum_"
 
 Session:
   # Default session lifetime
@@ -46,7 +46,7 @@ Guest:
 
 Cookie:
   # Name prefix for cookies
-  NamePrefix: "ww_"
+  NamePrefix: "infernum_"
   # Domain that cookies are available to
   Domain: ""
   # Path on the server in which cookies will be available on

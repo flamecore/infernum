@@ -1,6 +1,6 @@
 <?php
 /**
- * Webwork
+ * Infernum
  * Copyright (C) 2011 IceFlame.net
  *
  * Permission to use, copy, modify, and/or distribute this software for
@@ -15,13 +15,13 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * @package  FlameCore\Webwork
+ * @package  FlameCore\Infernum
  * @version  0.1-dev
  * @link     http://www.flamecore.org
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Webwork;
+namespace FlameCore\Infernum;
 
 /**
  * Class for managing the basic core features
@@ -73,13 +73,13 @@ class System
      */
     public static function startup()
     {
-        if (!is_dir(WW_SITE_PATH))
-            trigger_error('Directory of site "'.WW_SITE_NAME.'" does not exist', E_USER_ERROR);
+        if (!is_dir(INFERNUM_SITE_PATH))
+            trigger_error('Directory of site "'.INFERNUM_SITE_NAME.'" does not exist', E_USER_ERROR);
 
         // At first we have to load the settings
         $cache = new Cache('settings');
         self::$settings = $cache->data(function () {
-            return Util::parseSettings(WW_SITE_PATH.'/settings.yml');
+            return Util::parseSettings(INFERNUM_SITE_PATH.'/settings.yml');
         });
 
         // Make sure that the required settings are available and shut down the system otherwise
@@ -208,7 +208,7 @@ class System
      */
     public static function moduleExists($module)
     {
-        return is_readable(WW_ENGINE_PATH.'/modules/'.$module.'/controller.php');
+        return is_readable(INFERNUM_ENGINE_PATH.'/modules/'.$module.'/controller.php');
     }
 
     /**
@@ -222,18 +222,18 @@ class System
         if (!self::isStarted())
             trigger_error('The system is not yet ready', E_USER_ERROR);
 
-        if (defined('WW_MODULE'))
+        if (defined('INFERNUM_MODULE'))
             trigger_error('A module has already been loaded', E_USER_ERROR);
 
         if (!self::moduleExists($module))
             return false;
 
-        define('WW_MODULE', $module);
-        define('WW_MODULE_PATH', WW_ENGINE_PATH.'/modules/'.$module);
+        define('INFERNUM_MODULE', $module);
+        define('INFERNUM_MODULE_PATH', INFERNUM_ENGINE_PATH.'/modules/'.$module);
 
-        include_once WW_MODULE_PATH.'/controller.php';
+        include_once INFERNUM_MODULE_PATH.'/controller.php';
 
-        $controller_class = 'module_'.WW_MODULE;
+        $controller_class = 'module_'.INFERNUM_MODULE;
 
         if (!class_exists($controller_class) || !is_subclass_of($controller_class, 'Controller'))
             trigger_error('Module "'.$module.'" does not provide a valid controller', E_USER_ERROR);
