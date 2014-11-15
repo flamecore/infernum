@@ -31,39 +31,6 @@ namespace FlameCore\Infernum;
 class Format
 {
     /**
-     * Shortens a text string to the given length. The truncated text part is replaced by an ellipsis.
-     *
-     * @param string $string The text to shorten
-     * @param int $length Determines how many characters to shorten to (Default: 80)
-     * @param string $ellipsis Text string that replaces truncated text part (Default: '...').
-     *   Note that the length is included in shortening length setting.
-     * @param bool $break_words Break words when truncating? (Default: FALSE).
-     *   Note that FALSE truncates the text only at word boundaries.
-     * @param bool $middle Truncate in the middle of the string (Default: FALSE).
-     *   Note that with this option activated, word boundaries are ignored.
-     * @return string
-     */
-    public static function shorten($string, $length = 80, $ellipsis = '...', $break_words = false, $middle = false)
-    {
-        if ($length == 0)
-            return '';
-
-        if (isset($string[$length])) {
-            $length -= min($length, strlen($ellipsis));
-
-            if (!$break_words && !$middle)
-                $string = preg_replace('/\s+?(\S+)?$/', '', substr($string, 0, $length + 1));
-
-            if (!$middle)
-                return substr($string, 0, $length).$ellipsis;
-
-            return substr($string, 0, $length / 2).$ellipsis.substr($string, - $length / 2);
-        }
-
-        return $string;
-    }
-
-    /**
      * Formats a number with grouped thousands.
      *
      * @param float $number The number to be formatted

@@ -26,6 +26,7 @@ namespace FlameCore\Infernum;
 use FlameCore\Infernum\Template\Loader;
 use FlameCore\Infernum\Template\CoreExtension;
 use Twig_Environment;
+use Twig_Extensions_Extension_Text;
 
 /**
  * Template object
@@ -103,6 +104,7 @@ class Template
         }
 
         $twig = new Twig_Environment($loader, $engine_options);
+        $twig->addExtension(new Twig_Extensions_Extension_Text);
         $twig->addExtension(new CoreExtension);
 
         $this->twig = $twig;

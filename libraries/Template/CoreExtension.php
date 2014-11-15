@@ -35,7 +35,6 @@ class CoreExtension extends Twig_Extension
     public function getFilters()
     {
         return array(
-            new Twig_SimpleFilter('shorten', 'FlameCore\Infernum\Format::shorten'),
             new Twig_SimpleFilter('lformat_number', 'FlameCore\Infernum\International::formatNumber'),
             new Twig_SimpleFilter('lformat_money', 'FlameCore\Infernum\International::formatMoney'),
             new Twig_SimpleFilter('lformat_time', 'FlameCore\Infernum\International::formatTime'),
