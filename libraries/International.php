@@ -90,6 +90,71 @@ class International
     }
 
     /**
+     * Formats a number with grouped thousands.
+     *
+     * @param float $number The number to be formatted
+     * @param int $decimals Sets the number of decimal points (Default: 0)
+     * @param bool $groupThousands Enable grouping of thousands (Default: FALSE)
+     * @return string
+     */
+    public static function formatNumber($number, $decimals = 0, $groupThousands = true)
+    {
+        $separators = self::$locale->getNumberSeparators();
+
+        $decimalPoint = $separators['decimal'];
+        $thousandSep = $groupThousands ? $separators['thousand'] : '';
+
+        return Format::number($number, $decimals, $decimalPoint, $thousandSep);
+    }
+
+    /**
+     * Formats a number as a monetary string.
+     *
+     * @param float $number The number to be formatted
+     * @param string $currency The currency to use
+     * @return string
+     */
+    public static function formatMoney($number, $currency)
+    {
+        $format = self::$locale->getMoneyFormat();
+
+        return Format::money($number, $currency, $format);
+    }
+
+    /**
+     * Formats the given time/date to a time of day string.
+     *
+     * @param mixed $input Time/Date to be formatted. Can be UNIX timestamp, DateTime object or time/date string.
+     *   When omitted, the current time is used.
+     * @return string
+     */
+    public static function formatTime($input = null)
+    {
+        $format = self::$locale->getTimeFormat();
+
+        return Format::time($input, $format);
+    }
+
+    /**
+     * Formats the given time/date to a date string.
+     *
+     * @param mixed $input Time/Date to be formatted. Can be UNIX timestamp, DateTime object or time/date string.
+     *   When omitted, the current time is used.
+     * @param int $length The date length (1 = short [default], 2 = medium, 3 = long)
+     * @param bool $withTime Add time to string? (Default = FALSE)
+     * @return string
+     */
+    public static function formatDate($input = null, $length = 1, $withTime = false)
+    {
+        $format = self::$locale->getDateFormat($length);
+
+        if ($withTime)
+            $format .= ', ' . self::$locale->getTimeFormat();
+
+        return Format::time($input, $format);
+    }
+
+    /**
      * Gets the translation of a string
      *
      * @param string $string The string to translate

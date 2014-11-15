@@ -64,81 +64,53 @@ class Format
     }
 
     /**
-     * Formats a number with grouped thousands
+     * Formats a number with grouped thousands.
      *
      * @param float $number The number to be formatted
-     * @param int $decimals Sets the number of decimal points (Default = 0)
-     * @param bool $groupThousands Enable grouping of thousands (Default = FALSE)
+     * @param int $decimals The number of decimal points to display (Default: 0)
+     * @param string $decimalPoint The character(s) to use for the decimal point (Default: ".")
+     * @param string $thousandSep The character(s) to use for the thousands separator (Default: ",")
      * @return string
      */
-    public static function number($number, $decimals = 0, $groupThousands = false)
+    public static function number($number, $decimals = 0, $decimalPoint = '.', $thousandSep = ',')
     {
-        $separators = International::getLocale()->getNumberSeparators();
-
-        $decimal_sep = $separators['decimal'];
-        $thousands_sep = $groupThousands ? $separators['thousand'] : '';
-
-        return number_format($number, $decimals, $decimal_sep, $thousands_sep);
+        return number_format((float) $number, $decimals, $decimalPoint, $thousandSep);
     }
 
     /**
-     * Formats a number as a monetary string
+     * Formats a number as a monetary string.
      *
      * @param float $number The number to be formatted
      * @param string $currency The currency to use
-     * @param string $format The money format to use in the form '[$ ]#.###.#[..][ $]' (optional)
+     * @param string $format The money format to use in the form '[$ ]#[.]###.#[..][ $]'
      * @return string
      */
-    public static function money($number, $currency, $format = null)
+    public static function money($number, $currency, $format)
     {
-        $format = $format ?: International::getLocale()->getMoneyFormat();
-
         if (preg_match('/(\$ ?)*#(.?)###(.)(#+)( ?\$)*/', $format, $parts)) {
             $prefix = str_replace('$', $currency, $parts[1]);
-            $thousands_sep = $parts[2];
-            $decimal_sep = $parts[3];
+            $thousandSep = $parts[2];
+            $decimalPoint = $parts[3];
             $decimals = strlen($parts[4]);
             $suffix = isset($parts[5]) ? str_replace('$', $currency, $parts[5]) : '';
         } else {
-            trigger_error('Invalid money format ('.$format.')', E_USER_WARNING);
+            trigger_error(sprintf('Invalid money format "%s" given', $format), E_USER_WARNING);
             return $number;
         }
 
-        return $prefix . number_format($number, $decimals, $decimal_sep, $thousands_sep) . $suffix;
+        return $prefix . number_format($number, $decimals, $decimalPoint, $thousandSep) . $suffix;
     }
 
     /**
-     * Formats the given time/date to a time of day string
+     * Formats the given time/date to a time of day string.
      *
      * @param mixed $input Time/Date to be formatted. Can be UNIX timestamp, DateTime object or time/date string.
-     *   When omitted, the current time is used.
-     * @param string $format The date() format to use instead of locale specification (optional)
+     *   When NULL, the current time is used.
+     * @param string $format The date() format to use instead of locale specification
      * @return string
      */
-    public static function time($input = null, $format = null)
+    public static function time($input, $format)
     {
-        $format = $format ?: International::getLocale()->getTimeFormat();
-        $time   = isset($input) ? Util::toTimestamp($input) : time();
-
-        return date($format, $time);
-    }
-
-    /**
-     * Formats the given time/date to a date string
-     *
-     * @param mixed $input Time/Date to be formatted. Can be UNIX timestamp, DateTime object or time/date string.
-     *   When omitted, the current time is used.
-     * @param int $length The date length (1 = short [default], 2 = medium, 3 = long)
-     * @param bool $withTime Add time to string? (Default = FALSE)
-     * @return string
-     */
-    public static function date($input = null, $length = 1, $withTime = false)
-    {
-        $format = International::getLocale()->getDateFormat($length);
-
-        if ($withTime)
-            $format .= ', ' . International::getLocale()->getTimeFormat();
-
         $time = isset($input) ? Util::toTimestamp($input) : time();
 
         return date($format, $time);

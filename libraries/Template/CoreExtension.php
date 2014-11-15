@@ -36,10 +36,10 @@ class CoreExtension extends Twig_Extension
     {
         return array(
             new Twig_SimpleFilter('shorten', 'FlameCore\Infernum\Format::shorten'),
-            new Twig_SimpleFilter('lformat_number', 'FlameCore\Infernum\Format::number'),
-            new Twig_SimpleFilter('lformat_money', 'FlameCore\Infernum\Format::money'),
-            new Twig_SimpleFilter('lformat_time', 'FlameCore\Infernum\Format::time'),
-            new Twig_SimpleFilter('lformat_date', 'FlameCore\Infernum\Format::date')
+            new Twig_SimpleFilter('lformat_number', 'FlameCore\Infernum\International::formatNumber'),
+            new Twig_SimpleFilter('lformat_money', 'FlameCore\Infernum\International::formatMoney'),
+            new Twig_SimpleFilter('lformat_time', 'FlameCore\Infernum\International::formatTime'),
+            new Twig_SimpleFilter('lformat_date', 'FlameCore\Infernum\International::formatDate')
         );
     }
 
