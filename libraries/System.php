@@ -98,6 +98,10 @@ class System
 
         // All systems are started now and running smoothly
         self::$initialized = true;
+        
+        // Set default timezone
+        $timezone = self::setting('site.timezone', date_default_timezone_get());
+        date_default_timezone_set($timezone);
 
         // Start user session
         self::$session = Session::init();

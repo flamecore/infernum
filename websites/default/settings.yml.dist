@@ -5,6 +5,8 @@ site:
   frontpage: start
   # Default language
   language: "en-US"
+  # Default timezone
+  timezone: "Europe/Berlin"
 
 web:
   # URL of Infernum root
