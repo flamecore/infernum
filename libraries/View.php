@@ -133,7 +133,7 @@ class View
      */
     public static function getTheme()
     {
-        return isset(self::$theme) ? self::$theme : System::setting('View:Theme', 'default');
+        return isset(self::$theme) ? self::$theme : System::setting('web.theme', 'default');
     }
 
     /**

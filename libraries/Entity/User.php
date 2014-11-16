@@ -187,7 +187,7 @@ class User extends Entity
     public function isOnline()
     {
         $lastactive = $this->get('lastactive');
-        $threshold = System::setting('Session:OnlineThreshold', 600);
+        $threshold = System::setting('session.online_threshold', 600);
 
         // Check if the last activity time is within the threshold
         return $lastactive->diff(new DateTime)->format('%s') <= $threshold;

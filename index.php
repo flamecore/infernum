@@ -35,7 +35,7 @@ define('INFERNUM_ENGINE_PATH', DS != '/' ? str_replace(DS, '/', __DIR__) : __DIR
 try {
     require INFERNUM_ENGINE_PATH.'/includes/bootstrap.php';
 
-    View::setTitle(System::setting('Main:SiteName'));
+    View::setTitle(System::setting('site.title'));
 
     if (is_readable(INFERNUM_SITE_PATH.'/setup.php'))
         include INFERNUM_SITE_PATH.'/setup.php';
@@ -46,7 +46,7 @@ try {
     if (!empty($path)) {
         System::loadModuleFromPath($path);
     } else {
-        System::loadModule(System::setting('Main:Frontpage'));
+        System::loadModule(System::setting('site.frontpage'));
     }
 } catch (\Exception $exception) {
     if (function_exists('FlameCore\Infernum\infernum_config')) {

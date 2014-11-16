@@ -103,7 +103,7 @@ class Session
                 $this->data = unserialize($info['data']);
         } else {
             $this->id = $sid;
-            $this->lifetime = System::setting('Session:Lifetime', $this->lifetime);
+            $this->lifetime = System::setting('session.lifetime', $this->lifetime);
 
             // Create a new session
             $sql = 'INSERT INTO @PREFIX@sessions (id, expire) VALUES({0}, {1})';

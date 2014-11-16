@@ -74,7 +74,7 @@ class Template
      */
     public function __construct($source, $name, array $options = [])
     {
-        $theme = $options['theme'] ?: System::setting('View:Theme', 'default');
+        $theme = $options['theme'] ?: System::setting('web.theme', 'default');
 
         $engine_options = array(
             'cache' => false,

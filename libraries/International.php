@@ -55,7 +55,7 @@ class International
     public static function init(Request $request)
     {
         $locales = Localization::listAll();
-        $defaultLang = (string) System::setting('I18n:Language');
+        $defaultLang = (string) System::setting('site.language');
 
         if (!in_array($defaultLang, $locales))
             throw new \DomainException('The default language is invalid or undefined');

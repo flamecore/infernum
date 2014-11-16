@@ -1,53 +1,49 @@
-Main:
+site:
   # Name of the website
-  SiteName: "Infernum"
+  title: "Infernum"
   # Module to use as frontpage
-  Frontpage: start
+  frontpage: start
+  # Default language
+  language: "en-US"
 
-Web:
+web:
   # URL of Infernum root
-  Url: "http://localhost/Infernum"
+  url: "http://localhost/Infernum"
   # Use URL rewriting for page paths
-  UrlRewrite: true
-
-View:
+  url_rewrite: true
   # Theme from /themes folder
-  Theme: default
+  theme: default
 
-I18n:
-  # Default language 
-  Language: "en-US"
-
-Database:
+database:
   # Database driver to use
-  Driver: "MySQL"
+  driver: "MySQL"
   # Database server host
-  Host: "localhost"
+  host: "localhost"
   # Username of database server user
-  User: "root"
+  user: "root"
   # Password of database server user
-  Password: ""
+  password: ""
   # Name of database
-  Database: "infernum"
+  database: "infernum"
   # Database table prefix
-  Prefix: "infernum_"
+  prefix: "infernum_"
 
-Session:
+session:
   # Default session lifetime
-  Lifetime: 3600
+  lifetime: 3600
   # The threshold in seconds at which a user is considered as logged off
-  OnlineThreshold: 600
+  online_threshold: 600
 
-Guest:
+guest:
   # Username for anonymous users
-  Username: "Anonymous"
+  username: "Anonymous"
   # Assign anonymous users to this usergroup
-  Group: 1
+  group: 1
 
-Cookie:
+cookie:
   # Name prefix for cookies
-  NamePrefix: "infernum_"
+  name_prefix: "infernum_"
   # Domain that cookies are available to
-  Domain: ""
+  domain: ""
   # Path on the server in which cookies will be available on
-  Path: "/"
+  path: "/"

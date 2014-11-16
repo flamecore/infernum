@@ -39,7 +39,7 @@ class Util
      */
     public static function makeURL($path = '', $query = null)
     {
-        $root_url = System::setting('Web:Url');
+        $root_url = System::setting('web.url');
 
         $result = $root_url.'/'.$path;
 
@@ -58,9 +58,9 @@ class Util
      */
     public static function makePageURL($pagePath, $query = null)
     {
-        $root_url = System::setting('Web:Url');
+        $root_url = System::setting('web.url');
 
-        if (System::setting('Web:UrlRewrite')) {
+        if (System::setting('web.url_rewrite')) {
             $result = $root_url.'/'.$pagePath;
 
             if (isset($query))
@@ -85,7 +85,7 @@ class Util
      */
     public static function makeThemeFileURL($filename, $module = null, $theme = null)
     {
-        $rooturl = System::setting('Web:Url');
+        $rooturl = System::setting('web.url');
 
         if (!isset($theme))
             $theme = View::getTheme();
@@ -107,7 +107,7 @@ class Util
      */
     public static function getCookie($name)
     {
-        $name_prefix = System::setting('Cookie:NamePrefix');
+        $name_prefix = System::setting('cookie.name_prefix');
         $name = $name_prefix.$name;
 
         if (isset($_COOKIE[$name])) {
@@ -141,11 +141,11 @@ class Util
 
             return true;
         } else {
-            $name_prefix = System::setting('Cookie:NamePrefix');
+            $name_prefix = System::setting('cookie.name_prefix');
             $name = $name_prefix.$name;
 
-            $path   = System::setting('Cookie:Path');
-            $domain = System::setting('Cookie:Domain');
+            $path   = System::setting('cookie.path');
+            $domain = System::setting('cookie.domain');
 
             return setcookie($name, $value, $expire, $path, $domain);
         }

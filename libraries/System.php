@@ -83,16 +83,16 @@ class System
         self::$settings = $cache->data([__CLASS__, 'loadSettings']);
 
         // Make sure that the required settings are available and shut down the system otherwise
-        if (!isset(self::$settings['Main']) || !isset(self::$settings['Database']))
-            trigger_error('Required settings "Main" and/or "Database" not available', E_USER_ERROR);
+        if (!isset(self::$settings['site']) || !isset(self::$settings['database']))
+            trigger_error('Required settings "site" and/or "database" not available', E_USER_ERROR);
 
         // Now we can load our database driver
-        $driver = self::$settings['Database']['Driver'];
-        $host = self::$settings['Database']['Host'];
-        $user = self::$settings['Database']['User'];
-        $password = self::$settings['Database']['Password'];
-        $database = self::$settings['Database']['Database'];
-        $prefix = self::$settings['Database']['Prefix'];
+        $driver = self::$settings['database']['driver'];
+        $host = self::$settings['database']['host'];
+        $user = self::$settings['database']['user'];
+        $password = self::$settings['database']['password'];
+        $database = self::$settings['database']['database'];
+        $prefix = self::$settings['database']['prefix'];
 
         self::$db = Database\Connection::create($driver, $host, $user, $password, $database, $prefix);
 
@@ -125,7 +125,7 @@ class System
         if (!self::isStarted())
             trigger_error('The system is not yet ready', E_USER_ERROR);
 
-        $addrpart = explode(':', $address, 2);
+        $addrpart = explode('.', $address, 2);
 
         if (isset($addrpart[1])) {
             return isset(self::$settings[$addrpart[0]][$addrpart[1]]) ? self::$settings[$addrpart[0]][$addrpart[1]] : $default;
