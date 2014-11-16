@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{{ page_title() }}</title>
+        <title>{{ PAGE_TITLE }}</title>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-{% for tag in head_tags('meta') %}
+{% for tag in METATAGS %}
         <meta name="{{ tag.name }}" content="{{ tag.content }}" />
 {% endfor %}
-{% for tag in head_tags('link') %}
+{% for tag in LINKTAGS %}
         <link rel="{{ tag.rel }}" href="{{ tag.href }}" type="{{ tag.type }}" />
 {% endfor %}
         <link rel="stylesheet" href="{{ theme('css/style.css') }}" type="text/css" />
-{% for tag in head_tags('css') %}
+{% for tag in STYLESHEETS %}
         <link rel="stylesheet" href="{{ tag.url }}" type="text/css" media="{{ tag.media }}" />
 {% endfor %}
-{% for tag in head_tags('script') %}
+{% for tag in JAVASCRIPTS %}
         <script src="{{ tag.url }}" type="{{ tag.type }}"></script>
 {% endfor %}
     </head>

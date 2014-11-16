@@ -48,9 +48,7 @@ class CoreExtension extends Twig_Extension
             new Twig_SimpleFunction('u', 'FlameCore\Infernum\Util::makeURL'),
             new Twig_SimpleFunction('page', 'FlameCore\Infernum\Util::makePageURL'),
             new Twig_SimpleFunction('theme', 'FlameCore\Infernum\Util::makeThemeFileURL'),
-            new Twig_SimpleFunction('t', 'FlameCore\Infernum\International::translate'),
-            new Twig_SimpleFunction('page_title', 'FlameCore\Infernum\View::getTitle'),
-            new Twig_SimpleFunction('head_tags', 'FlameCore\Infernum\View::getHeadTags')
+            new Twig_SimpleFunction('t', 'FlameCore\Infernum\International::translate')
         );
     }
 

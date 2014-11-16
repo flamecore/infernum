@@ -66,9 +66,17 @@ class View
      */
     public function __construct($source, $template)
     {
-        $this->template = new Template($source, $template, [
+        $template = new Template($source, $template, [
             'theme' => self::getTheme()
         ]);
+
+        $template->set('PAGE_TITLE', self::getTitle());
+        $template->set('METATAGS', self::getHeadTags('meta'));
+        $template->set('LINKTAGS', self::getHeadTags('link'));
+        $template->set('STYLESHEETS', self::getHeadTags('css'));
+        $template->set('JAVASCRIPTS', self::getHeadTags('script'));
+
+        $this->template = $template;
     }
 
     /**
