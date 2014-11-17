@@ -65,49 +65,53 @@ class Template
     private static $globals = array();
 
     /**
-     * Generates a new Template object.
+     * Generates a Template object.
      *
-     * @param    string   $source    Module or template @namespace where the template is loaded from
-     * @param    string   $name      Name of the template to load (without file extension)
-     * @param    array    $options   An optional array of one or more of the following options:
-     *                                 * theme: Name of the theme where the template is loaded from
+     * @param string $name Name of the template to load (without file extension)
+     * @param \FlameCore\Infernum\Application $app The application context
+     * @param array $options An optional array of one or more of the following options:
+     *   * cache: An absolute path where to store compiled templates, or FALSE to disable compilation cache (default).
+     *   * debug: Enable debugmode for the template engine
      */
-    public function __construct($source, $name, array $options = [])
+    public function __construct($name, Application $app, array $options = [])
     {
-        $theme = $options['theme'] ?: System::setting('web.theme', 'default');
-
-        $engine_options = array(
-            'cache' => false,
-            'debug' => false
+        $engineOptions = array(
+            'cache' => (isset($options['cache']) ? $options['cache'] : $app->isCacheEnabled()) ? $app->getCachePath('templates') : false,
+            'debug' => isset($options['debug']) ? $options['debug'] : $app->isDebugModeEnabled()
         );
 
-        if (config('enable_caching')) {
-            $cache_path = WW_CACHE_PATH.'/templates/'.strtolower($type);
-
-            if (!is_dir($cache_path))
-                mkdir($cache_path, 0777, true);
-
-            $engine_options['cache'] = $cache_path;
-        }
-
-        if (config('enable_debugmode'))
-            $engine_options['debug'] = true;
-
         $loader = new Loader();
-        $loader->setNamespace('global', INFERNUM_ENGINE_PATH.'/themes/'.$theme.'/templates');
+        $loader->setNamespace('global', $app->getTemplatePath());
 
-        if ($source[0] != '@') {
-            $loader->setLocalPath(INFERNUM_ENGINE_PATH.'/modules/'.$source.'/themes/'.$theme.'/templates');
-            $this->name = $name;
-        } else {
-            $this->name = $source.'/'.$name;
+        if ($name[0] != '@') {
+            $module = $app->getLoadedModule();
+
+            if (!$module)
+                throw new \DomainException(sprintf('Cannot use local template path "%s" when no module is loaded.', $name));
+
+            $loader->setLocalPath($app->getTemplatePath($module));
         }
 
-        $twig = new Twig_Environment($loader, $engine_options);
+        $twig = new Twig_Environment($loader, $engineOptions);
+        $twig->getExtension('core')->setTimezone($app->setting('site.timezone'));
+
+        if (isset($app['intl'])) {
+            $locale = $app['intl']->getLocale();
+
+            $separators = $locale->getNumberSeparators();
+            $twig->getExtension('core')->setNumberFormat(0, $separators['decimal'], $separators['thousand']);
+
+            $format = $locale->getDateFormat();
+            $twig->getExtension('core')->setDateFormat($format, '%d days');
+        }
+
         $twig->addExtension(new Twig_Extensions_Extension_Text);
-        $twig->addExtension(new CoreExtension);
+
+        $extension = new CoreExtension($app);
+        $twig->addExtension($extension);
 
         $this->twig = $twig;
+        $this->name = $name;
     }
 
     /**

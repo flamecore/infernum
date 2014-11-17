@@ -69,7 +69,7 @@
             </fieldset>
             <fieldset>
                 <legend>Stack Trace</legend>
-                <pre><?php echo str_replace(INFERNUM_ENGINE_PATH, '.', $exception->getTraceAsString()) ?></pre>
+                <pre><?php echo str_replace(INFERNUM_PATH, '.', $exception->getTraceAsString()) ?></pre>
             </fieldset>
 <?php endif; ?>
 <?php else: ?>

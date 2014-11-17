@@ -41,15 +41,15 @@ class Translations
     /**
      * Constructor
      *
-     * @return void
+     * @param string $language The language
+     * @param \FlameCore\Infernum\Application $app The application context
      */
-    public function __construct($language)
+    public function __construct($language, Application $app)
     {
         // Load all strings of the selected language pack
-        $cache = new Cache('translations/'.$language);
-        $this->strings = $cache->data(function () use ($language) {
+        $this->strings = $app->cache('translations/'.$language, function () use ($language, $app) {
             $sql = 'SELECT string, translation FROM @PREFIX@translations WHERE language = {0}';
-            $result = System::db()->query($sql, array($language));
+            $result = $app['db']->query($sql, array($language));
 
             $strings = array();
             while ($entry = $result->fetch())

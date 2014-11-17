@@ -21,49 +21,31 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Infernum;
+namespace FlameCore\Infernum\Configuration;
+
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
 /**
- * Core functions
+ * The SystemConfiguration class
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-
-/**
- * Returns a configuration value
- *
- * @param string $confkey The configuration key
- * @param mixed $default Custom default value (optional)
- * @return mixed
- */
-function config($confkey, $default = false)
+class SystemConfiguration extends AbstractConfiguration
 {
-    if (isset($GLOBALS['CONFIG'][$confkey])) {
-        return $GLOBALS['CONFIG'][$confkey];
-    } else {
-        return $default;
+    protected function getDefinitionTree()
+    {
+        $treeBuilder = new TreeBuilder();
+        $rootNode = $treeBuilder->root('config');
+
+        $rootNode
+            ->children()
+                ->scalarNode('enable_debugmode')->defaultValue(true)->end()
+                ->scalarNode('enable_logging')->defaultValue(true)->end()
+                ->scalarNode('enable_caching')->defaultValue(true)->end()
+                ->integerNode('cache_lifetime')->defaultValue(86400)->end()
+                ->scalarNode('enable_multisite')->defaultValue(true)->end()
+            ->end();
+
+        return $treeBuilder;
     }
-}
-
-/**
- * Returns the translation of a string
- *
- * @param string $string The string to translate
- * @param array $vars Variables ('%var%') to replace as array
- * @return string
- */
-function t($string, $vars = null)
-{
-    return International::translate($string, $vars);
-}
-
-/**
- * Outputs the translation of a string
- *
- * @param string $string The string to translate
- * @param array $vars Variables ('%var%') to replace as array
- */
-function te($string, $vars = null)
-{
-    echo International::translate($string, $vars);
 }

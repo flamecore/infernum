@@ -23,6 +23,7 @@
 
 namespace FlameCore\Infernum\Template;
 
+use FlameCore\Infernum\Application;
 use Twig_Extension, Twig_SimpleFilter, Twig_SimpleFunction;
 
 /**
@@ -32,24 +33,39 @@ use Twig_Extension, Twig_SimpleFilter, Twig_SimpleFunction;
  */
 class CoreExtension extends Twig_Extension
 {
+    private $app;
+
+    public function __construct(Application $app)
+    {
+        $this->app = $app;
+    }
+
     public function getFilters()
     {
-        return array(
-            new Twig_SimpleFilter('lformat_number', 'FlameCore\Infernum\International::formatNumber'),
-            new Twig_SimpleFilter('lformat_money', 'FlameCore\Infernum\International::formatMoney'),
-            new Twig_SimpleFilter('lformat_time', 'FlameCore\Infernum\International::formatTime'),
-            new Twig_SimpleFilter('lformat_date', 'FlameCore\Infernum\International::formatDate')
-        );
+        $filters = array();
+
+        if (isset($this->app['intl'])) {
+            $filters[] = new Twig_SimpleFilter('lformat_number', [$this->app['intl'], 'formatNumber']);
+            $filters[] = new Twig_SimpleFilter('lformat_money', [$this->app['intl'], 'formatMoney']);
+            $filters[] = new Twig_SimpleFilter('lformat_time', [$this->app['intl'], 'formatTime']);
+            $filters[] = new Twig_SimpleFilter('lformat_date', [$this->app['intl'], 'formatDate']);
+        }
+
+        return $filters;
     }
 
     public function getFunctions()
     {
-        return array(
-            new Twig_SimpleFunction('u', 'FlameCore\Infernum\Util::makeURL'),
-            new Twig_SimpleFunction('page', 'FlameCore\Infernum\Util::makePageURL'),
-            new Twig_SimpleFunction('theme', 'FlameCore\Infernum\Util::makeThemeFileURL'),
-            new Twig_SimpleFunction('t', 'FlameCore\Infernum\International::translate')
-        );
+        $functions = array();
+        $functions[] = new Twig_SimpleFunction('u', [$this->app, 'makeURL']);
+        $functions[] = new Twig_SimpleFunction('page', [$this->app, 'makePageURL']);
+        $functions[] = new Twig_SimpleFunction('file', [$this->app, 'makeFileUrl']);
+
+        if (isset($this->app['intl'])) {
+            $functions[] = new Twig_SimpleFunction('t', [$this->app['intl'], 'translate']);
+        }
+
+        return $functions;
     }
 
     public function getName()

@@ -51,7 +51,7 @@ abstract class Entity extends Resource
             throw new \DomainException(sprintf('Cannot select by "%s.%s" field as it is not defined.', $table, $selector));
 
         $columns = array_map([__CLASS__, 'encode'], $columns);
-        return System::db()->update($table, $columns, [
+        return $this->database->update($table, $columns, [
             'where' => "`$selector` = {0}",
             'vars' => [$identifier],
             'limit' => 1

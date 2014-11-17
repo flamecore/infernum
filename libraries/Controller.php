@@ -34,36 +34,37 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class Controller
 {
     /**
-     * The Request object
+     * The application context
      *
-     * @var \Symfony\Component\HttpFoundation\Request
+     * @var \FlameCore\Infernum\Application
      */
-    private $request;
+    private $context;
 
     /**
-     * Generates a new Controller object
+     * Generates a new Controller object.
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request The Request object
+     * @param \FlameCore\Infernum\Application $context The application context
      */
-    final public function __construct(Request $request)
+    final public function __construct(Application $context)
     {
-        $this->request = &$request;
+        $this->context = $context;
     }
 
     /**
-     * Executes the action with given arguments
+     * Executes the action with given arguments.
      *
+     * @param \Symfony\Component\HttpFoundation\Request $request The Request object
      * @param string $action The action name
      * @param array $arguments The arguments as array (optional)
      * @return \Symfony\Component\HttpFoundation\Response
-     * @throws \UnexpectedValueException
+     * @throws \UnexpectedValueException if the action does not provide a valid response result.
      */
-    final public function run($action, Array $arguments = null)
+    final public function run(Request $request, $action, array $arguments = null)
     {
         if (!$this->actionExists($action))
             return $this->errorNotFound();
 
-        $result = call_user_func([$this, 'action_'.$action], $this->request, $arguments);
+        $result = call_user_func([$this, 'action_'.$action], $arguments, $request, $this->context);
 
         if ($result instanceof Response) {
             return $result;
@@ -97,7 +98,7 @@ abstract class Controller
      */
     final protected function message($message, $type = 'info', $status = 200)
     {
-        $view = new View('@global', 'message_body');
+        $view = new View('@global/message_body', $this->context);
         $view->set('message', $message);
         $view->set('type', $type);
 
@@ -111,7 +112,7 @@ abstract class Controller
      */
     final protected function errorNotFound()
     {
-        $view = new View('@global', '404_body');
+        $view = new View('@global/404_body', $this->context);
         return new Response($view, 404);
     }
 
@@ -122,7 +123,7 @@ abstract class Controller
      */
     final protected function errorForbidden()
     {
-        $view = new View('@global', '403_body');
+        $view = new View('@global/403_body', $this->context);
         return new Response($view, 403);
     }
 }

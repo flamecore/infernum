@@ -40,7 +40,7 @@ class Connection extends BaseConnection
         $this->link = @mysqli_connect($this->host, $this->user, $this->password, $this->database);
 
         if (mysqli_connect_errno())
-            trigger_error('Failed connecting to the database: '.mysqli_connect_error(), E_USER_ERROR);
+            throw new \UnexpectedValueException(sprintf('Failed connecting to the database: %s', mysqli_connect_error()));
     }
 
     /**
@@ -68,7 +68,7 @@ class Connection extends BaseConnection
             return true;
         }
 
-        trigger_error('Database query failed: '.$this->getError(), E_USER_ERROR);
+        throw new \UnexpectedValueException(sprintf('Database query failed: %s', $this->getError()));
     }
 
     /**

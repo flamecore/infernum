@@ -2,7 +2,7 @@ site:
   # Name of the website
   title: "Infernum"
   # Module to use as frontpage
-  frontpage: start
+  frontpage: acme/start:index
   # Default language
   language: "en-US"
   # Default timezone
@@ -18,7 +18,7 @@ web:
 
 database:
   # Database driver to use
-  driver: "MySQL"
+  driver: mysql
   # Database server host
   host: "localhost"
   # Username of database server user

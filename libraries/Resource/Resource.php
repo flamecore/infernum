@@ -23,7 +23,7 @@
 
 namespace FlameCore\Infernum\Resource;
 
-use FlameCore\Infernum\System;
+use FlameCore\Infernum\Database\Base\Connection;
 
 /**
  * The abstract Resource class
@@ -32,6 +32,8 @@ use FlameCore\Infernum\System;
  */
 abstract class Resource
 {
+    protected $database;
+
     /**
      * The data of the resource
      *
@@ -43,9 +45,12 @@ abstract class Resource
      * Fetches the data of the record. This method must retrieve the data.
      *
      * @param mixed $identifier The identifier of the record
+     * @param \FlameCore\Infernum\Database\Base\Connection $database The database connection to use
      */
-    public function __construct($identifier)
+    public function __construct($identifier, Connection $database)
     {
+        $this->database = $database;
+
         $table = static::getTable();
         $fields = static::getFields();
         $columns = array_keys($fields);
@@ -55,7 +60,7 @@ abstract class Resource
         if (!isset($fields[$selector]))
             throw new \DomainException(sprintf('Cannot select by "%s.%s" field as it is not defined.', $table, $selector));
 
-        $result = System::db()->select($table, $columns, [
+        $result = $database->select($table, $columns, [
             'where' => "`$selector` = {0}",
             'vars' => [$identifier],
             'limit' => 1
@@ -77,9 +82,10 @@ abstract class Resource
      * Checks wheter or not the record with given identifier exists.
      *
      * @param mixed $identifier The identifier of the record
+     * @param \FlameCore\Infernum\Database\Base\Connection $database The database connection to use
      * @return bool
      */
-    public static function exists($identifier)
+    public static function exists($identifier, Connection $database)
     {
         $table = static::getTable();
         $fields = static::getFields();
@@ -89,7 +95,7 @@ abstract class Resource
         if (!isset($fields[$selector]))
             throw new \DomainException(sprintf('Cannot select by "%s.%s" field as it is not defined.', $table, $selector));
 
-        $result = System::db()->select($table, 'id', [
+        $result = $database->select($table, 'id', [
             'where' => "`$selector` = {0}",
             'vars' => [$identifier],
             'limit' => 1
@@ -101,9 +107,10 @@ abstract class Resource
     /**
      * Returns a list of available records.
      *
+     * @param \FlameCore\Infernum\Database\Base\Connection $database The database connection to use
      * @return array
      */
-    public static function listAll()
+    public static function listAll(Connection $database)
     {
         $table = static::getTable();
         $fields = static::getFields();
@@ -114,7 +121,7 @@ abstract class Resource
 
         $items = array();
 
-        $result = System::db()->select($table, $keyName);
+        $result = $database->select($table, $keyName);
         while ($data = $result->fetch())
             $items[] = self::decode($data[$keyName], $fields[$keyName]);
 
@@ -124,9 +131,10 @@ abstract class Resource
     /**
      * Fetches all available records.
      *
+     * @param \FlameCore\Infernum\Database\Base\Connection $database The database connection to use
      * @return array
      */
-    public static function fetchAll()
+    public static function fetchAll(Connection $database)
     {
         $table = static::getTable();
         $fields = static::getFields();
@@ -138,7 +146,7 @@ abstract class Resource
 
         $items = array();
 
-        $result = System::db()->select($table, $columns);
+        $result = $database->select($table, $columns);
         while ($data = $result->fetch()) {
             $key = self::decode($data[$keyName], $fields[$keyName]);
 

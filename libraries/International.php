@@ -38,30 +38,32 @@ class International
      *
      * @var \FlameCore\Infernum\Localization
      */
-    private static $locale;
+    private $locale;
 
     /**
      * The translation engine object
      *
      * @var \FlameCore\Infernum\Translations
      */
-    private static $translations;
+    private $translations;
 
     /**
-     * Initializes the internationalization system
+     * Initializes the internationalization system.
      *
      * @param \Symfony\Component\HttpFoundation\Request $request The request
+     * @param \FlameCore\Infernum\Application $app The application context
+     * @return \FlameCore\Infernum\International Returns the new International object.
      */
-    public static function init(Request $request)
+    public static function init(Request $request, Application $app)
     {
-        $locales = Localization::listAll();
-        $defaultLang = (string) System::setting('site.language');
+        $locales = Localization::listAll($app['db']);
+        $defaultLang = $app->setting('site.language');
 
         if (!in_array($defaultLang, $locales))
-            throw new \DomainException('The default language is invalid or undefined');
+            throw new \DomainException('The default language is invalid or undefined.');
 
         // Detect the user's preferred language
-        if ($sessionLang = System::getSession()->read('language')) {
+        if (isset($app['session']) && $sessionLang = $app['session']->read('language')) {
             // There was found a language setting in the user's session
             $detectedLang = $sessionLang;
         } elseif ($browserLang = $request->getPreferredLanguage($locales)) {
@@ -70,10 +72,24 @@ class International
         }
 
         // If the preferred language is not supported, fall back to the default language
-        $locale = in_array($detectedLang, $locales) ? $detectedLang : $defaultLang;
+        $localeName = in_array($detectedLang, $locales) ? $detectedLang : $defaultLang;
+        $locale = new Localization($localeName, $app['db']);
 
-        self::$locale = new Localization($locale);
-        self::$translations = new Translations($locale);
+        return new self($locale, $app);
+    }
+
+    /**
+     * Generates a International object.
+     *
+     * @param \FlameCore\Infernum\Resource\Localization $locale The locale to use
+     * @param \FlameCore\Infernum\Application $app The application context
+     */
+    public function __construct(Localization $locale, Application $app)
+    {
+        $localeName = $locale->getID();
+
+        $this->locale = $locale;
+        $this->translations = new Translations($localeName, $app);
     }
 
     /**
@@ -81,12 +97,9 @@ class International
      *
      * @return \FlameCore\Infernum\Localization
      */
-    public static function getLocale()
+    public function getLocale()
     {
-        if (!isset(self::$locale) || !(self::$locale instanceof Localization))
-            throw new \LogicException('The I18n system is not yet initialized');
-
-        return self::$locale;
+        return $this->locale;
     }
 
     /**
@@ -97,9 +110,9 @@ class International
      * @param bool $groupThousands Enable grouping of thousands (Default: FALSE)
      * @return string
      */
-    public static function formatNumber($number, $decimals = 0, $groupThousands = true)
+    public function formatNumber($number, $decimals = 0, $groupThousands = true)
     {
-        $separators = self::$locale->getNumberSeparators();
+        $separators = $this->locale->getNumberSeparators();
 
         $decimalPoint = $separators['decimal'];
         $thousandSep = $groupThousands ? $separators['thousand'] : '';
@@ -114,9 +127,9 @@ class International
      * @param string $currency The currency to use
      * @return string
      */
-    public static function formatMoney($number, $currency)
+    public function formatMoney($number, $currency)
     {
-        $format = self::$locale->getMoneyFormat();
+        $format = $this->locale->getMoneyFormat();
 
         return Format::money($number, $currency, $format);
     }
@@ -128,9 +141,9 @@ class International
      *   When omitted, the current time is used.
      * @return string
      */
-    public static function formatTime($input = null)
+    public function formatTime($input = null)
     {
-        $format = self::$locale->getTimeFormat();
+        $format = $this->locale->getTimeFormat();
 
         return Format::time($input, $format);
     }
@@ -144,12 +157,12 @@ class International
      * @param bool $withTime Add time to string? (Default = FALSE)
      * @return string
      */
-    public static function formatDate($input = null, $length = 1, $withTime = false)
+    public function formatDate($input = null, $length = 1, $withTime = false)
     {
-        $format = self::$locale->getDateFormat($length);
+        $format = $this->locale->getDateFormat($length);
 
         if ($withTime)
-            $format .= ', ' . self::$locale->getTimeFormat();
+            $format .= ', ' . $this->locale->getTimeFormat();
 
         return Format::time($input, $format);
     }
@@ -161,11 +174,8 @@ class International
      * @param array $vars Variables (`%var%`) to replace as array. The key is the name of the variable.
      * @return string
      */
-    public static function translate($string, $vars = null)
+    public function translate($string, $vars = null)
     {
-        if (!isset(self::$translations) || !(self::$translations instanceof Translations))
-            throw new \LogicException('The I18n system is not yet initialized');
-
-        return self::$translations->get($string, $vars);
+        return $this->translations->get($string, $vars);
     }
 }

@@ -1,4 +1,0 @@
-<?php
-// Activated modules
-System::mountModule('my_module');
-System::mountModule('another_module', 'foo');

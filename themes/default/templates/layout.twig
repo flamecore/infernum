@@ -9,7 +9,7 @@
 {% for tag in LINKTAGS %}
         <link rel="{{ tag.rel }}" href="{{ tag.href }}" type="{{ tag.type }}" />
 {% endfor %}
-        <link rel="stylesheet" href="{{ theme('css/style.css') }}" type="text/css" />
+        <link rel="stylesheet" href="{{ file('css/style.css') }}" type="text/css" />
 {% for tag in STYLESHEETS %}
         <link rel="stylesheet" href="{{ tag.url }}" type="text/css" media="{{ tag.media }}" />
 {% endfor %}

@@ -31,82 +31,84 @@ namespace FlameCore\Infernum;
 class Cache
 {
     /**
-     * The name of the cache instance
+     * The path to the cache directory
      *
      * @var string
      */
-    private $name;
+    private $path;
 
     /**
-     * The lifetime of the cache instance in seconds
+     * Creates a Cache object.
      *
-     * @var int
+     * @param string $path The path to the cache directory
      */
-    private $lifetime;
-
-    /**
-     * Constructor
-     *
-     * @param string $name The name of the cache instance
-     * @param int $lifetime The lifetime of the cache instance in seconds (0 = infinite)
-     */
-    public function __construct($name, $lifetime = null)
+    public function __construct($path)
     {
-        if (!is_dir(INFERNUM_CACHE_PATH.'/data'))
-            mkdir(INFERNUM_CACHE_PATH.'/data', 0777, true);
-
-        if (!preg_match('#^[\w-+@\./]+$#', $name))
-            trigger_error('Invalid cache name given ("'.$name.'")', E_USER_ERROR);
-
-        if (!isset($lifetime))
-            $lifetime = config('cache_lifetime', 86400);
-
-        $this->name = $name;
-        $this->lifetime = (int) $lifetime;
+        $this->path = $path;
     }
 
     /**
-     * Reads data from cache. The $callback is used to generate the data if missing or expired.
+     * Reads data from the cache.
      *
-     * @param callable $callback The callback function that returns the data to store
+     * @param string $name The name of the cache file
      * @return mixed
      */
-    public function data($callback)
+    public function get($name)
     {
-        if (!is_callable($callback)) {
-            trigger_error('Invalid callback given for cache instance "'.$this->name.'"', E_USER_WARNING);
-            return;
-        }
+        if (!preg_match('#^[\w-+@\./]+$#', $name))
+            throw new \InvalidArgumentException(sprintf('Given cache name "%s" is invalid.', $name));
 
-        if (config('enable_caching') == true) {
-            // Caching is enabled, so we use a file
-            $filename = INFERNUM_CACHE_PATH.'/data/'.$this->name.'.dat';
+        $filename = $this->getFilename($name);
 
-            // Check if the file exists
-            if (file_exists($filename)) {
-                $file_content = file_get_contents($filename);
-                list($modified, $raw_data) = explode("\n", $file_content, 2);
+        // Check if the file exists
+        if (file_exists($filename)) {
+            $file_content = file_get_contents($filename);
+            list($expire, $raw_data) = explode("\n", $file_content, 2);
 
-                // Check if the file has expired. If so, there is no data we could use
-                if ($this->lifetime > 0 && $modified + $this->lifetime < time())
-                    $raw_data = null;
-            }
-
-            if (isset($raw_data)) {
-                // We were able to retrieve data from the file
+            // Check if the file is fresh
+            if ($expire == 0 || $expire > time())
                 return unserialize($raw_data);
-            } else {
-                // No data from file, so we use the data callback and store the given value
-                $data = $callback();
-
-                $file_content = time()."\n".serialize($data);
-                file_put_contents($filename, $file_content);
-
-                return $data;
-            }
-        } else {
-            // Caching is disabled, so we use the data callback
-            return $callback();
         }
+
+        return null;
+    }
+
+    /**
+     * Writes data to the cache.
+     *
+     * @param string $name The name of the cache file
+     * @param mixed $data The data to write
+     * @param int $lifetime The lifetime of the cache file in seconds (0 = infinite)
+     * @return bool
+     */
+    public function set($name, $data, $lifetime)
+    {
+        if (!preg_match('#^[\w-+@\./]+$#', $name))
+            throw new \InvalidArgumentException(sprintf('Given cache name "%s" is invalid.', $name));
+
+        $file_content = (time() + (int) $lifetime)."\n".serialize($data);
+        return file_put_contents($this->getFilename($name), $file_content);
+    }
+
+    /**
+     * Clears the cache.
+     *
+     * @return void
+     */
+    public function clear()
+    {
+        $iterator = new RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->path, \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ($iterator as $filename => $file) {
+            if ($file->isDir()) {
+                rmdir($filename);
+            } else {
+                unlink($filename);
+            }
+        }
+    }
+
+    private function getFilename($name)
+    {
+        return $this->path.'/'.$name.'.dat';
     }
 }

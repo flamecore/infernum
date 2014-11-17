@@ -23,6 +23,8 @@
 
 namespace FlameCore\Infernum;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Infernum Core
  *
@@ -30,32 +32,41 @@ namespace FlameCore\Infernum;
  */
 
 define('DS', DIRECTORY_SEPARATOR);
-define('INFERNUM_ENGINE_PATH', DS != '/' ? str_replace(DS, '/', __DIR__) : __DIR__);
+define('INFERNUM_PATH', DS != '/' ? str_replace(DS, '/', __DIR__) : __DIR__);
 
 try {
-    require INFERNUM_ENGINE_PATH.'/includes/bootstrap.php';
+    if (!is_readable(INFERNUM_PATH.'/vendor/autoload.php'))
+        throw new \LogicException('Vendor autoloader not found or unreadable. Please make sure that you have installed the required libraries using Composer.');
 
-    View::setTitle(System::setting('site.title'));
+    require_once INFERNUM_PATH.'/libraries/ClassLoader.php';
+    require_once INFERNUM_PATH.'/vendor/autoload.php';
 
-    if (is_readable(INFERNUM_SITE_PATH.'/setup.php'))
-        include INFERNUM_SITE_PATH.'/setup.php';
+    $loader = new ClassLoader(__NAMESPACE__, INFERNUM_PATH);
+    $loader->register();
 
-    $path = $request->query->get('p') ?: '';
+    $request = Request::createFromGlobals();
+    $domain = $request->server->get('SERVER_NAME');
 
-    // Split the path into its parts. Use frontpage path if no path is specified.
-    if (!empty($path)) {
-        System::loadModuleFromPath($path);
-    } else {
-        System::loadModule(System::setting('site.frontpage'));
-    }
+    $kernel = new Kernel($domain, INFERNUM_PATH);
+    $kernel['loader'] = $loader;
+
+    $site = $kernel->boot($request->server);
+
+    $app = new Application($site, $kernel);
+    $app['session'] = Session::init($request, $app);
+    $app['intl'] = International::init($request, $app);
+
+    View::setTitle($app->setting('site.title'));
+
+    $kernel->handle($request, $app);
 } catch (\Exception $exception) {
-    if (function_exists('FlameCore\Infernum\infernum_config')) {
-        infernum_log($exception->getMessage(), 2);
-        $verbosity = infernum_config('enable_debugmode') ? infernum_config('debug_verbosity', 1) : 0;
+    if (isset($kernel)) {
+        $kernel->log($exception->getMessage(), 2);
+        $verbosity = $kernel->config('enable_debugmode') ? $kernel->config('debug_verbosity', 1) : 0;
     } else {
         $verbosity = 1;
     }
 
-    require INFERNUM_ENGINE_PATH.'/includes/errorpage.php';
+    require INFERNUM_PATH.'/includes/errorpage.php';
     exit();
 }

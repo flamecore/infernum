@@ -154,6 +154,3 @@ class ClassLoader
         return trim($name, '\\');
     }
 }
-
-$loader = new ClassLoader(__NAMESPACE__, INFERNUM_ENGINE_PATH);
-$loader->register();

@@ -61,14 +61,12 @@ class View
     /**
      * Generates a View object
      *
-     * @param string $source Module or template `@namespace` where the template is loaded from
      * @param string $template Name of the template to load
+     * @param \FlameCore\Infernum\Application $app The application context
      */
-    public function __construct($source, $template)
+    public function __construct($template, Application $app)
     {
-        $template = new Template($source, $template, [
-            'theme' => self::getTheme()
-        ]);
+        $template = new Template($template, $app);
 
         $template->set('PAGE_TITLE', self::getTitle());
         $template->set('METATAGS', self::getHeadTags('meta'));
@@ -124,26 +122,6 @@ class View
     public function set($param1, $param2 = null)
     {
         $this->template->set($param1, $param2);
-    }
-
-    /**
-     * Returns the used theme
-     *
-     * @return string
-     */
-    public static function getTheme()
-    {
-        return isset(self::$theme) ? self::$theme : System::setting('web.theme', 'default');
-    }
-
-    /**
-     * Sets the used theme
-     *
-     * @param string $theme The theme to use
-     */
-    public static function setTheme($theme)
-    {
-        self::$theme = (string) $theme;
     }
 
     /**
