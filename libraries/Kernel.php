@@ -41,6 +41,8 @@ final class Kernel implements \ArrayAccess
 
     private $loadedModule = false;
 
+    private $loadedPlugins = array();
+
     private static $keys = array(
         'domain' => 'string',
         'path' => 'string',
@@ -88,6 +90,17 @@ final class Kernel implements \ArrayAccess
     public function getLoadedModule()
     {
         return $this->loadedModule;
+    }
+
+    /**
+     * Lists all loaded plugins.
+     *
+     * @return array Returns an array of loaded plugins.
+     * @api
+     */
+    public function getLoadedPlugins()
+    {
+        return $this->loadedPlugins;
     }
 
     /**
@@ -160,6 +173,13 @@ final class Kernel implements \ArrayAccess
 
         $site = new Site($sitename, $this);
 
+        $plugins = $site->getPlugins();
+        foreach ($plugins as $plugin) {
+            if (!$this->pluginExists($plugin))
+                throw new \RuntimeException(sprintf('Site "%s" depends on plugin "%s" which is not installed.', $sitename, $plugin));
+            $this->loadPlugin($plugin);
+        }
+
         $routes = $site->getRoutes();
         foreach ($routes as $route) {
             if (!$this->moduleExists($route['module']))
@@ -184,6 +204,13 @@ final class Kernel implements \ArrayAccess
     public function loadModule($moduleName)
     {
         $module = new Module($moduleName, $this);
+
+        $plugins = $module->getRequiredPlugins();
+        foreach ($plugins as $plugin) {
+            if (!$this->pluginExists($plugin))
+                throw new \RuntimeException(sprintf('Module "%s" depends on plugin "%s" which is not installed.', $moduleName, $plugin));
+            $this->loadPlugin($plugin);
+        }
 
         if (isset($this['loader']) && $module->providesLibraries())
             $this['loader']->addSource($module->getNamespace(), $module->getPath());
@@ -215,6 +242,53 @@ final class Kernel implements \ArrayAccess
     public function getModulePath($moduleName)
     {
         return $this['path'].'/modules/'.$moduleName;
+    }
+
+    /**
+     * Loads the given plugin.
+     *
+     * @param string $pluginName The plugin name
+     * @throws \RuntimeException if the plugin does not exist or if its information could not be loaded.
+     * @api
+     */
+    public function loadPlugin($pluginName)
+    {
+        if (!isset($this->loadedPlugins[$pluginName])) {
+            $plugin = new Plugin($pluginName, $this);
+
+            if (isset($this['loader']) && $plugin->providesLibraries())
+                $this['loader']->addSource($plugin->getNamespace(), $plugin->getPath());
+
+            $this->loadedPlugins[$pluginName] = $plugin;
+        } else {
+            $plugin = $this->loadedPlugins[$pluginName];
+        }
+
+        return $plugin;
+    }
+
+    /**
+     * Checks whether a plugin exists.
+     *
+     * @param string $pluginName The plugin name
+     * @return bool
+     * @api
+     */
+    public function pluginExists($pluginName)
+    {
+        return is_dir($this->getPluginPath($pluginName));
+    }
+
+    /**
+     * Returns the path of the given plugin.
+     *
+     * @param string $pluginName The plugin name
+     * @return string
+     * @api
+     */
+    public function getPluginPath($pluginName)
+    {
+        return $this['path'].'/plugins/'.$pluginName;
     }
 
     /**

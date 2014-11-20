@@ -26,34 +26,34 @@ namespace FlameCore\Infernum\Configuration;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
 /**
- * The SiteConfiguration class
+ * The PluginMetadata class
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class SiteConfiguration extends AbstractConfiguration
+class PluginMetadata extends AbstractConfiguration
 {
     protected function getDefinitionTree()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('siteconfig');
+        $rootNode = $treeBuilder->root('plugin');
 
         $rootNode
             ->children()
-                ->arrayNode('routes')
+                ->scalarNode('title')
                     ->isRequired()
-                    ->prototype('array')
-                        ->children()
-                            ->scalarNode('module')->isRequired()->end()
-                            ->scalarNode('alias')->isRequired()->end()
-                        ->end()
-                    ->end()
+                    ->cannotBeEmpty()
                 ->end()
-                ->arrayNode('plugins')
-                    ->defaultValue([])
-                    ->prototype('scalar')
-                    ->beforeNormalization()
-                        ->ifArray()
-                        ->then(function ($v) { return array_unique($v); })
+                ->scalarNode('description')->end()
+                ->scalarNode('author')->end()
+                ->scalarNode('website')->end()
+                ->scalarNode('namespace')
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                ->end()
+                ->arrayNode('provides')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('libraries')->defaultValue(false)->end()
                     ->end()
                 ->end()
             ->end();

@@ -23,37 +23,36 @@
 
 namespace FlameCore\Infernum;
 
-use FlameCore\Infernum\Configuration\SiteConfiguration;
-use FlameCore\Infernum\Configuration\SiteSettings;
+use FlameCore\Infernum\Configuration\PluginMetadata;
 
 /**
- * The Site class
+ * The Plugin class
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Site
+class Plugin
 {
     private $name;
 
+    private $namespace;
+
     private $path;
 
-    private $routes;
-
-    private $plugins;
+    private $provides = array();
 
     public function __construct($name, Kernel $kernel)
     {
-        $path = $kernel['path'].'/websites/'.$name;
+        if (!$kernel->pluginExists($name))
+            throw new \LogicException(sprintf('Plugin "%s" does not exist.', $name));
 
-        if (!is_dir($path))
-            throw new \LogicException(sprintf('Directory of site "%s" does not exist (%s).', $name, $path));
+        $path = $kernel->getPluginPath($name);
 
         $this->name = $name;
         $this->path = $path;
 
-        $config = $this->loadConfiguration();
-        $this->routes = $config['routes'];
-        $this->plugins = $config['plugins'];
+        $metadata = $this->loadMetadata();
+        $this->namespace = $metadata['namespace'];
+        $this->provides = $metadata['provides'];
     }
 
     public function getName()
@@ -61,38 +60,28 @@ class Site
         return $this->name;
     }
 
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+
     public function getPath()
     {
         return $this->path;
     }
 
-    public function getRoutes()
+    public function providesLibraries()
     {
-        return $this->routes;
+        return $this->provides['libraries'];
     }
 
-    public function getPlugins()
-    {
-        return $this->plugins;
-    }
-
-    public function loadSettings()
+    private function loadMetadata()
     {
         try {
-            $config = new SiteSettings($this->path.'/settings.yml');
+            $config = new PluginMetadata($this->path.'/plugin.yml');
             return $config->load();
         } catch (\Exception $e) {
-            throw new \RuntimeException(sprintf('Unable to load settings: %s', $e->getMessage()));
-        }
-    }
-
-    private function loadConfiguration()
-    {
-        try {
-            $config = new SiteConfiguration($this->path.'/site.yml');
-            return $config->load();
-        } catch (\Exception $e) {
-            throw new \RuntimeException(sprintf('Unable to load site configuration: %s', $e->getMessage()));
+            throw new \RuntimeException(sprintf('Unable to load plugin metadata: %s', $e->getMessage()));
         }
     }
 }

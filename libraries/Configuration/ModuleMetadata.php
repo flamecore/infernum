@@ -56,6 +56,19 @@ class ModuleMetadata extends AbstractConfiguration
                         ->booleanNode('libraries')->defaultFalse()->end()
                     ->end()
                 ->end()
+                ->arrayNode('requires')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('plugins')
+                            ->defaultValue([])
+                            ->prototype('scalar')
+                            ->beforeNormalization()
+                                ->ifArray()
+                                ->then(function ($v) { return array_unique($v); })
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $treeBuilder;
