@@ -49,6 +49,7 @@ class CoreExtension extends Twig_Extension
             $filters[] = new Twig_SimpleFilter('lformat_money', [$this->app['intl'], 'formatMoney']);
             $filters[] = new Twig_SimpleFilter('lformat_time', [$this->app['intl'], 'formatTime']);
             $filters[] = new Twig_SimpleFilter('lformat_date', [$this->app['intl'], 'formatDate']);
+            $filters[] = new Twig_SimpleFilter('t', [$this->app['intl'], 'translate']);
         }
 
         return $filters;
@@ -60,10 +61,6 @@ class CoreExtension extends Twig_Extension
         $functions[] = new Twig_SimpleFunction('u', [$this->app, 'makeURL']);
         $functions[] = new Twig_SimpleFunction('page', [$this->app, 'makePageURL']);
         $functions[] = new Twig_SimpleFunction('file', [$this->app, 'makeFileUrl']);
-
-        if (isset($this->app['intl'])) {
-            $functions[] = new Twig_SimpleFunction('t', [$this->app['intl'], 'translate']);
-        }
 
         return $functions;
     }
