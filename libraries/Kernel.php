@@ -138,6 +138,10 @@ final class Kernel implements \ArrayAccess
             }
 
             $module = $this->loadModule($module);
+
+            foreach ($this->loadedPlugins as $plugin)
+                $plugin->run($app);
+
             $response = $module->run($app, $request, $action, $arguments);
         } catch (RouteNotFoundException $e) {
             $response = new Response(new View('@global/404_body', $app), 404);
@@ -258,6 +262,8 @@ final class Kernel implements \ArrayAccess
 
             if (isset($this['loader']) && $plugin->providesLibraries())
                 $this['loader']->addSource($plugin->getNamespace(), $plugin->getPath());
+
+            $plugin->initialize();
 
             $this->loadedPlugins[$pluginName] = $plugin;
         } else {

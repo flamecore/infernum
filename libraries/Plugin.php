@@ -47,6 +47,9 @@ class Plugin
 
         $path = $kernel->getPluginPath($name);
 
+        if (!file_exists($path.'/plugin.php'))
+            throw new \LogicException(sprintf('Plugin "%s" does not provide an extension.', $name));
+
         $this->name = $name;
         $this->path = $path;
 
@@ -73,6 +76,30 @@ class Plugin
     public function providesLibraries()
     {
         return $this->provides['libraries'];
+    }
+
+    public function initialize()
+    {
+        require_once $this->path.'/plugin.php';
+
+        $class = $this->namespace.'\Extension';
+
+        if (!class_exists($class) || !is_subclass_of($class, __NAMESPACE__.'\Extension'))
+            throw new \RuntimeException(sprintf('Plugin "%s" does not provide a valid extension class.', $this->name));
+
+        $class::initialize();
+    }
+
+    public function run(Application $app)
+    {
+        require_once $this->path.'/plugin.php';
+
+        $class = $this->namespace.'\Extension';
+
+        if (!class_exists($class) || !is_subclass_of($class, __NAMESPACE__.'\Extension'))
+            throw new \RuntimeException(sprintf('Plugin "%s" does not provide a valid extension class.', $this->name));
+
+        $class::run($app);
     }
 
     private function loadMetadata()
