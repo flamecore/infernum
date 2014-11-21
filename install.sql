@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `infernum_usergroups` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=4;
 
-INSERT INTO `infernum_usergroups` (`id`, `name`, `title`, `accesslevel`) VALUES
+INSERT IGNORE INTO `infernum_usergroups` (`id`, `name`, `title`, `accesslevel`) VALUES
 (1, 'guest', 'Guest', 0),
 (2, 'member', 'Member', 1),
 (3, 'admin', 'Administrator', 2);
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `infernum_users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=2;
 
-INSERT INTO `infernum_users` (`id`, `username`, `email`, `password`, `group`, `profile`, `lastactive`) VALUES
+INSERT IGNORE INTO `infernum_users` (`id`, `username`, `email`, `password`, `group`, `profile`, `lastactive`) VALUES
 (1, 'admin', 'example@example.com', '$2y$10$H6H2qdcXn6yYtshRHTiXMOEMh6ePW/VZ4J1b6nIjkGGRXVinQCOLy', 3, '{}', '0000-00-00 00:00:00');
 
 CREATE TABLE IF NOT EXISTS `infernum_locales` (
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `infernum_locales` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `infernum_locales` (`id`, `name`, `text_direction`, `number_sep_decimal`, `number_sep_thousand`, `fmt_money`, `fmt_time`, `fmt_date_short`, `fmt_date_medium`, `fmt_date_long`) VALUES
+INSERT IGNORE INTO `infernum_locales` (`id`, `name`, `text_direction`, `number_sep_decimal`, `number_sep_thousand`, `fmt_money`, `fmt_time`, `fmt_date_short`, `fmt_date_medium`, `fmt_date_long`) VALUES
 ('en-US', 'English (US)', 'ltr', '.', ',', '$ #,###.##', 'h:i A', 'm/d/Y', 'F j, Y', 'D, F j, Y');
 
 CREATE TABLE IF NOT EXISTS `infernum_translations` (
