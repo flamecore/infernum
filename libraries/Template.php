@@ -84,12 +84,10 @@ class Template
         $loader->setNamespace('global', $app->getTemplatePath());
 
         if ($name[0] != '@') {
-            $module = $app->getLoadedModule();
-
-            if (!$module)
+            if (!$app->getLoadedModule())
                 throw new \DomainException(sprintf('Cannot use local template path "%s" when no module is loaded.', $name));
 
-            $loader->setLocalPath($app->getTemplatePath($module));
+            $loader->setLocalPath($app->getTemplatePath(true));
         }
 
         $twig = new Twig_Environment($loader, $engineOptions);

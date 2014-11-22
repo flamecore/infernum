@@ -189,14 +189,19 @@ final class Application implements \ArrayAccess
      * Generates a URL to a file.
      *
      * @param string $filename The name of the file (appended to path)
-     * @param string $module Use file URL of this module. If not set, use global file URL.
-     * @return string
+     * @param bool $module Use file URL of the loaded module. If FALSE, use global file URL.
+     * @return string|bool
      * @api
      */
-    public function makeFileUrl($filename, $module = null)
+    public function makeFileUrl($filename, $module = false)
     {
-        if (isset($module)) {
-            return $this['url'].'/modules/'.$module.'/public/'.$filename;
+        if ($module) {
+            $moduleName = $this->getLoadedModule();
+
+            if (!$moduleName)
+                return false;
+
+            return $this['url'].'/modules/'.$moduleName.'/public/'.$filename;
         } else {
             return $this['url'].'/themes/'.$this->getTheme().'/public/'.$filename;
         }
@@ -289,7 +294,7 @@ final class Application implements \ArrayAccess
     /**
      * Gets the loaded module.
      *
-     * @return string Returns the name of the loaded module or FALSE if no module is loaded yet.
+     * @return string|bool Returns the name of the loaded module or FALSE if no module is loaded yet.
      * @api
      */
     public function getLoadedModule()
@@ -317,14 +322,19 @@ final class Application implements \ArrayAccess
     /**
      * Gets the template path.
      *
-     * @param string $module Use template path of this module. If not set, use global template path.
-     * @return string Returns the full cache path.
+     * @param bool $module Use template path of the loaded module. If FALSE, use global template path.
+     * @return string|bool Returns the full template path or FALSE if it could not be determined.
      * @api
      */
-    public function getTemplatePath($module = null)
+    public function getTemplatePath($module = false)
     {
-        if (isset($module)) {
-            return $this->kernel->getModulePath($module).'/templates';
+        if ($module) {
+            $moduleName = $this->getLoadedModule();
+
+            if (!$moduleName)
+                return false;
+
+            return $this->kernel->getModulePath($moduleName).'/templates';
         } else {
             return $this->kernel['path'].'/themes/'.$this->getTheme().'/templates';
         }
