@@ -39,6 +39,8 @@ final class Kernel implements \ArrayAccess
 
     private $container = array();
 
+    private $pagePath = false;
+
     private $loadedModule = false;
 
     private $loadedPlugins = array();
@@ -79,6 +81,17 @@ final class Kernel implements \ArrayAccess
     public function isReady()
     {
         return $this->booted;
+    }
+
+    /**
+     * Gets the requested page path.
+     *
+     * @return string Returns the requested page path or FALSE if no request is handled yet.
+     * @api
+     */
+    public function getPagePath()
+    {
+        return $this->pagePath;
     }
 
     /**
@@ -130,7 +143,9 @@ final class Kernel implements \ArrayAccess
             throw new \LogicException('Kernel must be booted to handle requests.');
 
         try {
-            if ($result = $this['router']->parse($request->query)) {
+            $this->pagePath = $request->query->get('p', '');
+
+            if ($result = $this['router']->parse($this->pagePath)) {
                 list($module, $action, $arguments) = $result;
             } else {
                 list($module, $action) = explode(':', $app->setting('site.frontpage'));

@@ -24,7 +24,6 @@
 namespace FlameCore\Infernum;
 
 use FlameCore\Infernum\Exception\RouteNotFoundException;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * The Router class
@@ -60,15 +59,15 @@ class Router
     /**
      * Parses the query string parameters and returns corresponding module, action and arguments.
      *
-     * @param $query \Symfony\Component\HttpFoundation\ParameterBag Query string parameters ($_GET)
+     * @param string $path The requested page path
      * @return array|bool Returns an array in the form `[module, action, arguments]` if the path
      *   matches a mountpoint, or FALSE if the path is empty.
      * @throws \FlameCore\Infernum\Exception\Router\RouteNotFoundException if the path is not empty
      *   and doesn't match any mountpoint.
      */
-    public function parse(ParameterBag $query)
+    public function parse($path)
     {
-        if ($path = $query->get('p', false)) {
+        if (!empty($path)) {
             $path_parts = explode('/', $path);
 
             if (count($path_parts) > 2) {

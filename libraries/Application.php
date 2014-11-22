@@ -292,6 +292,17 @@ final class Application implements \ArrayAccess
     }
 
     /**
+     * Gets the requested page path.
+     *
+     * @return string Returns the requested page path or FALSE if no request is handled yet.
+     * @api
+     */
+    public function getPagePath()
+    {
+        return $this->kernel->getPagePath();
+    }
+
+    /**
      * Gets the loaded module.
      *
      * @return string|bool Returns the name of the loaded module or FALSE if no module is loaded yet.
