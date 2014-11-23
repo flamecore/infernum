@@ -39,6 +39,18 @@ class CoreExtension extends Twig_Extension
     {
         $this->app = $app;
     }
+    
+    public function getGlobals()
+    {
+        $globals = array();
+
+        if (isset($this->app['session'])) {
+            $globals['session'] = $this->app['session'];
+            $globals['user'] = $this->app['session']->getUser();
+        }
+
+        return $globals;
+    }
 
     public function getFilters()
     {
