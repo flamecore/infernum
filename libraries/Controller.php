@@ -25,6 +25,7 @@ namespace FlameCore\Infernum;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Base module controller
@@ -125,5 +126,18 @@ abstract class Controller
     {
         $view = new View('@global/403_body', $this->context);
         return new Response($view, 403);
+    }
+
+    /**
+     * Generates a redirect response.
+     *
+     * @param string $url The URL to redirect to
+     * @param int $status The status code (302 by default)
+     * @param array $headers The headers (Location is always set to the given URL)
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    final protected function redirect($url, $status = 302, $headers = [])
+    {
+        return new RedirectResponse($url, $status, $headers);
     }
 }
