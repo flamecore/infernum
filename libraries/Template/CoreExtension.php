@@ -24,6 +24,7 @@
 namespace FlameCore\Infernum\Template;
 
 use FlameCore\Infernum\Application;
+use FlameCore\Infernum\UI\Form\Form;
 use Twig_Extension, Twig_SimpleFilter, Twig_SimpleFunction;
 
 /**
@@ -73,6 +74,7 @@ class CoreExtension extends Twig_Extension
         $functions[] = new Twig_SimpleFunction('u', [$this->app, 'makeURL']);
         $functions[] = new Twig_SimpleFunction('page', [$this->app, 'makePageURL']);
         $functions[] = new Twig_SimpleFunction('file', [$this->app, 'makeFileUrl']);
+        $functions[] = new Twig_SimpleFunction('form', [$this, 'renderForm'], ['is_safe' => ['html']]);
 
         return $functions;
     }
@@ -80,5 +82,13 @@ class CoreExtension extends Twig_Extension
     public function getName()
     {
         return 'infernum_core';
+    }
+
+    public function renderForm(Form $form = null)
+    {
+        if ($form == null)
+            throw new \InvalidArgumentException('Cannot render form without Form object.');
+
+        return $form->render();
     }
 }

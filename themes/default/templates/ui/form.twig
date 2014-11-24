@@ -1,0 +1,9 @@
+<form name="{{ name }}" action="{{ action }}" method="{{ method }}" enctype="multipart/form-data" id="{{ name }}" class="fancy">
+{% for field in stack %}
+    {% include field.templateName %}
+{% endfor %}
+    <div class="buttons">
+        <button type="submit" class="button">Submit</button>
+        <button type="reset" class="button">Reset</button>
+    </div>
+</form>
