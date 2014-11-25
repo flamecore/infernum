@@ -44,6 +44,9 @@ class Cache
      */
     public function __construct($path)
     {
+        if (!is_writable($path))
+            throw new \LogicException('The cache directory is not writable.');
+
         $this->path = $path;
     }
 
