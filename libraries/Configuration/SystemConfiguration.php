@@ -39,11 +39,11 @@ class SystemConfiguration extends AbstractConfiguration
 
         $rootNode
             ->children()
-                ->scalarNode('enable_debugmode')->defaultValue(true)->end()
-                ->scalarNode('enable_logging')->defaultValue(true)->end()
-                ->scalarNode('enable_caching')->defaultValue(true)->end()
+                ->booleanNode('enable_debugmode')->defaultValue(true)->end()
+                ->booleanNode('enable_logging')->defaultValue(true)->end()
+                ->booleanNode('enable_caching')->defaultValue(true)->end()
                 ->integerNode('cache_lifetime')->defaultValue(86400)->end()
-                ->scalarNode('enable_multisite')->defaultValue(true)->end()
+                ->booleanNode('enable_multisite')->defaultValue(true)->end()
             ->end();
 
         return $treeBuilder;

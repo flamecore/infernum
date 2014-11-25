@@ -40,7 +40,7 @@ class CoreExtension extends Twig_Extension
     {
         $this->app = $app;
     }
-    
+
     public function getGlobals()
     {
         $globals = array();
