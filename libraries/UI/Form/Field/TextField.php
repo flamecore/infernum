@@ -60,6 +60,8 @@ class TextField extends SimpleField
             throw new \DomainException(sprintf('Style "%s" is not available for text fields. (expecting one of: text, password)', $style));
 
         $this->style = $style;
+
+        return $this;
     }
 
     public function getSize()
@@ -70,6 +72,8 @@ class TextField extends SimpleField
     public function setSize($size)
     {
         $this->size = $size;
+
+        return $this;
     }
 
     public function getMaxLength()
@@ -80,5 +84,7 @@ class TextField extends SimpleField
     public function setMaxLength($maxLength)
     {
         $this->asserts['max_length'] = $maxLength;
+
+        return $this;
     }
 }

@@ -139,6 +139,8 @@ abstract class AbstractField implements FieldInterface
             throw new \InvalidArgumentException('The form field name must not be empty.');
 
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -155,6 +157,8 @@ abstract class AbstractField implements FieldInterface
     public function setValue($value)
     {
         $this->value = $this->normalize($value);
+
+        return $this;
     }
 
     /**
@@ -173,6 +177,8 @@ abstract class AbstractField implements FieldInterface
         $title = (string) $title;
 
         $this->title = $title !== '' ? $title : false;
+
+        return $this;
     }
 
     /**
@@ -191,6 +197,8 @@ abstract class AbstractField implements FieldInterface
         $description = (string) $description;
 
         $this->description = $description !== '' ? $description : false;
+
+        return $this;
     }
 
     /**
@@ -209,6 +217,8 @@ abstract class AbstractField implements FieldInterface
         $errorText = (string) $errorText;
 
         $this->errorText = $errorText !== '' ? $errorText : false;
+
+        return $this;
     }
 
     /**
@@ -235,6 +245,8 @@ abstract class AbstractField implements FieldInterface
             'scheme'     => isset($asserts['scheme']) ? $asserts['scheme'] : null,
             'pattern'    => isset($asserts['pattern']) ? (string) $asserts['pattern'] : null
         );
+
+        return $this;
     }
 
     /**

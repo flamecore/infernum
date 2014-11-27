@@ -78,6 +78,7 @@ interface FieldInterface
      * Sets the name of the field.
      *
      * @param string $name The name of the field
+     * @return \FlameCore\Infernum\UI\Form\Field\FieldInterface
      */
     public function setName($name);
 
@@ -92,6 +93,7 @@ interface FieldInterface
      * Sets the value of the field.
      *
      * @param mixed $value The value of the field
+     * @return \FlameCore\Infernum\UI\Form\Field\FieldInterface
      */
     public function setValue($value);
 
@@ -106,6 +108,7 @@ interface FieldInterface
      * Sets the title of the field.
      *
      * @param string $title The title of the field
+     * @return \FlameCore\Infernum\UI\Form\Field\FieldInterface
      */
     public function setTitle($title);
 
@@ -120,6 +123,7 @@ interface FieldInterface
      * Sets the description of the field.
      *
      * @param string $description The description of the field
+     * @return \FlameCore\Infernum\UI\Form\Field\FieldInterface
      */
     public function setDescription($description);
 
@@ -134,6 +138,7 @@ interface FieldInterface
      * Sets the error text of the field.
      *
      * @param string $errorText The error text of the field
+     * @return \FlameCore\Infernum\UI\Form\Field\FieldInterface
      */
     public function setErrorText($errorText);
 
@@ -148,6 +153,7 @@ interface FieldInterface
      * Sets the assertations of the field.
      *
      * @return array
+     * @return \FlameCore\Infernum\UI\Form\Field\FieldInterface
      */
     public function setAsserts(array $asserts);
 

@@ -47,5 +47,7 @@ abstract class SimpleField extends AbstractField
         $class = (string) $class;
 
         $this->class = $class !== '' ? $class : false;
+
+        return $this;
     }
 }
