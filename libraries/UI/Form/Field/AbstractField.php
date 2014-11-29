@@ -93,6 +93,7 @@ abstract class AbstractField implements FieldInterface
         $this->setValue(isset($params['value']) ? $params['value'] : false);
         $this->setTitle(isset($params['title']) ? $params['title'] : false);
         $this->setDescription(isset($params['description']) ? $params['description'] : false);
+        $this->setErrorText(isset($params['error_text']) ? $params['error_text'] : false);
         $this->setAsserts($params);
 
         $this->initialize($params);
@@ -256,7 +257,7 @@ abstract class AbstractField implements FieldInterface
      */
     public function isRequired()
     {
-        if (isset($this->asserts['required']) && $this->asserts['required'])
+        if ($this->asserts['required'])
             return true;
 
         if (isset($this->asserts['not_equal']) && (string) $this->asserts['not_equal'] === '')
@@ -278,7 +279,7 @@ abstract class AbstractField implements FieldInterface
      */
     public function validate($value)
     {
-        if (isset($this->asserts['required']) && $this->asserts['required'] && (string) $value === '')
+        if ($this->asserts['required'] && (string) $value === '')
             return false;
 
         if (isset($this->asserts['equal']) && $value != $this->asserts['equal'])

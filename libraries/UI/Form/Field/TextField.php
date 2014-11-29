@@ -87,4 +87,9 @@ class TextField extends SimpleField
 
         return $this;
     }
+
+    public function normalize($value)
+    {
+        return (string) $value;
+    }
 }
