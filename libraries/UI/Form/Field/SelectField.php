@@ -24,24 +24,59 @@
 namespace FlameCore\Infernum\UI\Form\Field;
 
 /**
- * Class for text fields
+ * Class for select fields
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class TextField extends SimpleField
+class SelectField extends SimpleField
 {
+    protected $style;
+
+    protected $options;
+
     protected $size;
 
     public function initialize($params)
     {
         parent::initialize($params);
 
+        $this->setStyle(isset($params['style']) ? $params['style'] : 'select');
+        $this->setOptions(isset($params['options']) ? (array) $params['options'] : []);
         $this->setSize(isset($params['size']) ? $params['size'] : false);
     }
 
     public function getTemplateName()
     {
-        return '@global/ui/form_field_text';
+        return '@global/ui/form_field_'.$this->style;
+    }
+
+    public function getStyle()
+    {
+        return $this->style;
+    }
+
+    public function setStyle($style)
+    {
+        $style = (string) $style;
+
+        if ($style != 'select' && $style != 'radio')
+            throw new \DomainException(sprintf('Style "%s" is not available for select fields. (expecting one of: select, radio)', $style));
+
+        $this->style = $style;
+
+        return $this;
+    }
+
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    public function setOptions(array $options)
+    {
+        $this->options = $options;
+
+        return $this;
     }
 
     public function getSize()
@@ -54,22 +89,5 @@ class TextField extends SimpleField
         $this->size = $size;
 
         return $this;
-    }
-
-    public function getMaxLength()
-    {
-        return isset($this->asserts['max_length']) ? $this->asserts['max_length'] : false;
-    }
-
-    public function setMaxLength($maxLength)
-    {
-        $this->asserts['max_length'] = $maxLength;
-
-        return $this;
-    }
-
-    public function normalize($value)
-    {
-        return (string) $value;
     }
 }

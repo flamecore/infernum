@@ -24,34 +24,49 @@
 namespace FlameCore\Infernum\UI\Form\Field;
 
 /**
- * Class for text fields
+ * Class for textarea fields
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class TextField extends SimpleField
+class TextAreaField extends SimpleField
 {
-    protected $size;
+    protected $rows;
+
+    protected $cols;
 
     public function initialize($params)
     {
         parent::initialize($params);
 
-        $this->setSize(isset($params['size']) ? $params['size'] : false);
+        $this->setRows(isset($params['rows']) ? $params['rows'] : 0);
+        $this->setCols(isset($params['cols']) ? $params['cols'] : 0);
     }
 
     public function getTemplateName()
     {
-        return '@global/ui/form_field_text';
+        return '@global/ui/form_field_textarea';
     }
 
-    public function getSize()
+    public function getRows()
     {
-        return $this->size;
+        return $this->rows;
     }
 
-    public function setSize($size)
+    public function setRows($rows)
     {
-        $this->size = $size;
+        $this->rows = (int) $rows;
+
+        return $this;
+    }
+
+    public function getCols()
+    {
+        return $this->cols;
+    }
+
+    public function setCols($cols)
+    {
+        $this->cols = (int) $cols;
 
         return $this;
     }

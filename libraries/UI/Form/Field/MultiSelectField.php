@@ -24,52 +24,31 @@
 namespace FlameCore\Infernum\UI\Form\Field;
 
 /**
- * Class for text fields
+ * Class for multiselect fields
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class TextField extends SimpleField
+class MultiSelectField extends SelectField
 {
-    protected $size;
-
-    public function initialize($params)
-    {
-        parent::initialize($params);
-
-        $this->setSize(isset($params['size']) ? $params['size'] : false);
-    }
-
     public function getTemplateName()
     {
-        return '@global/ui/form_field_text';
+        return '@global/ui/form_field_multi'.$this->style;
     }
 
-    public function getSize()
+    public function setStyle($style)
     {
-        return $this->size;
-    }
+        $style = (string) $style;
 
-    public function setSize($size)
-    {
-        $this->size = $size;
+        if ($style != 'select' && $style != 'checkbox')
+            throw new \DomainException(sprintf('Style "%s" is not available for multiselect fields. (expecting one of: select, checkbox)', $style));
 
-        return $this;
-    }
-
-    public function getMaxLength()
-    {
-        return isset($this->asserts['max_length']) ? $this->asserts['max_length'] : false;
-    }
-
-    public function setMaxLength($maxLength)
-    {
-        $this->asserts['max_length'] = $maxLength;
+        $this->style = $style;
 
         return $this;
     }
 
     public function normalize($value)
     {
-        return (string) $value;
+        return (array) $value;
     }
 }

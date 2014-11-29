@@ -53,7 +53,10 @@ class Form
     private static $types = array(
         'hidden' => 'HiddenField',
         'text' => 'TextField',
-        'bool' => 'BooleanField'
+        'textarea' => 'TextAreaField',
+        'bool' => 'BooleanField',
+        'select' => 'SelectField',
+        'multi' => 'MultiSelectField'
     );
 
     /**

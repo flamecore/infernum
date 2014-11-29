@@ -1,0 +1,11 @@
+    <div class="controlset field{% if submitted and field.name in invalid %} error{% endif %}">
+        {% if field.title %}<label>{{ field.title }}{% if field.required %} <em class="required">*</em>{% endif %}</label>{% endif %}
+        <div class="field-group">
+{% for value, caption in field.options %}
+            <input type="checkbox" name="{{ field.name }}[]" id="{{ field.name~'_'~loop.index }}" value="{{ value }}"{% if value in (submitted ? data[field.name] : field.value) %} checked="checked"{% endif %}{% if field.class %} class="{{ field.class }}"{% endif %} />
+            <label for="{{ field.name~'_'~loop.index }}">{{ caption }}</label>
+{% endfor %}
+        </div>
+        {% if field.description %}<span class="description">{{ field.description }}</span>{% endif %}
+        {% if field.errorText and submitted and field.name in invalid %}<span class="error-text">{{ field.errorText }}</span>{% endif %}
+    </div>

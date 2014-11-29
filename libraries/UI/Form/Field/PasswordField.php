@@ -24,11 +24,11 @@
 namespace FlameCore\Infernum\UI\Form\Field;
 
 /**
- * Class for text fields
+ * Class for password fields
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class TextField extends SimpleField
+class PasswordField extends SimpleField
 {
     protected $size;
 
@@ -41,7 +41,7 @@ class TextField extends SimpleField
 
     public function getTemplateName()
     {
-        return '@global/ui/form_field_text';
+        return '@global/ui/form_field_password';
     }
 
     public function getSize()
