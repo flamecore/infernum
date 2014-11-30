@@ -24,7 +24,6 @@
 namespace FlameCore\Infernum\UI\Form\Field;
 
 use FlameCore\Infernum\UI\Form\Form;
-use FlameCore\Infernum\Filter;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -91,7 +90,7 @@ abstract class AbstractField implements FieldInterface
         $this->form = $form;
         $this->setName($name);
 
-        $this->setValue(isset($params['value']) ? $params['value'] : false);
+        $this->setValue(isset($params['value']) ? $params['value'] : null);
         $this->setTitle(isset($params['title']) ? $params['title'] : false);
         $this->setDescription(isset($params['description']) ? $params['description'] : false);
         $this->setErrorText(isset($params['error_text']) ? $params['error_text'] : false);
@@ -238,14 +237,8 @@ abstract class AbstractField implements FieldInterface
     {
         $this->asserts = array(
             'required'   => isset($asserts['required']) ? (bool) $asserts['required'] : false,
-            'equal'      => isset($asserts['equal']) ? $asserts['equal'] : null,
-            'not_equal'  => isset($asserts['not_equal']) ? $asserts['not_equal'] : null,
             'min_length' => isset($asserts['min_length']) ? (int) $asserts['min_length'] : null,
-            'max_length' => isset($asserts['max_length']) ? (int) $asserts['max_length'] : null,
-            'min_range'  => isset($asserts['min_range']) ? (int) $asserts['min_range'] : null,
-            'max_range'  => isset($asserts['max_range']) ? (int) $asserts['max_range'] : null,
-            'scheme'     => isset($asserts['scheme']) ? $asserts['scheme'] : null,
-            'pattern'    => isset($asserts['pattern']) ? (string) $asserts['pattern'] : null
+            'max_length' => isset($asserts['max_length']) ? (int) $asserts['max_length'] : null
         );
 
         return $this;
@@ -261,10 +254,7 @@ abstract class AbstractField implements FieldInterface
         if ($this->asserts['required'])
             return true;
 
-        if (isset($this->asserts['not_equal']) && (string) $this->asserts['not_equal'] === '')
-            return true;
-
-        return isset($this->asserts['equal']) || isset($this->asserts['min_length']) || isset($this->asserts['min_range']) || isset($this->asserts['sheme']);
+        return isset($this->asserts['min_length']);
     }
 
     /**
@@ -293,36 +283,11 @@ abstract class AbstractField implements FieldInterface
         if ($this->asserts['required'] && (string) $value === '')
             return false;
 
-        if (isset($this->asserts['equal']) && $value != $this->asserts['equal'])
-            return false;
-
-        if (isset($this->asserts['not_equal']) && $value == $this->asserts['not_equal'])
-            return false;
-
         if (isset($this->asserts['min_length']) && strlen($value) < (int) $this->asserts['min_length'])
             return false;
 
         if (isset($this->asserts['max_length']) && strlen($value) > (int) $this->asserts['max_length'])
             return false;
-
-        if (isset($this->asserts['min_range']) && (int) $value < (int) $this->asserts['min_range'])
-            return false;
-
-        if (isset($this->asserts['max_range']) && (int) $value > (int) $this->asserts['max_range'])
-            return false;
-
-        if (isset($this->asserts['scheme'])) {
-            $value = (string) $value;
-            if ($this->asserts['scheme'] == 'email') {
-                return Filter::isEmail($value);
-            } elseif ($this->asserts['scheme'] == 'url') {
-                return Filter::isURL($value);
-            } elseif ($this->asserz['scheme'] == 'ip') {
-                return Filter::isIP($value);
-            } elseif ($this->asserts['scheme'] == 'regex' && isset($this->asserts['pattern'])) {
-                return Filter::matchesRegex($value, (string) $this->asserts['pattern']);
-            }
-        }
 
         return true;
     }

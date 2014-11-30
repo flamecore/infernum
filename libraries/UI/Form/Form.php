@@ -176,7 +176,7 @@ class Form
             throw new \LogicException(sprintf('Cannot add field with name "%s" since a field with this name is already defined.', $name));
 
         if (!isset(self::$types[$type]))
-            throw new \DomainException(sprintf('"%s" is not a valid form field type.', $type));
+            throw new \DomainException(sprintf('The form field type "%s" is not valid.', $type));
 
         $class = sprintf('%s\Field\%s', __NAMESPACE__, self::$types[$type]);
         $this->stack[$name] = new $class($this, $name, $params);
