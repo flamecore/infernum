@@ -23,6 +23,8 @@
 
 namespace FlameCore\Infernum\UI\Form\Field;
 
+use FlameCore\Infernum\Filter;
+
 /**
  * Class for text fields
  *
@@ -30,18 +32,42 @@ namespace FlameCore\Infernum\UI\Form\Field;
  */
 class TextField extends SimpleField
 {
+    protected $scheme;
+
     protected $size;
 
     public function initialize($params)
     {
         parent::initialize($params);
 
+        $this->setScheme(isset($params['scheme']) ? $params['scheme'] : false);
         $this->setSize(isset($params['size']) ? $params['size'] : false);
     }
 
     public function getTemplateName()
     {
         return '@global/ui/form_field_text';
+    }
+
+    public function getScheme()
+    {
+        return $this->scheme;
+    }
+
+    public function setScheme($scheme)
+    {
+        if ($scheme === false) {
+            $this->scheme = false;
+        } else {
+            $scheme = (string) $scheme;
+
+            if (!in_array($scheme, ['tel', 'url', 'email']))
+                throw new \DomainException(sprintf('The text field scheme "%s" is not available. (expecting one of: tel, url, email)', $scheme));
+
+            $this->scheme = $scheme;
+        }
+
+        return $this;
     }
 
     public function getSize()
@@ -71,5 +97,20 @@ class TextField extends SimpleField
     public function normalize($value)
     {
         return (string) $value;
+    }
+
+    public function validate($value)
+    {
+        if ($this->scheme) {
+            $value = (string) $value;
+
+            if ($this->scheme == 'email' && !Filter::isEmail($value))
+                return false;
+
+            if ($this->scheme == 'url' && !Filter::isURL($value))
+                return false;
+        }
+
+        return parent::validate($value);
     }
 }
