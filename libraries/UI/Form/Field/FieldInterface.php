@@ -24,6 +24,7 @@
 namespace FlameCore\Infernum\UI\Form\Field;
 
 use FlameCore\Infernum\UI\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * The Field interface
@@ -156,6 +157,14 @@ interface FieldInterface
      * @return \FlameCore\Infernum\UI\Form\Field\FieldInterface
      */
     public function setAsserts(array $asserts);
+
+    /**
+     * Retrieves the field data from the request.
+     *
+     * @param \Symfony\Component\HttpFoundation\Request $request The request
+     * @return mixed
+     */
+    public function retrieve(Request $request);
 
     /**
      * Normalizes the given value.

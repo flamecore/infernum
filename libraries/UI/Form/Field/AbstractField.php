@@ -25,6 +25,7 @@ namespace FlameCore\Infernum\UI\Form\Field;
 
 use FlameCore\Infernum\UI\Form\Form;
 use FlameCore\Infernum\Filter;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Base class for form fields.
@@ -264,6 +265,16 @@ abstract class AbstractField implements FieldInterface
             return true;
 
         return isset($this->asserts['equal']) || isset($this->asserts['min_length']) || isset($this->asserts['min_range']) || isset($this->asserts['sheme']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function retrieve(Request $request)
+    {
+        $values = $this->form->getMethod() == 'GET' ? $request->query : $request->request;
+
+        return $this->normalize($values->get($this->name));
     }
 
     /**

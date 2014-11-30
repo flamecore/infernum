@@ -272,15 +272,13 @@ class Form
      */
     public function handleRequest(Request $request)
     {
-        $values = $this->method == 'GET' ? $request->query : $request->request;
-
-        if ($values->get('_submit') == $this->name)
+        if ($this->get('_submit')->retrieve($request) == $this->name)
             $this->submitted = true;
 
         if ($this->submitted) {
             foreach ($this->stack as $field) {
                 $name = $field->getName();
-                $value = $field->normalize($values->get($name));
+                $value = $field->retrieve($request);
 
                 if (!$field->validate($value))
                     $this->invalid[] = $name;
