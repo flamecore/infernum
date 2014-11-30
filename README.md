@@ -19,9 +19,9 @@ Installation
 
 4. Copy the file `websites/default/settings.yml.dist` and rename it to `settings.yml` and adapt the new file according to your needs.
 
-5. Create your first module. Let's call it `YourVendor/StartModule` and use it as our frontpage. This can be done in `settings.yml`.
+5. Create your first module. Let's call it `vendor/start` and use it as our frontpage. This can be done in `settings.yml`.
 
-6. Optional: Copy the file `websites/default/setup.php.dist` and rename it to `setup.php`. To use more modules register them there.
+6. Copy the file `websites/default/site.yml.dist` and rename it to `site.yml`. To use more modules you can register them there.
 
 
 Requirements
