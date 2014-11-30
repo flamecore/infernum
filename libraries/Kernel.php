@@ -41,6 +41,8 @@ final class Kernel implements \ArrayAccess
 
     private $pagePath = false;
 
+    private $runningExtension = false;
+
     private $loadedModule = false;
 
     private $loadedPlugins = array();
@@ -92,6 +94,17 @@ final class Kernel implements \ArrayAccess
     public function getPagePath()
     {
         return $this->pagePath;
+    }
+
+    /**
+     * Gets the currently running extension.
+     *
+     * @return \FlameCore\Infernum\Module|\FlameCore\Infernum\Plugin|bool Returns an abstraction object of the running extension or FALSE if no extension is running.
+     * @api
+     */
+    public function getRunningExtension()
+    {
+        return $this->runningExtension;
     }
 
     /**
@@ -154,8 +167,13 @@ final class Kernel implements \ArrayAccess
 
             $module = $this->loadModule($module);
 
-            foreach ($this->loadedPlugins as $plugin)
+            foreach ($this->loadedPlugins as $plugin) {
+                $this->runningExtension = $plugin;
+
                 $plugin->run($app);
+            }
+
+            $this->runningExtension = $module;
 
             $response = $module->run($app, $request, $action, $arguments);
         } catch (RouteNotFoundException $e) {

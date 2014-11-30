@@ -189,19 +189,22 @@ final class Application implements \ArrayAccess
      * Generates a URL to a file.
      *
      * @param string $filename The name of the file (appended to path)
-     * @param bool $module Use file URL of the loaded module. If FALSE, use global file URL.
+     * @param bool $fromExtension Use file URL of the running extension. If FALSE, use global file URL.
      * @return string|bool
      * @api
      */
-    public function makeFileUrl($filename, $module = false)
+    public function makeFileUrl($filename, $fromExtension = false)
     {
-        if ($module) {
-            $moduleName = $this->getLoadedModule();
+        if ($fromExtension) {
+            $extension = $this->kernel->getRunningExtension();
 
-            if (!$moduleName)
+            if ($extension instanceof Module) {
+                return $this['url'].'/modules/'.$extension->getName().'/public/'.$filename;
+            } elseif ($extension instanceof Plugin) {
+                return $this['url'].'/plugins/'.$extension->getName().'/public/'.$filename;
+            } else {
                 return false;
-
-            return $this['url'].'/modules/'.$moduleName.'/public/'.$filename;
+            }
         } else {
             return $this['url'].'/themes/'.$this->getTheme().'/public/'.$filename;
         }
@@ -303,17 +306,6 @@ final class Application implements \ArrayAccess
     }
 
     /**
-     * Gets the loaded module.
-     *
-     * @return string|bool Returns the name of the loaded module or FALSE if no module is loaded yet.
-     * @api
-     */
-    public function getLoadedModule()
-    {
-        return $this->kernel->getLoadedModule();
-    }
-
-    /**
      * Gets the path to the cache directory. The directory is created, if it does not exist on the filesystem.
      *
      * @param string $subpath A sub path insiside base cache path (optional)
@@ -333,19 +325,20 @@ final class Application implements \ArrayAccess
     /**
      * Gets the template path.
      *
-     * @param bool $module Use template path of the loaded module. If FALSE, use global template path.
+     * @param bool $fromExtension Use template path of the running extension. If FALSE, use global template path.
      * @return string|bool Returns the full template path or FALSE if it could not be determined.
      * @api
      */
-    public function getTemplatePath($module = false)
+    public function getTemplatePath($fromExtension = false)
     {
-        if ($module) {
-            $moduleName = $this->getLoadedModule();
+        if ($fromExtension) {
+            $extension = $this->kernel->getRunningExtension();
 
-            if (!$moduleName)
+            if ($extension instanceof Module || $extension instanceof Plugin) {
+                return $extension->getPath().'/templates';
+            } else {
                 return false;
-
-            return $this->kernel->getModulePath($moduleName).'/templates';
+            }
         } else {
             return $this->kernel['path'].'/themes/'.$this->getTheme().'/templates';
         }
