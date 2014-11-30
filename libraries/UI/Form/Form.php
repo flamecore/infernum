@@ -56,7 +56,9 @@ class Form
         'textarea' => 'TextAreaField',
         'bool' => 'BooleanField',
         'select' => 'SelectField',
-        'multi' => 'MultiSelectField'
+        'multi' => 'MultiSelectField',
+        'number' => 'NumberField',
+        'date' => 'DateField'
     );
 
     /**
