@@ -23,20 +23,28 @@
 
 namespace FlameCore\Infernum\Template;
 
+use FlameCore\Infernum\Application;
 use FlameCore\Infernum\Template\Exception\BadNameError;
 use FlameCore\Infernum\Template\Exception\NotFoundError;
 use Twig_LoaderInterface, Twig_ExistsLoaderInterface;
 
 /**
- * Loader for the Twig template engine
+ * Loader for template engines
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Loader implements Twig_LoaderInterface, Twig_ExistsLoaderInterface
+class TemplateLoader implements Twig_LoaderInterface, Twig_ExistsLoaderInterface
 {
-    private $localPath;
+    private $app;
 
     private $namespaces = array();
+
+    final public function __construct(Application $app)
+    {
+        $this->setNamespace('global', $app->getTemplatePath());
+
+        $this->app = $app;
+    }
 
     public function getSource($template)
     {
@@ -58,19 +66,9 @@ class Loader implements Twig_LoaderInterface, Twig_ExistsLoaderInterface
         try {
             $this->locate($template);
             return true;
-        } catch (Template_Exception_NotFoundError $e) {
+        } catch (NotFoundError $e) {
             return false;
         }
-    }
-
-    /**
-     * Checks whether or not the local path is defined
-     *
-     * @return bool
-     */
-    final public function isLocalPathDefined()
-    {
-        return isset($this->localPath);
     }
 
     /**
@@ -80,17 +78,7 @@ class Loader implements Twig_LoaderInterface, Twig_ExistsLoaderInterface
      */
     final public function getLocalPath()
     {
-        return $this->localPath ?: false;
-    }
-
-    /**
-     * Sets the local template path
-     *
-     * @param string $path The local template path
-     */
-    final public function setLocalPath($path)
-    {
-        $this->localPath = $path;
+        return $this->app->getTemplatePath(true);
     }
 
     /**
@@ -165,15 +153,16 @@ class Loader implements Twig_LoaderInterface, Twig_ExistsLoaderInterface
 
             $name = substr($template, $pos + 1);
             $path = $this->getNamespace($namespace);
+
+            $filename = "$path/$name.twig";
         } else {
-            if (!$this->isLocalPathDefined())
+            $localPath = $this->getLocalPath();
+
+            if (!$localPath)
                 throw new BadNameError(sprintf('Cannot find template "%s": There is no local template path defined.', $template));
 
-            $name = $template;
-            $path = $this->getLocalPath();
+            $filename = "$localPath/$template.twig";
         }
-
-        $filename = "$path/$name.twig";
 
         if (!file_exists($filename))
             throw new NotFoundError(sprintf('Unable to find template "%s". (looked into: %s)', $template, $path));

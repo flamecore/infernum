@@ -47,7 +47,8 @@ final class Application implements \ArrayAccess
         'db' => '\FlameCore\Infernum\Database\Base\Connection',
         'cache' => '\FlameCore\Infernum\Cache',
         'session' => '\FlameCore\Infernum\Session',
-        'intl' => '\FlameCore\Infernum\International'
+        'intl' => '\FlameCore\Infernum\International',
+        'tpl' => '\FlameCore\Infernum\Template\Twig\TwigEngine'
     );
 
     /**

@@ -21,9 +21,10 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Infernum\Template;
+namespace FlameCore\Infernum\Template\Twig;
 
 use FlameCore\Infernum\Application;
+use FlameCore\Infernum\Template;
 use FlameCore\Infernum\UI\Form\Form;
 use Twig_Extension, Twig_SimpleFilter, Twig_SimpleFunction;
 
@@ -32,7 +33,7 @@ use Twig_Extension, Twig_SimpleFilter, Twig_SimpleFunction;
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class CoreExtension extends Twig_Extension
+class TwigCoreExtension extends Twig_Extension
 {
     private $app;
 
@@ -75,6 +76,7 @@ class CoreExtension extends Twig_Extension
         $functions[] = new Twig_SimpleFunction('page', [$this->app, 'makePageURL']);
         $functions[] = new Twig_SimpleFunction('file', [$this->app, 'makeFileUrl']);
         $functions[] = new Twig_SimpleFunction('form', [$this, 'renderForm'], ['is_safe' => ['html']]);
+        $functions[] = new Twig_SimpleFunction('inject', [$this, 'renderInjection'], ['is_safe' => ['html']]);
 
         return $functions;
     }
@@ -90,5 +92,16 @@ class CoreExtension extends Twig_Extension
             throw new \InvalidArgumentException('Cannot render form without Form object.');
 
         return $form->render();
+    }
+
+    public function renderInjection(Template $template)
+    {
+        if ($hookpoint == null)
+            throw new \InvalidArgumentException('Cannot render injection without hookpoint name.');
+
+        if (!isset($this->hooks[$hookpoint]))
+            throw new \DomainException(sprintf('The hookpoint "%s" does not exist.', $hookpoint));
+
+        return $hook->render();
     }
 }

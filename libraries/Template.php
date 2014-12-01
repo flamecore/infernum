@@ -23,11 +23,6 @@
 
 namespace FlameCore\Infernum;
 
-use FlameCore\Infernum\Template\Loader;
-use FlameCore\Infernum\Template\CoreExtension;
-use Twig_Environment;
-use Twig_Extensions_Extension_Text;
-
 /**
  * Template object
  *
@@ -44,11 +39,11 @@ class Template
     private $name;
 
     /**
-     * Twig Environment instance
+     * Template engine instance
      *
-     * @var Twig_Environment
+     * @var object
      */
-    private $twig;
+    private $engine;
 
     /**
      * All assigned template variables
@@ -69,49 +64,14 @@ class Template
      *
      * @param string $name Name of the template to load (without file extension)
      * @param \FlameCore\Infernum\Application $app The application context
-     * @param array $options An optional array of one or more of the following options:
-     *   * cache: An absolute path where to store compiled templates, or FALSE to disable compilation cache (default).
-     *   * debug: Enable debugmode for the template engine
      */
-    public function __construct($name, Application $app, array $options = [])
+    public function __construct($name, Application $app)
     {
-        $engineOptions = array(
-            'cache' => (isset($options['cache']) ? $options['cache'] : $app->isCacheEnabled()) ? $app->getCachePath('templates') : false,
-            'debug' => isset($options['debug']) ? $options['debug'] : $app->isDebugModeEnabled()
-        );
+        if (!isset($app['tpl']))
+            throw new \LogicException('No template engine available.');
 
-        $loader = new Loader();
-        $loader->setNamespace('global', $app->getTemplatePath());
-
-        if ($name[0] != '@') {
-            $localPath = $app->getTemplatePath(true);
-
-            if (!$localPath)
-                throw new \DomainException(sprintf('Cannot use local template path "%s" when no extension is running.', $name));
-
-            $loader->setLocalPath($localPath);
-        }
-
-        $twig = new Twig_Environment($loader, $engineOptions);
-        $twig->getExtension('core')->setTimezone($app->setting('site.timezone'));
-
-        if (isset($app['intl'])) {
-            $locale = $app['intl']->getLocale();
-
-            $separators = $locale->getNumberSeparators();
-            $twig->getExtension('core')->setNumberFormat(0, $separators['decimal'], $separators['thousand']);
-
-            $format = $locale->getDateFormat();
-            $twig->getExtension('core')->setDateFormat($format, '%d days');
-        }
-
-        $twig->addExtension(new Twig_Extensions_Extension_Text);
-
-        $extension = new CoreExtension($app);
-        $twig->addExtension($extension);
-
-        $this->twig = $twig;
         $this->name = $name;
+        $this->engine = $app['tpl'];
     }
 
     /**
@@ -138,8 +98,7 @@ class Template
     {
         $variables = array_merge(self::$globals, $this->variables);
 
-        $object = $this->twig->loadTemplate($this->name);
-        return $object->render($variables);
+        return $this->engine->render($this->name, $variables);
     }
 
     /**
