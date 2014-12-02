@@ -25,6 +25,7 @@ namespace FlameCore\Infernum\UI\Form;
 
 use FlameCore\Infernum\Application;
 use FlameCore\Infernum\Template;
+use FlameCore\Infernum\UI\Form\Field\FieldInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -185,6 +186,17 @@ class Form
         $this->stack[$name] = new $class($this, $name, $params);
 
         return $this;
+    }
+
+    /**
+     * Adds a field object to the stack.
+     *
+     * @param string $name The name of the field
+     * @param \FlameCore\Infernum\UI\Form\Field\FieldInterface $object The field object
+     */
+    public function addObject($name, FieldInterface $object)
+    {
+        $this->stack[$name] = $object;
     }
 
     /**
