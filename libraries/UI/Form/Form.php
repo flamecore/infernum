@@ -33,7 +33,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author  Christian Neff <christian.neff@gmail.com>
  */
-class Form
+class Form implements \IteratorAggregate, \Countable
 {
     private $name;
 
@@ -311,10 +311,7 @@ class Form
     public function render()
     {
         $tpl = new Template('@global/ui/form', $this->context);
-        $tpl->set('name', $this->name);
-        $tpl->set('action', $this->action);
-        $tpl->set('method', $this->method);
-        $tpl->set('stack', $this->stack);
+        $tpl->set('form', $this);
 
         if ($this->submitted) {
             $tpl->set('submitted', true);
@@ -323,5 +320,25 @@ class Form
         }
 
         return $tpl->render();
+    }
+
+    /**
+     * Returns an iterator for form fields.
+     *
+     * @return \ArrayIterator An \ArrayIterator instance
+     */
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->stack);
+    }
+
+    /**
+     * Returns the number of form fields on the stack.
+     *
+     * @return int The number of form fields
+     */
+    public function count()
+    {
+        return count($this->stack);
     }
 }
