@@ -53,6 +53,7 @@ class Form
     private static $types = array(
         'hidden' => 'HiddenField',
         'text' => 'TextField',
+        'password' => 'PasswordField',
         'textarea' => 'TextAreaField',
         'bool' => 'BooleanField',
         'select' => 'SelectField',
