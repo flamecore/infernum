@@ -23,6 +23,7 @@
 
 namespace FlameCore\Infernum;
 
+use FlameCore\Infernum\Interfaces\ExtensionAbstraction;
 use FlameCore\Infernum\Configuration\PluginMetadata;
 
 /**
@@ -30,7 +31,7 @@ use FlameCore\Infernum\Configuration\PluginMetadata;
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Plugin
+class Plugin implements ExtensionAbstraction
 {
     private $name;
 

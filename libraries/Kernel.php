@@ -99,7 +99,7 @@ final class Kernel implements \ArrayAccess
     /**
      * Gets the currently running extension.
      *
-     * @return \FlameCore\Infernum\Module|\FlameCore\Infernum\Plugin|bool Returns an abstraction object of the running extension or FALSE if no extension is running.
+     * @return \FlameCore\Infernum\Interfaces\ExtensionAbstraction|bool Returns an abstraction object of the running extension or FALSE if no extension is running.
      * @api
      */
     public function getRunningExtension()

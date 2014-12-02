@@ -25,6 +25,7 @@ namespace FlameCore\Infernum\Template\Twig;
 
 use FlameCore\Infernum\Application;
 use FlameCore\Infernum\Template\TemplateLoader;
+use FlameCore\Infernum\Template\EngineInterface;
 use Twig_Environment;
 use Twig_Extensions_Extension_Text;
 
@@ -33,7 +34,7 @@ use Twig_Extensions_Extension_Text;
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class TwigEngine
+class TwigEngine implements EngineInterface
 {
     /**
      * Twig Environment instance
@@ -85,7 +86,7 @@ class TwigEngine
      * @throws \FlameCore\Infernum\Template\Exception\NotFoundError
      * @throws \FlameCore\Infernum\Template\Exception\BadNameError
      */
-    public function render($name, $variables = [])
+    public function render($name, array $variables = [])
     {
         $template = $this->twig->loadTemplate($name);
 
