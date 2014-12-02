@@ -83,9 +83,8 @@ final class Application implements \ArrayAccess
         // Set default timezone
         date_default_timezone_set($this['settings']['site']['timezone']);
 
-        // Open cache instance if enabled
-        if ($this->isCacheEnabled())
-            $this['cache'] = new Cache($this->getCachePath('data'));
+        // Open cache instance
+        $this['cache'] = new Cache($this->getCachePath('data'));
     }
 
     /**
@@ -238,7 +237,7 @@ final class Application implements \ArrayAccess
         if (!is_callable($callback))
             throw new \InvalidArgumentException(sprintf('Invalid callback given for cache file "%s".', $name));
 
-        if (isset($this['cache'])) {
+        if ($this->isCacheEnabled()) {
             $data = $this['cache']->get($name);
             if (isset($data)) {
                 // We were able to retrieve data
