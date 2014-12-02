@@ -212,6 +212,21 @@ final class Application implements \ArrayAccess
     }
 
     /**
+     * Logs a message.
+     *
+     * @param type $message The message
+     * @param type $severity The severity level
+     * @return bool
+     * @api
+     */
+    public function log($message, $severity = 0)
+    {
+        $logfile = 'site-'.$this->site->getName();
+
+        return $this->kernel->log($message, $severity, $logfile);
+    }
+
+    /**
      * Reads data from cache. The $callback is used to generate the data if missing or expired.
      *
      * @param callable $callback The callback function that returns the data to store
