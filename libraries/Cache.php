@@ -58,19 +58,19 @@ class Cache
      */
     public function get($name)
     {
-        if (!preg_match('#^[\w-+@\./]+$#', $name))
+        if (!$this->validateName($name))
             throw new \InvalidArgumentException(sprintf('Given cache name "%s" is invalid.', $name));
 
         $filename = $this->getFilename($name);
 
         // Check if the file exists
         if (file_exists($filename)) {
-            $file_content = file_get_contents($filename);
-            list($expire, $raw_data) = explode("\n", $file_content, 2);
+            $filecontent = file_get_contents($filename);
+            list($expire, $rawdata) = explode("\n", $filecontent, 2);
 
             // Check if the file is fresh
             if ($expire == 0 || $expire > time())
-                return unserialize($raw_data);
+                return unserialize($rawdata);
         }
 
         return null;
@@ -86,11 +86,42 @@ class Cache
      */
     public function set($name, $data, $lifetime)
     {
-        if (!preg_match('#^[\w-+@\./]+$#', $name))
+        if (!$this->validateName($name))
             throw new \InvalidArgumentException(sprintf('Given cache name "%s" is invalid.', $name));
 
-        $file_content = (time() + (int) $lifetime)."\n".serialize($data);
-        return file_put_contents($this->getFilename($name), $file_content);
+        $filename = $this->getFilename($name);
+
+        if (strpos($name, '/') !== false) {
+            $directory = dirname($filename);
+
+            if (!is_dir($directory))
+                mkdir($directory, 0777, true);
+        }
+
+        $filecontent = (time() + (int) $lifetime)."\n".serialize($data);
+        return file_put_contents($filename, $filecontent);
+    }
+
+    /**
+     * Returns whether the cache contains the file with given name.
+     *
+     * @param string $name The name of the cache file
+     * @return bool
+     */
+    public function contains($name)
+    {
+        return file_exists($this->getFilename($name));
+    }
+
+    /**
+     * Deletes the cache file with given name.
+     *
+     * @param string $name The name of the cache file
+     * @return bool
+     */
+    public function delete($name)
+    {
+        return unlink($this->getFilename($name));
     }
 
     /**
@@ -113,5 +144,10 @@ class Cache
     private function getFilename($name)
     {
         return $this->path.'/'.$name.'.dat';
+    }
+
+    private function validateName($name)
+    {
+        return preg_match('#^[\w-+@\./]+$#', $name) && $name[0] != '/';
     }
 }
