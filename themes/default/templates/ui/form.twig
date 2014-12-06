@@ -3,7 +3,11 @@
     {% include field.templateName %}
 {% endfor %}
     <div class="buttons">
+{% for button in form.buttons %}
+        <button type="{{ button.type }}"{% if field.class %} class="{{ field.class }}"{% endif %}>{{ button.title }}</button>
+{% else %}
         <button type="submit" class="button">Submit</button>
         <button type="reset" class="button">Reset</button>
+{% endfor %}
     </div>
 </form>

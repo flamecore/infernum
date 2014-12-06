@@ -26,6 +26,7 @@ namespace FlameCore\Infernum\UI\Form;
 use FlameCore\Infernum\Application;
 use FlameCore\Infernum\Template;
 use FlameCore\Infernum\UI\Form\Field\FieldInterface;
+use FlameCore\Infernum\UI\Form\Button\ButtonInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -49,6 +50,8 @@ class Form implements \IteratorAggregate, \Countable
 
     private $stack = array();
 
+    private $buttons = array();
+
     private $context;
 
     private static $types = array(
@@ -61,6 +64,12 @@ class Form implements \IteratorAggregate, \Countable
         'multi' => 'MultiSelectField',
         'number' => 'NumberField',
         'date' => 'DateField'
+    );
+
+    private static $buttonTypes = array(
+        'button' => 'SimpleButton',
+        'submit' => 'SubmitButton',
+        'reset' => 'ResetButton'
     );
 
     /**
@@ -238,6 +247,51 @@ class Form implements \IteratorAggregate, \Countable
     public function has($name)
     {
         return isset($this->stack[$name]);
+    }
+
+    /**
+     * Adds a button to the form.
+     *
+     * @param string $type The type of the button
+     * @param string $title The title of the button
+     * @param array $params The parameters of the field
+     * @return \FlameCore\Infernum\UI\Form\Form
+     */
+    public function addButton($type, $title, array $params = [])
+    {
+        if (empty($title))
+            throw new \InvalidArgumentException('Cannot add button without title.');
+
+        if (!isset(self::$buttonTypes[$type]))
+            throw new \DomainException(sprintf('The form field type "%s" is not valid.', $type));
+
+        $class = sprintf('%s\Button\%s', __NAMESPACE__, self::$buttonTypes[$type]);
+        $this->buttons[] = new $class($this, $title, $params);
+
+        return $this;
+    }
+
+    /**
+     * Adds a button object to the form.
+     *
+     * @param \FlameCore\Infernum\UI\Form\Button\ButtonInterface $object The button object
+     * @return \FlameCore\Infernum\UI\Form\Form
+     */
+    public function addButtonObject(ButtonInterface $object)
+    {
+        $this->buttons[] = $object;
+
+        return $this;
+    }
+
+    /**
+     * Returns the buttons.
+     *
+     * @return array
+     */
+    public function getButtons()
+    {
+        return $this->buttons;
     }
 
     /**
