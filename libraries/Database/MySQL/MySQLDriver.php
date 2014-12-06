@@ -23,14 +23,14 @@
 
 namespace FlameCore\Infernum\Database\MySQL;
 
-use FlameCore\Infernum\Database\Base\Connection as BaseConnection;
+use FlameCore\Infernum\Database\AbstractDriver;
 
 /**
  * This class allows you to execute operations in a MySQL database
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Connection extends BaseConnection
+class MySQLDriver extends AbstractDriver
 {
     /**
      * {@inheritdoc}
@@ -63,7 +63,7 @@ class Connection extends BaseConnection
             $this->queryCount++;
 
             if ($result instanceof \MySQLi_Result)
-                return new Result($result);
+                return new MySQLResult($result);
 
             return true;
         }

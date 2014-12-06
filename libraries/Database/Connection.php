@@ -43,7 +43,7 @@ class Connection
      * @param string $password The password for authenticating at the database server (Default: empty)
      * @param string $database The name of the database
      * @param string $prefix The prefix of the database tables (Default: empty)
-     * @return \FlameCore\Infernum\Database\Base\Connection Returns the Connection object.
+     * @return \FlameCore\Infernum\Database\DriverInterface Returns the Driver object.
      */
     public static function create($driver, $host = 'localhost', $user = 'root', $password = '', $database, $prefix = '')
     {
@@ -62,7 +62,7 @@ class Connection
      * Opens a new database connection using the given DSN.
      *
      * @param string $dsn The Data Source Name (driver://user:password@host/database?prefix=prefix)
-     * @return \FlameCore\Infernum\Database\Base\Connection Returns the Connection object.
+     * @return \FlameCore\Infernum\Database\DriverInterface Returns the Driver object.
      */
     public static function createFromDsn($dsn)
     {
@@ -96,6 +96,6 @@ class Connection
         if (!isset(self::$drivers[$driver]))
             throw new \DomainException(sprintf('Database driver "%s" is not supported', $driver));
 
-        return sprintf('%s\%s\Connection', __NAMESPACE__, self::$drivers[$driver]);
+        return sprintf('%1$s\%2$s\%2$sDriver', __NAMESPACE__, self::$drivers[$driver]);
     }
 }

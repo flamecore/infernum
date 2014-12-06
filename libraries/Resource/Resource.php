@@ -23,7 +23,7 @@
 
 namespace FlameCore\Infernum\Resource;
 
-use FlameCore\Infernum\Database\Base\Connection;
+use FlameCore\Infernum\Database\DriverInterface;
 
 /**
  * The abstract Resource class
@@ -45,9 +45,9 @@ abstract class Resource
      * Fetches the data of the record. This method must retrieve the data.
      *
      * @param mixed $identifier The identifier of the record
-     * @param \FlameCore\Infernum\Database\Base\Connection $database The database connection to use
+     * @param \FlameCore\Infernum\Database\DriverInterface $database The database connection to use
      */
-    public function __construct($identifier, Connection $database)
+    public function __construct($identifier, DriverInterface $database)
     {
         $this->database = $database;
 
@@ -82,10 +82,10 @@ abstract class Resource
      * Checks wheter or not the record with given identifier exists.
      *
      * @param mixed $identifier The identifier of the record
-     * @param \FlameCore\Infernum\Database\Base\Connection $database The database connection to use
+     * @param \FlameCore\Infernum\Database\DriverInterface $database The database connection to use
      * @return bool
      */
-    public static function exists($identifier, Connection $database)
+    public static function exists($identifier, DriverInterface $database)
     {
         $table = static::getTable();
         $fields = static::getFields();
@@ -107,10 +107,10 @@ abstract class Resource
     /**
      * Returns a list of available records.
      *
-     * @param \FlameCore\Infernum\Database\Base\Connection $database The database connection to use
+     * @param \FlameCore\Infernum\Database\DriverInterface $database The database connection to use
      * @return array
      */
-    public static function listAll(Connection $database)
+    public static function listAll(DriverInterface $database)
     {
         $table = static::getTable();
         $fields = static::getFields();
@@ -131,10 +131,10 @@ abstract class Resource
     /**
      * Fetches all available records.
      *
-     * @param \FlameCore\Infernum\Database\Base\Connection $database The database connection to use
+     * @param \FlameCore\Infernum\Database\DriverInterface $database The database connection to use
      * @return array
      */
-    public static function fetchAll(Connection $database)
+    public static function fetchAll(DriverInterface $database)
     {
         $table = static::getTable();
         $fields = static::getFields();

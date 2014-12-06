@@ -21,32 +21,15 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Infernum\Database\Base;
+namespace FlameCore\Infernum\Database;
 
 /**
- * Result set returned by a database query
+ * The Result interface
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-abstract class Result
+interface ResultInterface
 {
-    /**
-     * The result object returned by the corresponding query
-     *
-     * @var object
-     */
-    protected $result;
-
-    /**
-     * Constructor
-     *
-     * @param object $result The result object returned by the corresponding query
-     */
-    public function __construct($result)
-    {
-        $this->result = $result;
-    }
-
     /**
      * Fetches a result row as an associative or enumerated array.
      *
@@ -55,7 +38,7 @@ abstract class Result
      *   Returns an enumerated array of strings that corresponds to the fetched row otherwise.
      *   Returns NULL if there are no more rows in resultset.
      */
-    abstract public function fetch($numeric = false);
+    public function fetch($numeric = false);
 
     /**
      * Fetches the value of a single cell in a result row
@@ -63,7 +46,7 @@ abstract class Result
      * @param mixed $index The index (int or string) of the cell to fetch (Default: 0)
      * @return mixed Returns the value of the cell or NULL on failure
      */
-    abstract public function fetchCell($index = 0);
+    public function fetchCell($index = 0);
 
     /**
      * Fetches the values of each cell in a single column of the result set
@@ -71,7 +54,7 @@ abstract class Result
      * @param int $index The index (int or string) of the cell to fetch (Default: 0)
      * @return array Returns the values of each cell as an array
      */
-    abstract public function fetchColumn($index = 0);
+    public function fetchColumn($index = 0);
 
     /**
      * Fetches all result rows as an associative array or a numeric array
@@ -79,33 +62,33 @@ abstract class Result
      * @param bool $numeric Set to TRUE to return an enumerated array (Default: FALSE)
      * @return array Returns an array of associative or numeric arrays holding result rows
      */
-    abstract public function fetchAll($numeric = false);
+    public function fetchAll($numeric = false);
 
     /**
      * Gets the number of rows in a result
      *
      * @return int
      */
-    abstract public function numRows();
+    public function numRows();
 
     /**
      * Checks if the result has any rows
      *
      * @return bool
      */
-    abstract public function hasRows();
+    public function hasRows();
 
     /**
      * Gets the number of fields in a result
      *
      * @return int
      */
-    abstract public function numFields();
+    public function numFields();
 
     /**
      * Frees the memory associated with the result
      *
      * @return void
      */
-    abstract public function free();
+    public function free();
 }

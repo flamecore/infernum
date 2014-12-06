@@ -57,7 +57,7 @@ final class Application implements \ArrayAccess
             'url' => 'string',
             'settings' => 'array',
             'logger' => '\Psr\Log\LoggerInterface',
-            'db' => '\FlameCore\Infernum\Database\Base\Connection',
+            'db' => '\FlameCore\Infernum\Database\DriverInterface',
             'cache' => '\FlameCore\Infernum\Cache',
             'session' => '\FlameCore\Infernum\Session',
             'intl' => '\FlameCore\Infernum\International',

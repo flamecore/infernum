@@ -23,14 +23,14 @@
 
 namespace FlameCore\Infernum\Database\MySQL;
 
-use FlameCore\Infernum\Database\Base\Result as BaseResult;
+use FlameCore\Infernum\Database\AbstractResult;
 
 /**
  * Result set returned by a MySQL query
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Result extends BaseResult
+class MySQLResult extends AbstractResult
 {
     /**
      * {@inheritdoc}
