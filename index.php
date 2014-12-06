@@ -66,7 +66,7 @@ try {
     $kernel->handle($request, $app);
 } catch (\Exception $exception) {
     if (isset($kernel)) {
-        $kernel->log($exception->getMessage(), 2);
+        $kernel['logger']->error($exception->getMessage());
         $verbosity = $kernel->config('enable_debugmode') ? $kernel->config('debug_verbosity', 1) : 0;
     } else {
         $verbosity = 1;

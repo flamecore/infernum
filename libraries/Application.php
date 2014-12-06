@@ -44,6 +44,7 @@ final class Application implements \ArrayAccess
     private static $keys = array(
         'url' => 'string',
         'settings' => 'array',
+        'logger' => '\Psr\Log\LoggerInterface',
         'db' => '\FlameCore\Infernum\Database\Base\Connection',
         'cache' => '\FlameCore\Infernum\Cache',
         'session' => '\FlameCore\Infernum\Session',
@@ -62,6 +63,8 @@ final class Application implements \ArrayAccess
     {
         $this->site = $site;
         $this->kernel = $kernel;
+
+        $this['logger'] = new Logger('site-'.$site->getName(), $kernel);
 
         // At first we have to load the settings
         $this['settings'] = $kernel->cache($site->getName().'/settings', [$site, 'loadSettings']);
@@ -208,21 +211,6 @@ final class Application implements \ArrayAccess
         } else {
             return $this['url'].'/themes/'.$this->getTheme().'/public/'.$filename;
         }
-    }
-
-    /**
-     * Logs a message.
-     *
-     * @param type $message The message
-     * @param type $severity The severity level
-     * @return bool
-     * @api
-     */
-    public function log($message, $severity = 0)
-    {
-        $logfile = 'site-'.$this->site->getName();
-
-        return $this->kernel->log($message, $severity, $logfile);
     }
 
     /**

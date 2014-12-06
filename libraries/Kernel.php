@@ -51,6 +51,7 @@ final class Kernel implements \ArrayAccess
         'domain' => 'string',
         'path' => 'string',
         'config' => 'array',
+        'logger' => '\Psr\Log\LoggerInterface',
         'loader' => '\FlameCore\Infernum\ClassLoader',
         'cache' => '\FlameCore\Infernum\Cache',
         'router' => '\FlameCore\Infernum\Router'
@@ -72,6 +73,7 @@ final class Kernel implements \ArrayAccess
 
         $this['config'] = $this->cache('config', [$this, 'loadConfiguration']);
 
+        $this['logger'] = new Logger('system', $this);
         $this['router'] = new Router($this);
     }
 
@@ -331,37 +333,6 @@ final class Kernel implements \ArrayAccess
     }
 
     /**
-     * Logs a message.
-     *
-     * @param type $message The message
-     * @param type $severity The severity level
-     * @param type $logfile The file to log to
-     * @return bool
-     * @api
-     */
-    public function log($message, $severity = 0, $logfile = 'system')
-    {
-        if (!$this->config('enable_logging'))
-            return true;
-
-        if ($severity >= 4) {
-            $severity_tag = 'ALERT';
-        } elseif ($severity == 3) {
-            $severity_tag = 'CRITICAL';
-        } elseif ($severity == 2) {
-            $severity_tag = 'ERROR';
-        } elseif ($severity == 1) {
-            $severity_tag = 'WARNING';
-        } else {
-            $severity_tag = 'INFO';
-        }
-
-        $logtext = date('Y-m-d H:i:s').' ['.$severity_tag.'] '.$message;
-
-        return error_log($logtext.PHP_EOL, 3, $this['path'].'/logs/'.$logfile.'.log');
-    }
-
-    /**
      * Reads data from cache. The $callback is used to generate the data if missing or expired.
      *
      * @param callable $callback The callback function that returns the data to store
@@ -425,7 +396,7 @@ final class Kernel implements \ArrayAccess
                 break;
             case E_WARNING:
             case E_USER_WARNING:
-                $this->log($message, 1);
+                $this['logger']->warning($message);
                 break;
         }
 
