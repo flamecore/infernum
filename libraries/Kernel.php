@@ -37,7 +37,7 @@ final class Kernel implements \ArrayAccess
 {
     private $booted = false;
 
-    private $container = array();
+    private $container;
 
     private $pagePath = false;
 
@@ -47,16 +47,6 @@ final class Kernel implements \ArrayAccess
 
     private $loadedPlugins = array();
 
-    private static $keys = array(
-        'domain' => 'string',
-        'path' => 'string',
-        'config' => 'array',
-        'logger' => '\Psr\Log\LoggerInterface',
-        'loader' => '\FlameCore\Infernum\ClassLoader',
-        'cache' => '\FlameCore\Infernum\Cache',
-        'router' => '\FlameCore\Infernum\Router'
-    );
-
     /**
      * Initializes the Kernel.
      *
@@ -64,6 +54,16 @@ final class Kernel implements \ArrayAccess
      */
     public function __construct($domain, $path)
     {
+        $this->container = new Container('kernel', [
+            'domain' => 'string',
+            'path' => 'string',
+            'config' => 'array',
+            'loader' => '\FlameCore\Infernum\ClassLoader',
+            'logger' => '\Psr\Log\LoggerInterface',
+            'cache' => '\FlameCore\Infernum\Cache',
+            'router' => '\FlameCore\Infernum\Router'
+        ]);
+
         $this['domain'] = $domain;
         $this['path'] = $path;
 
@@ -429,7 +429,7 @@ final class Kernel implements \ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container->get($offset);
     }
 
     /**
@@ -440,7 +440,7 @@ final class Kernel implements \ArrayAccess
      */
     public function offsetExists($offset)
     {
-        return isset($this->container[$offset]);
+        return $this->container->has($offset);
     }
 
     /**
@@ -453,22 +453,7 @@ final class Kernel implements \ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        if (is_null($offset))
-            throw new \InvalidArgumentException('Cannot set key with empty name in kernel storage.');
-
-        if (isset(self::$keys[$offset])) {
-            if (isset($this->container[$offset]))
-                throw new \LogicException(sprintf('Cannot override internal key "%s" in kernel storage.', $offset));
-
-            $type = self::$keys[$offset];
-            if ($type[0] == '\\') {
-                $className = substr($type, 1);
-                if (!$value instanceof $className)
-                    throw new \InvalidArgumentException(sprintf('Value for internal key "%s" in kernel storage must be an instance of %s class, but %s given.', $offset, $className, is_object($value) ? get_class($value) : gettype($value)));
-            }
-        }
-
-        $this->container[$offset] = $value;
+        $this->container->set($offset, $value, true);
     }
 
     /**
@@ -479,9 +464,6 @@ final class Kernel implements \ArrayAccess
      */
     public function offsetUnset($offset)
     {
-        if (isset(self::$keys[$offset]))
-            throw new \LogicException(sprintf('Cannot unset internal key "%s" in kernel storage.', $offset));
-
-        unset($this->container[$offset]);
+        $this->container->remove($offset);
     }
 }

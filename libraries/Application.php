@@ -33,24 +33,13 @@ use Symfony\Component\HttpFoundation\Cookie;
  */
 final class Application implements \ArrayAccess
 {
-    private $container = array();
+    private $container;
 
     private $site;
 
     private $kernel;
 
     private $theme = false;
-
-    private static $keys = array(
-        'url' => 'string',
-        'settings' => 'array',
-        'logger' => '\Psr\Log\LoggerInterface',
-        'db' => '\FlameCore\Infernum\Database\Base\Connection',
-        'cache' => '\FlameCore\Infernum\Cache',
-        'session' => '\FlameCore\Infernum\Session',
-        'intl' => '\FlameCore\Infernum\International',
-        'tpl' => '\FlameCore\Infernum\Template\EngineInterface'
-    );
 
     /**
      * Initializes the application.
@@ -63,6 +52,17 @@ final class Application implements \ArrayAccess
     {
         $this->site = $site;
         $this->kernel = $kernel;
+
+        $this->container = new Container('application', [
+            'url' => 'string',
+            'settings' => 'array',
+            'logger' => '\Psr\Log\LoggerInterface',
+            'db' => '\FlameCore\Infernum\Database\Base\Connection',
+            'cache' => '\FlameCore\Infernum\Cache',
+            'session' => '\FlameCore\Infernum\Session',
+            'intl' => '\FlameCore\Infernum\International',
+            'tpl' => '\FlameCore\Infernum\Template\EngineInterface'
+        ]);
 
         $this['logger'] = new Logger('site-'.$site->getName(), $kernel);
 
@@ -378,7 +378,7 @@ final class Application implements \ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container->get($offset);
     }
 
     /**
@@ -389,7 +389,7 @@ final class Application implements \ArrayAccess
      */
     public function offsetExists($offset)
     {
-        return isset($this->container[$offset]);
+        return $this->container->has($offset);
     }
 
     /**
@@ -402,22 +402,7 @@ final class Application implements \ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        if (is_null($offset))
-            throw new \InvalidArgumentException('Cannot set key with empty name in application storage.');
-
-        if (isset(self::$keys[$offset])) {
-            if (isset($this->container[$offset]))
-                throw new \LogicException(sprintf('Cannot override internal key "%s" in application storage.', $offset));
-
-            $type = self::$keys[$offset];
-            if ($type[0] == '\\') {
-                $className = substr($type, 1);
-                if (!$value instanceof $className)
-                    throw new \InvalidArgumentException(sprintf('Value for internal key "%s" in application storage must be an instance of %s class, but %s given.', $offset, $className, is_object($value) ? get_class($value) : gettype($value)));
-            }
-        }
-
-        $this->container[$offset] = $value;
+        $this->container->set($offset, $value, true);
     }
 
     /**
@@ -428,9 +413,6 @@ final class Application implements \ArrayAccess
      */
     public function offsetUnset($offset)
     {
-        if (isset(self::$keys[$offset]))
-            throw new \LogicException(sprintf('Cannot unset internal key "%s" in application storage.', $offset));
-
-        unset($this->container[$offset]);
+        $this->container->remove($offset);
     }
 }
