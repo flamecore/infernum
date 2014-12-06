@@ -52,7 +52,7 @@ interface FieldInterface
      *   * scheme       The value must match this scheme. Possible values are 'email', 'url', 'ip' or 'regex'.
      *   * pattern      The value must match this regular expression. This option is only availabe if 'scheme' is set to 'regex'.
      */
-    public function __construct(Form $form, $name, $params);
+    public function __construct(Form $form, $name, array $params);
 
     /**
      * Gets the template name of this field

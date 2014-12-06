@@ -48,7 +48,7 @@ class Form implements \IteratorAggregate, \Countable
 
     private $invalid = array();
 
-    private $stack = array();
+    private $fields = array();
 
     private $buttons = array();
 
@@ -180,7 +180,7 @@ class Form implements \IteratorAggregate, \Countable
      * @param array $params The parameters of the field
      * @return \FlameCore\Infernum\UI\Form\Form
      */
-    public function add($type, $name, $params = array())
+    public function add($type, $name, array $params = [])
     {
         if (empty($name))
             throw new \InvalidArgumentException('Cannot add field without name.');
@@ -192,7 +192,7 @@ class Form implements \IteratorAggregate, \Countable
             throw new \DomainException(sprintf('The form field type "%s" is not valid.', $type));
 
         $class = sprintf('%s\Field\%s', __NAMESPACE__, self::$types[$type]);
-        $this->stack[$name] = new $class($this, $name, $params);
+        $this->fields[$name] = new $class($this, $name, $params);
 
         return $this;
     }
@@ -202,10 +202,13 @@ class Form implements \IteratorAggregate, \Countable
      *
      * @param string $name The name of the field
      * @param \FlameCore\Infernum\UI\Form\Field\FieldInterface $object The field object
+     * @return \FlameCore\Infernum\UI\Form\Form
      */
-    public function addObject($name, FieldInterface $object)
+    public function addObject(FieldInterface $object)
     {
-        $this->stack[$name] = $object;
+        $this->fields[$object->getName()] = $object;
+
+        return $this;
     }
 
     /**
@@ -214,7 +217,7 @@ class Form implements \IteratorAggregate, \Countable
      * @param string $name The name of the field
      * @return \FlameCore\Infernum\UI\Form\Form
      */
-    public function remove($type, $name, $params = array())
+    public function remove($name)
     {
         if (empty($name))
             throw new \InvalidArgumentException('Cannot remove field without name.');
@@ -222,7 +225,7 @@ class Form implements \IteratorAggregate, \Countable
         if ($this->has($name))
             throw new \LogicException(sprintf('Cannot remove field with name "%s" since a field with this name is not defined.', $name));
 
-        unset($this->stack[$name]);
+        unset($this->fields[$name]);
 
         return $this;
     }
@@ -235,7 +238,7 @@ class Form implements \IteratorAggregate, \Countable
      */
     public function get($name)
     {
-        return isset($this->stack[$name]) ? $this->stack[$name] : null;
+        return isset($this->fields[$name]) ? $this->fields[$name] : null;
     }
 
     /**
@@ -246,7 +249,7 @@ class Form implements \IteratorAggregate, \Countable
      */
     public function has($name)
     {
-        return isset($this->stack[$name]);
+        return isset($this->fields[$name]);
     }
 
     /**
@@ -345,7 +348,7 @@ class Form implements \IteratorAggregate, \Countable
             $this->submitted = true;
 
         if ($this->submitted) {
-            foreach ($this->stack as $field) {
+            foreach ($this->fields as $field) {
                 $name = $field->getName();
                 $value = $field->retrieve($request);
 
@@ -383,7 +386,7 @@ class Form implements \IteratorAggregate, \Countable
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this->stack);
+        return new \ArrayIterator($this->fields);
     }
 
     /**
@@ -393,6 +396,6 @@ class Form implements \IteratorAggregate, \Countable
      */
     public function count()
     {
-        return count($this->stack);
+        return count($this->fields);
     }
 }

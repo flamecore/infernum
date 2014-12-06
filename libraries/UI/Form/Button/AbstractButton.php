@@ -42,7 +42,7 @@ abstract class AbstractButton implements ButtonInterface
     /**
      * {@inheritdoc}
      */
-    public function __construct(Form $form, $title, array $params)
+    public function __construct(Form $form, $title, array $params = [])
     {
         $this->form = $form;
         $this->setTitle($title);

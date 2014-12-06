@@ -85,7 +85,7 @@ abstract class AbstractField implements FieldInterface
     /**
      * {@inheritdoc}
      */
-    public function __construct(Form $form, $name, $params)
+    public function __construct(Form $form, $name, array $params = [])
     {
         $this->form = $form;
         $this->setName($name);
@@ -104,7 +104,7 @@ abstract class AbstractField implements FieldInterface
      *
      * @param array $params The form field parameters
      */
-    public function initialize($params)
+    public function initialize(array $params)
     {
     }
 
