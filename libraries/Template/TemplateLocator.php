@@ -26,50 +26,23 @@ namespace FlameCore\Infernum\Template;
 use FlameCore\Infernum\Application;
 use FlameCore\Infernum\Template\Exception\BadNameError;
 use FlameCore\Infernum\Template\Exception\NotFoundError;
-use Twig_LoaderInterface;
-use Twig_ExistsLoaderInterface;
 
 /**
- * Loader for template engines
+ * Locator for template engines
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class TemplateLoader implements Twig_LoaderInterface, Twig_ExistsLoaderInterface
+class TemplateLocator
 {
-    private $app;
+    protected $app;
 
-    private $namespaces = array();
+    protected $namespaces = array();
 
     final public function __construct(Application $app)
     {
         $this->setNamespace('global', $app->getTemplatePath());
 
         $this->app = $app;
-    }
-
-    public function getSource($template)
-    {
-        return file_get_contents($this->locate($template));
-    }
-
-    public function getCacheKey($template)
-    {
-        return $this->locate($template);
-    }
-
-    public function isFresh($template, $time)
-    {
-        return filemtime($this->locate($template)) <= $time;
-    }
-
-    public function exists($template)
-    {
-        try {
-            $this->locate($template);
-            return true;
-        } catch (NotFoundError $e) {
-            return false;
-        }
     }
 
     /**
@@ -122,7 +95,7 @@ class TemplateLoader implements Twig_LoaderInterface, Twig_ExistsLoaderInterface
      * @return string
      * @throws Exception_Template_NotFoundError, Exception_Template_BadNameError
      */
-    private function locate($template)
+    public function locate($template)
     {
         $template = preg_replace('#/{2,}#', '/', strtr((string) $template, '\\', '/'));
 

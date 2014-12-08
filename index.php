@@ -23,7 +23,7 @@
 
 namespace FlameCore\Infernum;
 
-use FlameCore\Infernum\Template\TemplateLoader;
+use FlameCore\Infernum\Template\TemplateLocator;
 use FlameCore\Infernum\Template\Twig\TwigEngine;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -58,7 +58,7 @@ try {
     $app['session'] = Session::init($request, $app);
     $app['intl'] = International::init($request, $app);
 
-    $loader = new TemplateLoader($app);
+    $loader = new TemplateLocator($app);
     $app['tpl'] = new TwigEngine($loader, $app);
 
     View::setTitle($app->setting('site.title'));

@@ -24,7 +24,7 @@
 namespace FlameCore\Infernum\Template\Twig;
 
 use FlameCore\Infernum\Application;
-use FlameCore\Infernum\Template\TemplateLoader;
+use FlameCore\Infernum\Template\TemplateLocator;
 use FlameCore\Infernum\Template\EngineInterface;
 use Twig_Environment;
 use Twig_Extensions_Extension_Text;
@@ -46,15 +46,17 @@ class TwigEngine implements EngineInterface
     /**
      * Generates a TwigEngine object.
      *
-     * @param \FlameCore\Infernum\Template\TemplateLoader $loader The template loader
+     * @param \FlameCore\Infernum\Template\TemplateLocator $locator The template locator
      * @param \FlameCore\Infernum\Application $app The application context
      */
-    public function __construct(TemplateLoader $loader, Application $app)
+    public function __construct(TemplateLocator $locator, Application $app)
     {
         $engineOptions = array(
             'cache' => $app->isCacheEnabled() ? $app->getCachePath('templates') : false,
             'debug' => $app->isDebugModeEnabled()
         );
+
+        $loader = new TwigLoader($locator);
 
         $twig = new Twig_Environment($loader, $engineOptions);
         $twig->getExtension('core')->setTimezone($app->setting('site.timezone'));
