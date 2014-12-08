@@ -26,7 +26,8 @@ namespace FlameCore\Infernum\Template;
 use FlameCore\Infernum\Application;
 use FlameCore\Infernum\Template\Exception\BadNameError;
 use FlameCore\Infernum\Template\Exception\NotFoundError;
-use Twig_LoaderInterface, Twig_ExistsLoaderInterface;
+use Twig_LoaderInterface;
+use Twig_ExistsLoaderInterface;
 
 /**
  * Loader for template engines

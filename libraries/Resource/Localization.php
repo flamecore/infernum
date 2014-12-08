@@ -30,7 +30,7 @@ namespace FlameCore\Infernum\Resource;
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Localization extends Resource
+class Localization extends AbstractResource
 {
     /**
      * Returns the locale's ID

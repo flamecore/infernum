@@ -24,14 +24,14 @@
 namespace FlameCore\Infernum\Entity;
 
 use FlameCore\Infernum\System;
-use FlameCore\Infernum\Resource\Resource;
+use FlameCore\Infernum\Resource\AbstractResource;
 
 /**
  * The abstract Entity class
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-abstract class Entity extends Resource
+abstract class AbstractEntity extends AbstractResource
 {
     /**
      * Updates the given columns of the record.

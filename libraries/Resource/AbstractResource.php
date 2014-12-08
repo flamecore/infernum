@@ -30,7 +30,7 @@ use FlameCore\Infernum\Database\DriverInterface;
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-abstract class Resource
+abstract class AbstractResource
 {
     protected $database;
 

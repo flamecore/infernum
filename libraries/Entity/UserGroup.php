@@ -30,7 +30,7 @@ namespace FlameCore\Infernum\Entity;
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class UserGroup extends Entity
+class UserGroup extends AbstractEntity
 {
     /**
      * Returns the groups's ID

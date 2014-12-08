@@ -30,7 +30,7 @@ namespace FlameCore\Infernum\Entity;
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class User extends Entity
+class User extends AbstractEntity
 {
     /**
      * Returns the user's ID

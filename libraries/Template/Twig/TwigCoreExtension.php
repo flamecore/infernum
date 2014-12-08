@@ -26,7 +26,9 @@ namespace FlameCore\Infernum\Template\Twig;
 use FlameCore\Infernum\Application;
 use FlameCore\Infernum\Template;
 use FlameCore\Infernum\UI\Form\Form;
-use Twig_Extension, Twig_SimpleFilter, Twig_SimpleFunction;
+use Twig_Extension;
+use Twig_SimpleFilter;
+use Twig_SimpleFunction;
 
 /**
  * Core Extension for the Twig template engine
