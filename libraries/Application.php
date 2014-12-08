@@ -226,10 +226,9 @@ final class Application implements \ArrayAccess
             throw new \InvalidArgumentException(sprintf('Invalid callback given for cache file "%s".', $name));
 
         if ($this->isCacheEnabled()) {
-            $data = $this['cache']->get($name);
-            if (isset($data)) {
+            if ($this['cache']->contains($name)) {
                 // We were able to retrieve data
-                return $data;
+                return $this['cache']->get($name);
             } else {
                 // No data, so we use the given data callback and store the value
                 $data = $callback();
