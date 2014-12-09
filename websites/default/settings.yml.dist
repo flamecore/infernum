@@ -14,7 +14,7 @@ web:
   # Use URL rewriting for page paths
   url_rewrite: true
   # Theme from /themes folder
-  theme: default
+  theme: flamecore/indigo
 
 database:
   # Database driver to use

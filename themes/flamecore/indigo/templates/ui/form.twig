@@ -1,8 +1,8 @@
-<form name="{{ form.name }}" action="{{ form.action }}" method="{{ form.method }}" enctype="multipart/form-data" id="{{ form.name }}" class="fancy">
+<form name="{{ form.name }}" action="{{ form.action }}" method="{{ form.method }}" enctype="multipart/form-data" id="{{ form.name }}" class="contentform">
 {% for field in form %}
     {% include field.templateName %}
 {% endfor %}
-    <div class="buttons">
+    <div class="buttons-container">
 {% for button in form.buttons %}
         <button type="{{ button.type }}"{% if field.class %} class="{{ field.class }}"{% endif %}>{{ button.title }}</button>
 {% else %}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+{% for tag in METATAGS %}
+        <meta name="{{ tag.name }}" content="{{ tag.content }}" />
+{% endfor %}
+{% for tag in LINKTAGS %}
+        <link rel="{{ tag.rel }}" href="{{ tag.href }}" type="{{ tag.type }}" />
+{% endfor %}
+        <link rel="stylesheet" type="text/css" href="{{ file('css/default.css') }}" media="screen"/>
+{% for tag in STYLESHEETS %}
+        <link rel="stylesheet" href="{{ tag.url }}" type="text/css" media="{{ tag.media }}" />
+{% endfor %}
+{% for tag in JAVASCRIPTS %}
+        <script src="{{ tag.url }}" type="{{ tag.type }}"></script>
+{% endfor %}
+        <title>{{ PAGE_TITLE }}</title>
+    </head>
+    <body>
+
+        <div class="container">
+
+            <div class="header">
+
+                <div class="title">
+                    <h1>Infernum</h1>
+                </div>
+
+                <div class="navigation">
+                    <a href="{{ u() }}">Home</a>
+                    <div class="clearer"><span></span></div>
+                </div>
+
+            </div>
+
+            <div class="main">
+
+                <div class="content">
+
+{% block content %}{% endblock %}
+
+                </div>
+
+                <div class="sidebar">
+
+{% block sidebar %}{% endblock %}
+
+                </div>
+
+                <div class="clearer">&nbsp;</div>
+
+            </div>
+
+        </div>
+
+        <div class="footer">
+
+            <div class="left">Copyright &copy; {{ 'now'|date('Y') }} Infernum</div>
+
+            <div class="right">Powered by <a href="http://github.com/iceflame-net/Infernum">Infernum</a> – Theme by <a href="http://templates.arcsin.se/">Arcsin</a></div>
+
+            <div class="clearer">&nbsp;</div>
+
+        </div>
+
+    </body>
+</html>

@@ -1,0 +1,312 @@
+/*
+ * Indigo
+ * http://templates.arcsin.se/indigo-website-template
+ * Author: Viktor Persson <http://arcsin.se>
+ *
+ * This template is licensed under a Creative Commons Attribution 2.5 License
+ * http://templates.arcsin.se/license
+ */
+
+/* reset */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, 
+blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, 
+img, ins, kbd, q, s, samp, small, strike, strong, sub, tt, var, b, u, i, 
+center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, 
+tbody, tfoot, thead, tr, th, td {
+    margin: 0; padding: 0; border: 0; outline: 0; 
+    font-size: 100%; vertical-align: baseline; background: transparent;
+}
+body { line-height: 1; }
+ol, ul { list-style: none; }
+blockquote, q { quotes: none; } 
+blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
+:focus { outline: 0; }
+ins { text-decoration: none; }
+del { text-decoration: line-through; }
+table { border-collapse: collapse; border-spacing: 0; }
+
+/* standard elements */
+a {
+    color: #F70;
+}
+a:hover {
+    color: #C60;
+}
+body {
+    background: #0094D6 url(../images/bg.gif) repeat-x;
+    color: #466;
+    font: normal 13px "Lucida Sans Unicode",sans-serif;
+    margin: 0;
+}
+input {
+    color: #555;
+    font: normal 1.1em "Lucida Sans Unicode",sans-serif;
+}
+p,cite,code,ul {
+    font-size: 1.2em;
+    padding-bottom: 1.2em;
+}
+h1 {
+    font-size: 1.4em;
+    margin-bottom: 4px;
+}
+code {
+    background: url(../images/bgcode.gif);
+    border: 1px solid #F0F0F0;
+    border-left: 6px solid #39F;
+    color: #555;
+    display: block;
+    font: normal 1.1em "Lucida Sans Unicode",serif;
+    margin-bottom: 12px;
+    padding: 8px 10px;
+    white-space: pre;
+}
+cite {
+    background: url(../images/quote.gif) no-repeat;
+    color: #666;
+    display: block;
+    font: normal 1.3em "Lucida Sans Unicode",serif;
+    padding-left: 28px;
+}
+h1,h2,h3 {
+    color: #06C;
+    padding-top: 6px;
+}
+/* misc */
+.clear,.clearer {clear: both;}
+.clearer {
+    display: block;
+    font-size: 0;
+    line-height: 0;
+    height: 0;
+}
+.left {float: left;}
+.right {float: right;}
+
+/* structure */
+.container {
+    background: url(../images/topleft.gif) no-repeat;
+}
+
+.header {
+    height: 92px;
+}
+
+/* title */
+.title {
+    float: left;
+    padding: 28px 0 0 76px;
+}
+.title h1 {
+    color: #FFF;
+    font: bold 2em "Trebuchet MS", sans-serif;
+}
+/* navigation */
+.navigation {
+    float: left;
+    height: 92px;
+    margin-left: 24px;
+    padding: 0 16px;
+}
+.navigation a {
+    color: #FFF;
+    float: left;
+    font: bold 1.2em "Trebuchet MS", sans-serif;
+    margin-top: 54px;
+    padding: 8px 18px;
+    text-align: center;
+    text-decoration: none;
+}
+.navigation a:hover {
+    background-color: #4A91C3;
+    color: #FFF;
+}
+
+/* main */
+.main {
+    background: #FFF url(../images/bgmain.gif) no-repeat;
+    clear: both;
+    padding: 12px 12px 20px 52px;
+    min-height: 500px;
+}
+
+/* main left */
+.sidebar {
+    float: left;
+    width: 24%;
+}
+.sidebar h1 {
+    border-bottom: 1px dashed #DDD;
+    color: #E73;
+    font-size: 1.2em;
+    height: 20px;
+    margin-top: 1.2em;
+}
+.sidebar ul {
+    margin: 0;
+    padding: 0;
+}
+.sidebar li { 
+    border-bottom: 1px dashed #EEE;
+    list-style: none;
+    margin: 0;
+}
+.sidebar li a {
+    color: #777;
+    display: block;
+    font-size: 0.9em;
+    padding: 3px 6px 3px 18px;
+    text-decoration: none;
+}
+.sidebar li a:hover {
+    color: #111;
+    background: url(../images/nav_li.gif) no-repeat;
+}
+
+/* content */
+.content {
+    float: left;
+    margin-right: 4%;
+    width: 69%;
+}
+.content .descr {
+    color: #C60;
+    margin-bottom: 6px;
+}
+.content li {
+    list-style: url(../images/li.gif);
+    margin-left: 18px;
+}
+
+/* search form */
+.styled {
+    border: 3px double #E5E5E5;
+    padding: 2px 3px;
+}
+.button {
+    border: 1px solid #AAA;
+    padding: 2px 3px;
+}
+
+/* messages */
+.box-info, .box-success, .box-warning, .box-error {
+    background:#fff url(../images/info.png) no-repeat 13px center;
+    margin:.75em 0;
+    padding:1em 1em 1em 40px;
+}
+
+.box-info {
+    background-color:#ccf;
+    border:1px solid #aaf;
+}
+
+.box-success {
+    background-color:#cfc;
+    background-image:url(../images/success.png);
+    border:1px solid #afa;
+}
+
+.box-warning {
+    background-color:#ffc;
+    background-image:url(../images/warning.png);
+    border:1px solid #ffa;
+}
+
+.box-error {
+    background-color:#fcc;
+    background-image:url(../images/error.png);
+    border:1px solid #faa;
+}
+
+/* form */
+.contentform input, .contentform select, .contentform textarea, .contentform  {
+    margin: 0;
+}
+.contentform input:not([type=radio]):not([type=checkbox]), .contentform select {
+    padding:1px;
+}
+.contentform input:not([type=radio]):not([type=checkbox]),
+.contentform select, .contentform textarea, .contentform .controlset {
+    display: inline-block;
+}
+.contentform .controlset {
+    line-height: 22px;
+}
+
+.contentform .controlset label {
+    margin-left: 3px;
+}
+
+.contentform .controlset input {
+    display:inline !important;
+    float:none !important;
+    vertical-align: middle;
+}
+
+.contentform .error input,
+.contentform .error textarea,
+.contentform .error select {
+    border-color:#c00 !important;
+}
+
+.contentform .error .controlset {
+    color:#C00;
+}
+
+.contentform .field {
+    margin:0 0 .8em;
+    position:relative;
+}
+
+.contentform .field > label {
+    display:block;
+    float:left;
+    line-height:22px;
+    font-weight:bold;
+    margin-right:10px;
+    text-align:right;
+    width:150px;
+}
+
+.contentform label em.required {
+    color:#C00;
+    font-style:normal;
+}
+
+.contentform .description {
+    color:#999;
+    display:block;
+    font-size:.9em;
+    margin-left:160px;
+    margin-top:.25em;
+}
+
+.contentform .error-text {
+    display:block;
+    color:#C00;
+    display:none;
+    font-size:.9em;
+    margin-left:166px;
+    margin-top:.25em;
+}
+
+.contentform .buttons-container {
+    margin-top:8px;
+    margin-left:158px;
+}
+
+/* footer */
+.footer {
+    background: #0094D6 url(../images/bgfooter.gif) repeat-x;
+    font-size: 1.1em;
+    padding: 14px 4% 12px;
+}
+.footer a {
+    color: #FFF;
+    text-decoration: none;
+}
+.footer, .footer .right a {color: #C1DEF0;}
+.footer a:hover, .footer .right a:hover {
+    color: #FFF;
+    text-decoration: underline;
+}
