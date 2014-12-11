@@ -130,7 +130,7 @@ class UserGroup extends AbstractEntity
      */
     protected static function getTable()
     {
-        return '@PREFIX@usergroups';
+        return 'usergroups';
     }
 
     /**

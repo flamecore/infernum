@@ -86,6 +86,7 @@ class SiteSettings extends AbstractConfiguration
                             ->cannotBeEmpty()
                         ->end()
                         ->scalarNode('prefix')->defaultValue('')->end()
+                        ->scalarNode('charset')->defaultValue('utf8')->end()
                     ->end()
                 ->end()
                 ->arrayNode('session')

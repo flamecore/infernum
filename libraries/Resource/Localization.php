@@ -117,7 +117,7 @@ class Localization extends AbstractResource
      */
     protected static function getTable()
     {
-        return '@PREFIX@locales';
+        return 'locales';
     }
 
     /**

@@ -42,32 +42,39 @@ class Connection
      * @param string $user The username for authenticating at the database server (Default: 'root')
      * @param string $password The password for authenticating at the database server (Default: empty)
      * @param string $database The name of the database
-     * @param string $prefix The prefix of the database tables (Default: empty)
+     * @param array $options An array of options (prefix, charset)
      * @return \FlameCore\Infernum\Database\DriverInterface Returns the Driver object.
      */
-    public static function create($driver, $host = 'localhost', $user = 'root', $password = '', $database, $prefix = '')
+    public static function create($driver, $host = 'localhost', $user = 'root', $password = '', $database, array $options = [])
     {
         $driverClass = self::getDriverClass($driver);
 
         if (!class_exists($driverClass))
-            throw new \DomainException(sprintf('Database driver class "%s" is not available', $driverClass));
+            throw new \DomainException(sprintf('Database driver class "%s" is not available.', $driverClass));
 
         if (!is_string($database) || empty($database))
-            throw new \InvalidArgumentException('Database name is invalid');
+            throw new \InvalidArgumentException('Database name is invalid.');
 
-        return new $driverClass($host, $user, $password, $database, $prefix);
+        $driver = new $driverClass($host, $user, $password, $database);
+
+        if (isset($options['prefix']))
+            $driver->setPrefix($options['prefix']);
+
+        if (isset($options['charset']))
+            $driver->setCharset($options['charset']);
+
+        return $driver;
     }
 
     /**
      * Opens a new database connection using the given DSN.
      *
-     * @param string $dsn The Data Source Name (driver://user:password@host/database?prefix=prefix)
+     * @param string $dsn The Data Source Name (driver://user:password@host/database[?option=value&...])
      * @return \FlameCore\Infernum\Database\DriverInterface Returns the Driver object.
      */
     public static function createFromDsn($dsn)
     {
         $params = parse_url($dsn);
-        parse_str($params['query'], $options);
 
         $driver = isset($params['scheme']) ? $params['scheme'] : false;
         $host = isset($params['host']) ? $params['host'] : null;
@@ -75,9 +82,9 @@ class Connection
         $password = isset($params['pass']) ? $params['pass'] : null;
         $database = isset($params['path']) ? trim($params['path'], '/') : false;
 
-        $prefix = isset($options['prefix']) ? $options['prefix'] : '';
+        parse_str($params['query'], $options);
 
-        return self::create($driver, $host, $user, $password, $database, $prefix);
+        return self::create($driver, $host, $user, $password, $database, $options);
     }
 
     /**
@@ -88,13 +95,15 @@ class Connection
      */
     private static function getDriverClass($driver)
     {
-        if (!is_string($driver) || empty($driver))
-            throw new \InvalidArgumentException('Database driver name is invalid');
+        $driver = (string) $driver;
+
+        if ($driver === '')
+            throw new \InvalidArgumentException('Database driver name is invalid.');
 
         $driver = strtolower($driver);
 
         if (!isset(self::$drivers[$driver]))
-            throw new \DomainException(sprintf('Database driver "%s" is not supported', $driver));
+            throw new \DomainException(sprintf('Database driver "%s" is not supported.', $driver));
 
         return sprintf('%1$s\%2$s\%2$sDriver', __NAMESPACE__, self::$drivers[$driver]);
     }

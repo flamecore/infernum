@@ -33,6 +33,23 @@ use FlameCore\Infernum\Database\AbstractResult;
 class MySQLResult extends AbstractResult
 {
     /**
+     * The result object returned by the corresponding query
+     *
+     * @var \mysqli_result
+     */
+    protected $result;
+
+    /**
+     * Constructor
+     *
+     * @param \mysqli_result $result The result object returned by the corresponding query
+     */
+    public function __construct(\mysqli_result $result)
+    {
+        $this->result = $result;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function fetch($numeric = false)
@@ -99,14 +116,6 @@ class MySQLResult extends AbstractResult
     public function numRows()
     {
         return mysqli_num_rows($this->result);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasRows()
-    {
-        return $this->numRows() > 0;
     }
 
     /**

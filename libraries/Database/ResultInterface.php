@@ -41,7 +41,7 @@ interface ResultInterface
     public function fetch($numeric = false);
 
     /**
-     * Fetches the value of a single cell in a result row
+     * Fetches the value of a single cell in a result row.
      *
      * @param mixed $index The index (int or string) of the cell to fetch (Default: 0)
      * @return mixed Returns the value of the cell or NULL on failure
@@ -49,7 +49,7 @@ interface ResultInterface
     public function fetchCell($index = 0);
 
     /**
-     * Fetches the values of each cell in a single column of the result set
+     * Fetches the values of each cell in a single column of the result set.
      *
      * @param int $index The index (int or string) of the cell to fetch (Default: 0)
      * @return array Returns the values of each cell as an array
@@ -57,7 +57,7 @@ interface ResultInterface
     public function fetchColumn($index = 0);
 
     /**
-     * Fetches all result rows as an associative array or a numeric array
+     * Fetches all result rows as an associative array or a numeric array.
      *
      * @param bool $numeric Set to TRUE to return an enumerated array (Default: FALSE)
      * @return array Returns an array of associative or numeric arrays holding result rows
@@ -65,28 +65,28 @@ interface ResultInterface
     public function fetchAll($numeric = false);
 
     /**
-     * Gets the number of rows in a result
+     * Gets the number of rows in a result.
      *
      * @return int
      */
     public function numRows();
 
     /**
-     * Checks if the result has any rows
+     * Checks if the result has any rows.
      *
      * @return bool
      */
     public function hasRows();
 
     /**
-     * Gets the number of fields in a result
+     * Gets the number of fields in a result.
      *
      * @return int
      */
     public function numFields();
 
     /**
-     * Frees the memory associated with the result
+     * Frees the memory associated with the result.
      *
      * @return void
      */

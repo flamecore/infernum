@@ -63,14 +63,7 @@ abstract class AbstractDriver implements DriverInterface
      *
      * @var string
      */
-    protected $prefix;
-
-    /**
-     * The link identifier of the connection
-     *
-     * @var mysqli
-     */
-    protected $link;
+    protected $prefix = '';
 
     /**
      * The number of executed queries
@@ -89,27 +82,39 @@ abstract class AbstractDriver implements DriverInterface
     /**
      * Constructor
      *
-     * @param string $host The database server host, mostly 'localhost'
+     * @param string $host The database server host
      * @param string $user The username for authenticating at the database server
      * @param string $password The password for authenticating at the database server
      * @param string $database The name of the database
-     * @param string $prefix The prefix of the database tables
      */
-    public function __construct($host = 'localhost', $user = 'root', $password = '', $database, $prefix)
+    public function __construct($host, $user, $password, $database)
     {
-        $this->host = $host;
-        $this->user = $user;
-        $this->password = $password;
-        $this->database = $database;
-        $this->prefix = $prefix;
+        $this->host = (string) $host;
+        $this->user = (string) $user;
+        $this->password = (string) $password;
+        $this->database = (string) $database;
 
         $this->connect();
     }
 
     /**
-     * Gets the number of already executed SQL operations
-     *
-     * @return int Returns the number of already executed SQL operations
+     * {@inheritdoc}
+     */
+    public function getPrefix()
+    {
+        return $this->prefix;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPrefix($prefix)
+    {
+        $this->prefix = (string) $prefix;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getQueryCount()
     {
@@ -117,49 +122,50 @@ abstract class AbstractDriver implements DriverInterface
     }
 
     /**
-     * Prepares a PHP value for use in a SQL statement
+     * Encodes a PHP value for use in a SQL statement.
      *
-     * @param mixed $value The value to prepare
+     * @param mixed $value The value to encode
      * @return string
      */
-    protected function prepareValue($value)
+    protected function encode($value)
     {
         if (is_numeric($value)) {
             return $value;
         } elseif (is_bool($value)) {
             return (int) $value;
         } elseif (is_string($value)) {
-            return '"'.$this->quote($value).'"';
+            return "'".$this->escape($value)."'";
         } elseif (is_array($value)) {
-            return '"'.$this->quote(implode(',', $value)).'"';
+            return "'".$this->escape(implode(',', $value))."'";
         } elseif (is_object($value)) {
-            return (string) $value;
+            return "'".$this->escape((string) $value)."'";
         } else {
             return 'NULL';
         }
     }
 
     /**
-     * Prepares a SQL statement. Replaces `@HOST@`, `@USER@`, `@DATABASE@`, `@PREFIX@` and `{variables}`, if neccessary.
+     * Prepares a SQL statement. Replaces `<HOST>`, `<USER>`, `<DATABASE>`, `<PREFIX>` and `{variables}`, if neccessary.
      *
-     * @param string $query The SQL query to prepare
+     * @param string $statement The SQL statement to prepare
      * @param array $vars An array of values replacing the variables. Only neccessary if you're using variables.
      * @return string
      */
-    protected function prepareQuery($query, $vars = null)
+    protected function prepare($statement, $vars = null)
     {
-        $query = str_replace('@HOST@', $this->host, $query);
-        $query = str_replace('@USER@', $this->user, $query);
-        $query = str_replace('@DATABASE@', $this->database, $query);
-        $query = str_replace('@PREFIX@', $this->prefix, $query);
+        $replace = array(
+            '<HOST>' => $this->host,
+            '<USER>' => $this->user,
+            '<DATABASE>' => $this->database,
+            '<PREFIX>' => $this->prefix
+        );
 
         if (is_array($vars)) {
             foreach ($vars as $key => $value) {
-                $value = $this->prepareValue($value);
-                $query = str_replace('{'.$key.'}', $value, $query);
+                $replace['{'.$key.'}'] = $this->encode($value);
             }
         }
 
-        return $query;
+        return strtr($statement, $replace);
     }
 }

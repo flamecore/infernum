@@ -229,7 +229,7 @@ class User extends AbstractEntity
      */
     protected static function getTable()
     {
-        return '@PREFIX@users';
+        return 'users';
     }
 
     /**

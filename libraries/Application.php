@@ -79,9 +79,9 @@ final class Application implements \ArrayAccess
         $user = $this['settings']['database']['user'];
         $password = $this['settings']['database']['password'];
         $database = $this['settings']['database']['database'];
-        $prefix = $this['settings']['database']['prefix'];
+        $options = $this['settings']['database'];
 
-        $this['db'] = Database\Connection::create($driver, $host, $user, $password, $database, $prefix);
+        $this['db'] = Database\Connection::create($driver, $host, $user, $password, $database, $options);
 
         // Set default timezone
         date_default_timezone_set($this['settings']['site']['timezone']);

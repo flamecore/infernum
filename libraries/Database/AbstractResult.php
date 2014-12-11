@@ -31,19 +31,10 @@ namespace FlameCore\Infernum\Database;
 abstract class AbstractResult implements ResultInterface
 {
     /**
-     * The result object returned by the corresponding query
-     *
-     * @var object
+     * {@inheritdoc}
      */
-    protected $result;
-
-    /**
-     * Constructor
-     *
-     * @param object $result The result object returned by the corresponding query
-     */
-    public function __construct($result)
+    public function hasRows()
     {
-        $this->result = $result;
+        return $this->numRows() > 0;
     }
 }

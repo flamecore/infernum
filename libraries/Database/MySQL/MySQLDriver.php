@@ -33,6 +33,13 @@ use FlameCore\Infernum\Database\AbstractDriver;
 class MySQLDriver extends AbstractDriver
 {
     /**
+     * The link identifier of the connection
+     *
+     * @var mysqli
+     */
+    protected $link;
+
+    /**
      * {@inheritdoc}
      */
     public function connect()
@@ -40,7 +47,7 @@ class MySQLDriver extends AbstractDriver
         $this->link = @mysqli_connect($this->host, $this->user, $this->password, $this->database);
 
         if (mysqli_connect_errno())
-            throw new \UnexpectedValueException(sprintf('Failed connecting to the database: %s', mysqli_connect_error()));
+            throw new \RuntimeException(sprintf('Failed connecting to the database: %s', mysqli_connect_error()));
     }
 
     /**
@@ -56,19 +63,19 @@ class MySQLDriver extends AbstractDriver
      */
     public function query($query, $vars = null)
     {
-        $query = $this->prepareQuery($query, $vars);
+        $query = $this->prepare($query, $vars);
 
         $result = @mysqli_query($this->link, $query);
         if ($result) {
             $this->queryCount++;
 
-            if ($result instanceof \MySQLi_Result)
+            if ($result instanceof \mysqli_result)
                 return new MySQLResult($result);
 
             return true;
         }
 
-        throw new \UnexpectedValueException(sprintf('Database query failed: %s', $this->getError()));
+        throw new \RuntimeException(sprintf('Database query failed: %s', $this->getError()));
     }
 
     /**
@@ -77,9 +84,9 @@ class MySQLDriver extends AbstractDriver
     public function select($table, $columns = '*', $params = array())
     {
         if (is_array($columns))
-            $columns = '`' . join('`, `', $columns) . '`';
+            $columns = '`'.implode('`, `', $columns).'`';
 
-        $sql = 'SELECT '.$columns.' FROM `'.$table.'`';
+        $sql = 'SELECT '.$columns.' FROM `<PREFIX>'.$table.'`';
 
         if (isset($params['where']))
             $sql .= ' WHERE '.$params['where'];
@@ -103,10 +110,10 @@ class MySQLDriver extends AbstractDriver
 
         foreach ($data as $column => $value) {
             $columns[] = '`'.$column.'`';
-            $values[]  = $this->prepareValue($value);
+            $values[]  = $this->encode($value);
         }
 
-        $sql = 'INSERT INTO `'.$table.'` ('.implode(', ', $columns).') VALUES('.implode(', ', $values).')';
+        $sql = 'INSERT INTO `<PREFIX>'.$table.'` ('.implode(', ', $columns).') VALUES('.implode(', ', $values).')';
         return $this->query($sql);
     }
 
@@ -118,11 +125,11 @@ class MySQLDriver extends AbstractDriver
         $dataset = array();
 
         foreach ($data as $key => $value) {
-            $value = $this->prepareValue($value);
+            $value = $this->encode($value);
             $dataset[] = '`'.$key.'` = '.$value;
         }
 
-        $sql = 'UPDATE `'.$table.'` SET '.implode(', ', $dataset);
+        $sql = 'UPDATE `<PREFIX>'.$table.'` SET '.implode(', ', $dataset);
 
         if (isset($params['where']))
             $sql .= ' WHERE '.$params['where'];
@@ -135,21 +142,38 @@ class MySQLDriver extends AbstractDriver
     /**
      * {@inheritdoc}
      */
-    public function importDump($file, $vars = null)
+    public function batch($statements)
     {
-        $dumpContent = file_get_contents($file);
-        $queries = preg_split('/;\s*$/', $dumpContent);
+        if (is_array($statements))
+            $statements = implode(';', $statements);
 
-        $this->beginTransaction();
+        $statements = $this->prepare($statements);
 
-        foreach ($queries as $query) {
-            $query = trim($query);
-            if ($query == '' || substr($query, 0, 2) == '--')
-                continue;
-            $this->query($query, $vars);
+        if (mysqli_multi_query($this->link, $statements)) {
+            $i = 1;
+            do {
+                $i++;
+            } while (mysqli_next_result($this->link));
         }
 
-        $this->endTransaction();
+        if (mysqli_errno($this->link))
+            throw new \RuntimeException(sprintf('Batch execution prematurely ended at statement %d: %s', $i, mysqli_error($this->link)));
+
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function import($file)
+    {
+        if (!is_file($file) || !is_readable($file))
+            throw new \LogicException(sprintf('File "%s" does not exist or is not readable.', $file));
+
+        $sql = trim(file_get_contents($file));
+        $sql = preg_replace('@(([\'"`]).*?[^\\\]\2)|((?:\#|--).*?$|/\*(?:[^/*]|/(?!\*)|\*(?!/)|(?R))*\*\/)\s*|(?<=;)\s+@ms', '$1', $sql);
+
+        return $this->batch($sql);
     }
 
     /**
@@ -213,9 +237,17 @@ class MySQLDriver extends AbstractDriver
     /**
      * {@inheritdoc}
      */
-    public function quote($string)
+    public function getCharset()
     {
-        return mysqli_real_escape_string($this->link, $string);
+        return mysqli_character_set_name($this->link);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCharset($charset)
+    {
+        return mysqli_set_charset($this->link, (string) $charset);
     }
 
     /**
@@ -224,5 +256,16 @@ class MySQLDriver extends AbstractDriver
     public function getError()
     {
         return mysqli_error($this->link);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function escape($string)
+    {
+        $string = mysqli_real_escape_string($this->link, $string);
+        $string = addcslashes($string, '%_');
+
+        return $string;
     }
 }
