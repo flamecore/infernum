@@ -220,7 +220,7 @@ final class Application implements \ArrayAccess
      * @return mixed
      * @api
      */
-    public function cache($name, $callback, $lifetime = null)
+    public function cache($name, callable $callback, $lifetime = null)
     {
         if (!is_callable($callback))
             throw new \InvalidArgumentException(sprintf('Invalid callback given for cache file "%s".', $name));

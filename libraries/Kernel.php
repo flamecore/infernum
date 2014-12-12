@@ -339,7 +339,7 @@ final class Kernel implements \ArrayAccess
      * @return mixed
      * @api
      */
-    public function cache($name, $callback, $lifetime = 86400)
+    public function cache($name, callable $callback, $lifetime = 86400)
     {
         if (!is_callable($callback))
             throw new \InvalidArgumentException(sprintf('Invalid callback given for cache file "%s".', $name));
