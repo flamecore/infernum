@@ -171,7 +171,6 @@ final class Kernel implements \ArrayAccess
 
             foreach ($this->loadedPlugins as $plugin) {
                 $this->runningExtension = $plugin;
-
                 $plugin->run($app);
             }
 
@@ -179,6 +178,13 @@ final class Kernel implements \ArrayAccess
 
             $response = $module->run($app, $request, $action, $arguments);
         } catch (RouteNotFoundException $e) {
+            foreach ($this->loadedPlugins as $plugin) {
+                $this->runningExtension = $plugin;
+                $plugin->run($app);
+            }
+
+            $this->runningExtension = false;
+
             $response = new Response(new View('@global/404_body', $app), 404);
         }
 
