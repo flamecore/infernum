@@ -23,7 +23,7 @@
 
 namespace FlameCore\Infernum;
 
-use FlameCore\Infernum\Exception\RouteNotFoundException;
+use FlameCore\Infernum\Exceptions\RouteNotFoundException;
 
 /**
  * The Router class

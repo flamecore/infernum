@@ -24,7 +24,7 @@
 namespace FlameCore\Infernum\Template\Twig;
 
 use FlameCore\Infernum\Template\TemplateLocator;
-use FlameCore\Infernum\Template\Exception\NotFoundError;
+use FlameCore\Infernum\Template\NotFoundException;
 use Twig_LoaderInterface;
 use Twig_ExistsLoaderInterface;
 
@@ -62,7 +62,7 @@ class TwigLoader implements Twig_LoaderInterface, Twig_ExistsLoaderInterface
         try {
             $this->locator->locate($template);
             return true;
-        } catch (NotFoundError $e) {
+        } catch (NotFoundException $e) {
             return false;
         }
     }

@@ -21,13 +21,13 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Infernum\Template\Exception;
+namespace FlameCore\Infernum\Exceptions;
 
 /**
- * This exception is thrown if a bad template name is given
+ * This exception is thrown if a route is not found
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class BadNameError extends \Exception
+class RouteNotFoundException extends \Exception
 {
 }

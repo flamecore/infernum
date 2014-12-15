@@ -21,13 +21,13 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Infernum\Template\Exception;
+namespace FlameCore\Infernum\Template;
 
 /**
- * This exception is thrown if a template is not found
+ * This exception is thrown if a bad template name is given
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class NotFoundError extends \Exception
+class BadNameException extends \Exception
 {
 }

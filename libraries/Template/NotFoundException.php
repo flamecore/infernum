@@ -21,13 +21,13 @@
  * @license  ISC License <http://opensource.org/licenses/ISC>
  */
 
-namespace FlameCore\Infernum\Exception;
+namespace FlameCore\Infernum\Template;
 
 /**
- * This exception is thrown if a route is not found
+ * This exception is thrown if a template is not found
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class RouteNotFoundException extends \Exception
+class NotFoundException extends \Exception
 {
 }

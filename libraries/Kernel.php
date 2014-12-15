@@ -24,7 +24,7 @@
 namespace FlameCore\Infernum;
 
 use FlameCore\Infernum\Configuration\SystemConfiguration;
-use FlameCore\Infernum\Exception\RouteNotFoundException;
+use FlameCore\Infernum\Exceptions\RouteNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

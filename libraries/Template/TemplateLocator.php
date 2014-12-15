@@ -24,8 +24,8 @@
 namespace FlameCore\Infernum\Template;
 
 use FlameCore\Infernum\Application;
-use FlameCore\Infernum\Template\Exception\BadNameError;
-use FlameCore\Infernum\Template\Exception\NotFoundError;
+use FlameCore\Infernum\Template\BadNameException;
+use FlameCore\Infernum\Template\NotFoundException;
 
 /**
  * Locator for template engines
@@ -93,14 +93,15 @@ class TemplateLocator
      *
      * @param string $template The name of the template
      * @return string
-     * @throws Exception_Template_NotFoundError, Exception_Template_BadNameError
+     * @throws \FlameCore\Infernum\Template\NotFoundException
+     * @throws \FlameCore\Infernum\Template\BadNameException
      */
     public function locate($template)
     {
         $template = preg_replace('#/{2,}#', '/', strtr((string) $template, '\\', '/'));
 
         if (strpos($template, "\0") !== false)
-            throw new BadNameError('A template name cannot contain NUL bytes.');
+            throw new BadNameException('A template name cannot contain NUL bytes.');
 
         $template = ltrim($template, '/');
         $parts = explode('/', $template);
@@ -113,17 +114,17 @@ class TemplateLocator
             }
 
             if ($level < 0)
-                throw new BadNameError(sprintf('Looks like you try to load a template outside configured directories. (%s)', $template));
+                throw new BadNameException(sprintf('Looks like you try to load a template outside configured directories. (%s)', $template));
         }
 
         if ($template[0] == '@') {
             if (false === $pos = strpos($template, '/'))
-                throw new BadNameError(sprintf('Malformed namespaced template name "%s". (expecting "@namespace/template_name")', $template));
+                throw new BadNameException(sprintf('Malformed namespaced template name "%s". (expecting "@namespace/template_name")', $template));
 
             $namespace = substr($template, 1, $pos - 1);
 
             if (!$this->isNamespaceDefined($namespace))
-                throw new BadNameError(sprintf('Cannot find template "%s": The template namespace "%s" is not defined.', $template, $namespace));
+                throw new BadNameException(sprintf('Cannot find template "%s": The template namespace "%s" is not defined.', $template, $namespace));
 
             $name = substr($template, $pos + 1);
             $path = $this->getNamespace($namespace);
@@ -133,13 +134,13 @@ class TemplateLocator
             $localPath = $this->getLocalPath();
 
             if (!$localPath)
-                throw new BadNameError(sprintf('Cannot find template "%s": There is no local template path defined.', $template));
+                throw new BadNameException(sprintf('Cannot find template "%s": There is no local template path defined.', $template));
 
             $filename = "$localPath/$template.twig";
         }
 
         if (!file_exists($filename))
-            throw new NotFoundError(sprintf('Unable to find template "%s". (looked into: %s)', $template, $path));
+            throw new NotFoundException(sprintf('Unable to find template "%s". (looked into: %s)', $template, $path));
 
         return $filename;
     }
