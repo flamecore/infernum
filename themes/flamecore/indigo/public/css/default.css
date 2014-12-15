@@ -109,7 +109,7 @@ h1,h2,h3 {
     padding: 0 16px;
 }
 .navigation a {
-    color: #FFF;
+    color: #CCC;
     float: left;
     font: bold 1.2em "Trebuchet MS", sans-serif;
     margin-top: 54px;
@@ -118,8 +118,11 @@ h1,h2,h3 {
     text-decoration: none;
 }
 .navigation a:hover {
-    background-color: #4A91C3;
     color: #FFF;
+}
+.navigation a.selected {
+    color: #FFF;
+    background-color: #4A91C3;
 }
 
 /* main */
@@ -160,7 +163,7 @@ h1,h2,h3 {
 }
 .sidebar li a:hover {
     color: #111;
-    background: url(../images/nav_li.gif) no-repeat;
+    background: center left url(../images/nav_li.gif) no-repeat;
 }
 
 /* content */

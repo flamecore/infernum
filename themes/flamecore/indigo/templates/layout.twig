@@ -28,7 +28,9 @@
                 </div>
 
                 <div class="navigation">
-                    <a href="{{ u() }}">Home</a>
+{% for item in menus.main.items %}
+                    <a href="{{ item.url }}"{% if item.selected %} class="selected"{% endif %}>{{ item.title }}</a>
+{% endfor %}
                     <div class="clearer"><span></span></div>
                 </div>
 
@@ -44,7 +46,16 @@
 
                 <div class="sidebar">
 
-{% block sidebar %}{% endblock %}
+{% block sidebar %}
+    {% if menus.sidebar %}
+                    <h1>{{ menus.sidebar.title }}</h1>
+                    <ul>
+        {% for item in menus.sidebar.items %}
+                        <li><a href="{{ item.url }}"{% if item.selected %} class="selected"{% endif %}>{{ item.title }}</a></li>
+        {% endfor %}
+                    </ul>
+    {% endif %}
+{% endblock %}
 
                 </div>
 

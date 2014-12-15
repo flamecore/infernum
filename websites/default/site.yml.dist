@@ -1,2 +1,5 @@
 routes:
     - { module: acme/my-module, alias: foo }
+
+plugins:
+    - flamecore/menu

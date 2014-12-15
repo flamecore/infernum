@@ -1,0 +1,6 @@
+title: Menu
+description: Generates hierarchical navigation menus
+author: IceFlame.net
+website: http://www.flamecore.org
+
+namespace: FlameCore\InfernumMenuPlugin

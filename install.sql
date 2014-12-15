@@ -62,3 +62,23 @@ CREATE TABLE IF NOT EXISTS `infernum_translations` (
   PRIMARY KEY (`id`),
   KEY `pack` (`language`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=2;
+
+CREATE TABLE IF NOT EXISTS `infernum_menu_links` (
+  `id` int(4) NOT NULL AUTO_INCREMENT,
+  `menutype` int(2) NOT NULL,
+  `url` varchar(255) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `selected_on` varchar(255) NOT NULL,
+  `parent` int(4) NOT NULL,
+  `sort_order` int(2) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS `infernum_menu_types` (
+  `id` int(2) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
