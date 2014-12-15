@@ -67,7 +67,11 @@ final class Application implements \ArrayAccess
         $this['logger'] = new Logger('site-'.$site->getName(), $kernel);
 
         // At first we have to load the settings
-        $this['settings'] = $kernel->cache($site->getName().'/settings', [$site, 'loadSettings']);
+        if ($this->isCacheEnabled()) {
+            $this['settings'] = $kernel->cache($site->getName().'/settings', [$site, 'loadSettings']);
+        } else {
+            $this['settings'] = $site->loadSettings();
+        }
 
         // Set web URL
         $url = strtr($this['settings']['web']['url'], ['%domain%' => $kernel['domain']]);
