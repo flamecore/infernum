@@ -61,19 +61,32 @@ class Cache
         if (!$this->validateName($name))
             throw new \InvalidArgumentException(sprintf('Given cache name "%s" is invalid.', $name));
 
+        $rawdata = '';
+        $expire = 0;
         $filename = $this->getFilename($name);
 
-        // Check if the file exists
-        if (file_exists($filename)) {
-            $filecontent = file_get_contents($filename);
-            list($expire, $rawdata) = explode("\n", $filecontent, 2);
-
-            // Check if the file is fresh
-            if ($expire == 0 || $expire > time())
-                return unserialize($rawdata);
+        if (!is_file($filename)) {
+            return false;
         }
 
-        return null;
+        $resource = fopen($filename, "r");
+
+        if (($line = fgets($resource)) !== false) {
+            $expire = (int) $line;
+        }
+
+        if ($expire != 0 && $expire < time()) {
+            fclose($resource);
+            return false;
+        }
+
+        while (($line = fgets($resource)) !== false) {
+            $rawdata .= $line;
+        }
+
+        fclose($resource);
+
+        return unserialize($rawdata);
     }
 
     /**
@@ -89,17 +102,31 @@ class Cache
         if (!$this->validateName($name))
             throw new \InvalidArgumentException(sprintf('Given cache name "%s" is invalid.', $name));
 
+        $rawdata = serialize($data);
+        $expire = time() + (int) $lifetime;
         $filename = $this->getFilename($name);
 
         if (strpos($name, '/') !== false) {
             $directory = dirname($filename);
 
-            if (!is_dir($directory))
-                mkdir($directory, 0777, true);
+            if (!is_dir($directory)) {
+                if (false === @mkdir($directory, 0777, true) && !is_dir($directory)) {
+                    return false;
+                }
+            } elseif (!is_writable($directory)) {
+                return false;
+            }
         }
 
-        $filecontent = (time() + (int) $lifetime)."\n".serialize($data);
-        return file_put_contents($filename, $filecontent);
+        $tmpfile = tempnam($directory, $name);
+
+        if ((file_put_contents($tmpfile, $expire.PHP_EOL.$rawdata) !== false) && @rename($tmpfile, $filename)) {
+            @chmod($filename, 0666 & ~umask());
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -110,7 +137,22 @@ class Cache
      */
     public function contains($name)
     {
-        return file_exists($this->getFilename($name));
+        $expire = 0;
+        $filename = $this->getFilename($name);
+
+        if (!is_file($filename)) {
+            return false;
+        }
+
+        $resource = fopen($filename, "r");
+
+        if (($line = fgets($resource)) !== false) {
+            $expire = (int) $line;
+        }
+
+        fclose($resource);
+
+        return $expire == 0 || $expire >= time();
     }
 
     /**
@@ -121,7 +163,7 @@ class Cache
      */
     public function delete($name)
     {
-        return unlink($this->getFilename($name));
+        return @unlink($this->getFilename($name));
     }
 
     /**
@@ -134,6 +176,7 @@ class Cache
         $iterator = new RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->path, \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
         foreach ($iterator as $filename => $file) {
             if ($file->isDir()) {
+                $this->clear($filename);
                 rmdir($filename);
             } else {
                 unlink($filename);
