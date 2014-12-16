@@ -202,10 +202,10 @@ interface DriverInterface
     public function getError();
 
     /**
-     * Escapes special characters in a string for use in an SQL statement, taking into account the current charset of the connection.
+     * Quotes a string for use in a SQL statement, taking into account the current charset of the connection.
      *
      * @param string $string The string to be escaped
      * @return string Returns the escaped string.
      */
-    public function escape($string);
+    public function quote($string);
 }

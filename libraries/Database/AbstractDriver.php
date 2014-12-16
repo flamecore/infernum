@@ -134,11 +134,11 @@ abstract class AbstractDriver implements DriverInterface
         } elseif (is_bool($value)) {
             return (int) $value;
         } elseif (is_string($value)) {
-            return "'".$this->escape($value)."'";
+            return $this->quote($value);
         } elseif (is_array($value)) {
-            return "'".$this->escape(implode(',', $value))."'";
+            return $this->quote(implode(',', $value));
         } elseif (is_object($value)) {
-            return "'".$this->escape((string) $value)."'";
+            return $this->quote((string) $value);
         } else {
             return 'NULL';
         }

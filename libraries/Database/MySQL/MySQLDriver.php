@@ -261,11 +261,11 @@ class MySQLDriver extends AbstractDriver
     /**
      * {@inheritdoc}
      */
-    public function escape($string)
+    public function quote($string)
     {
         $string = mysqli_real_escape_string($this->link, $string);
         $string = addcslashes($string, '%_');
 
-        return $string;
+        return "'$string'";
     }
 }
