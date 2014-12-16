@@ -68,6 +68,8 @@ class View
     {
         $template = new Template($template, $app);
 
+        $template->set('SITE_URL', $app['url']);
+        $template->set('SITE_TITLE', $app->setting('site.title'));
         $template->set('PAGE_TITLE', self::getTitle());
         $template->set('METATAGS', self::getHeadTags('meta'));
         $template->set('LINKTAGS', self::getHeadTags('link'));

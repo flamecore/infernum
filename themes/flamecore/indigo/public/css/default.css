@@ -101,6 +101,10 @@ h1,h2,h3 {
     color: #FFF;
     font: bold 2em "Trebuchet MS", sans-serif;
 }
+.title a {
+    color: #fff;
+    text-decoration: none;
+}
 /* navigation */
 .navigation {
     float: left;
