@@ -35,7 +35,7 @@ class MySQLDriver extends AbstractDriver
     /**
      * The link identifier of the connection
      *
-     * @var mysqli
+     * @var \mysqli
      */
     protected $link;
 
@@ -46,8 +46,9 @@ class MySQLDriver extends AbstractDriver
     {
         $this->link = @mysqli_connect($this->host, $this->user, $this->password, $this->database);
 
-        if (mysqli_connect_errno())
+        if (mysqli_connect_errno()) {
             throw new \RuntimeException(sprintf('Failed connecting to the database: %s', mysqli_connect_error()));
+        }
     }
 
     /**
@@ -61,41 +62,62 @@ class MySQLDriver extends AbstractDriver
     /**
      * {@inheritdoc}
      */
-    public function query($query, $vars = null)
+    public function query($query, array $vars = null)
     {
-        $query = $this->prepare($query, $vars);
-
+        $query = $this->interpolate($query, $vars);
         $result = @mysqli_query($this->link, $query);
+
         if ($result) {
             $this->queryCount++;
 
-            if ($result instanceof \mysqli_result)
+            if ($result instanceof \mysqli_result) {
                 return new MySQLResult($result);
+            }
 
             return true;
         }
 
-        throw new \RuntimeException(sprintf('Database query failed: %s', $this->getError()));
+        throw new \RuntimeException(sprintf('Failed to execute database query: %s', mysqli_error($this->link)));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function select($table, $columns = '*', $params = array())
+    public function exec($sql, array $vars = null)
     {
-        if (is_array($columns))
+        $sql = $this->interpolate($sql, $vars);
+        $result = @mysqli_query($this->link, $sql);
+
+        if ($result) {
+            return mysqli_affected_rows($this->link);
+        }
+
+        throw new \RuntimeException(sprintf('Failed to execute database statement: %s', mysqli_error($this->link)));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function select($table, $columns = '*', array $params = [])
+    {
+        if (is_array($columns)) {
             $columns = '`'.implode('`, `', $columns).'`';
+        }
 
         $sql = 'SELECT '.$columns.' FROM `<PREFIX>'.$table.'`';
 
-        if (isset($params['where']))
+        if (isset($params['where'])) {
             $sql .= ' WHERE '.$params['where'];
-        if (isset($params['limit']))
+        }
+        if (isset($params['limit'])) {
             $sql .= ' LIMIT '.$params['limit'];
-        if (isset($params['group']))
+        }
+        if (isset($params['group'])) {
             $sql .= ' GROUP BY '.$params['group'];
-        if (isset($params['order']))
+        }
+        if (isset($params['order'])) {
             $sql .= ' ORDER BY '.$params['order'];
+        }
 
         return $this->query($sql, isset($params['vars']) ? $params['vars'] : null);
     }
@@ -103,7 +125,7 @@ class MySQLDriver extends AbstractDriver
     /**
      * {@inheritdoc}
      */
-    public function insert($table, $data)
+    public function insert($table, array $data)
     {
         $columns = array();
         $values = array();
@@ -114,13 +136,13 @@ class MySQLDriver extends AbstractDriver
         }
 
         $sql = 'INSERT INTO `<PREFIX>'.$table.'` ('.implode(', ', $columns).') VALUES('.implode(', ', $values).')';
-        return $this->query($sql);
+        return $this->exec($sql);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function update($table, $data, $params = array())
+    public function update($table, $data, array $params = [])
     {
         $dataset = array();
 
@@ -131,12 +153,14 @@ class MySQLDriver extends AbstractDriver
 
         $sql = 'UPDATE `<PREFIX>'.$table.'` SET '.implode(', ', $dataset);
 
-        if (isset($params['where']))
+        if (isset($params['where'])) {
             $sql .= ' WHERE '.$params['where'];
-        if (isset($params['limit']))
+        }
+        if (isset($params['limit'])) {
             $sql .= ' LIMIT '.$params['limit'];
+        }
 
-        return $this->query($sql, isset($params['vars']) ? $params['vars'] : null);
+        return $this->exec($sql, isset($params['vars']) ? $params['vars'] : null);
     }
 
     /**
@@ -144,10 +168,11 @@ class MySQLDriver extends AbstractDriver
      */
     public function batch($statements)
     {
-        if (is_array($statements))
+        if (is_array($statements)) {
             $statements = implode(';', $statements);
+        }
 
-        $statements = $this->prepare($statements);
+        $statements = $this->interpolate($statements);
 
         if (mysqli_multi_query($this->link, $statements)) {
             $i = 1;
@@ -156,8 +181,9 @@ class MySQLDriver extends AbstractDriver
             } while (mysqli_next_result($this->link));
         }
 
-        if (mysqli_errno($this->link))
+        if (mysqli_errno($this->link)) {
             throw new \RuntimeException(sprintf('Batch execution prematurely ended at statement %d: %s', $i, mysqli_error($this->link)));
+        }
 
         return true;
     }
@@ -167,21 +193,14 @@ class MySQLDriver extends AbstractDriver
      */
     public function import($file)
     {
-        if (!is_file($file) || !is_readable($file))
+        if (!is_file($file) || !is_readable($file)) {
             throw new \LogicException(sprintf('File "%s" does not exist or is not readable.', $file));
+        }
 
         $sql = trim(file_get_contents($file));
         $sql = preg_replace('@(([\'"`]).*?[^\\\]\2)|((?:\#|--).*?$|/\*(?:[^/*]|/(?!\*)|\*(?!/)|(?R))*\*\/)\s*|(?<=;)\s+@ms', '$1', $sql);
 
         return $this->batch($sql);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function affectedRows()
-    {
-        return mysqli_affected_rows($this->link);
     }
 
     /**
@@ -197,17 +216,12 @@ class MySQLDriver extends AbstractDriver
      */
     public function beginTransaction()
     {
-        mysqli_autocommit($this->link, false);
-        $this->inTransaction = true;
-    }
+        if (mysqli_begin_transaction($this->link)) {
+            $this->inTransaction = true;
+            return true;
+        }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function endTransaction()
-    {
-        mysqli_autocommit($this->link, true);
-        $this->inTransaction = false;
+        return false;
     }
 
     /**
@@ -215,11 +229,12 @@ class MySQLDriver extends AbstractDriver
      */
     public function commit()
     {
-        if ($this->inTransaction) {
-            return mysqli_commit($this->link);
-        } else {
-            return false;
+        if ($this->inTransaction && mysqli_commit($this->link)) {
+            $this->inTransaction = false;
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -229,9 +244,48 @@ class MySQLDriver extends AbstractDriver
     {
         if ($this->inTransaction) {
             return mysqli_rollback($this->link);
-        } else {
-            return false;
         }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function inTransaction()
+    {
+        return $this->inTransaction;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function quote($string)
+    {
+        $string = mysqli_real_escape_string($this->link, $string);
+        $string = addcslashes($string, '%_');
+
+        return "'$string'";
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getError()
+    {
+        return mysqli_errno($this->link);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getErrorInfo()
+    {
+        return array(
+            mysqli_sqlstate($this->link),
+            mysqli_errno($this->link),
+            mysqli_error($this->link)
+        );
     }
 
     /**
@@ -248,24 +302,5 @@ class MySQLDriver extends AbstractDriver
     public function setCharset($charset)
     {
         return mysqli_set_charset($this->link, (string) $charset);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getError()
-    {
-        return mysqli_error($this->link);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function quote($string)
-    {
-        $string = mysqli_real_escape_string($this->link, $string);
-        $string = addcslashes($string, '%_');
-
-        return "'$string'";
     }
 }

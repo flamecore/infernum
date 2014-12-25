@@ -67,7 +67,7 @@ class MySQLResult extends AbstractResult
         } elseif (is_string($index)) {
             $row = $this->fetch();
         } else {
-            throw new \InvalidArgumentException('The $index parameter must be either an integer or a string');
+            throw new \InvalidArgumentException('The $index parameter must be either an integer or a string.');
         }
 
         if (isset($row[$index])) {
@@ -87,7 +87,7 @@ class MySQLResult extends AbstractResult
         } elseif (is_string($index)) {
             $rows = $this->fetchAll();
         } else {
-            throw new \InvalidArgumentException('The $index parameter must be either an integer or a string');
+            throw new \InvalidArgumentException('The $index parameter must be either an integer or a string.');
         }
 
         return array_column($rows, $index);
@@ -98,16 +98,13 @@ class MySQLResult extends AbstractResult
      */
     public function fetchAll($numeric = false)
     {
-        if (function_exists('mysqli_fetch_all')) {
-            return mysqli_fetch_all($this->result, $numeric ? MYSQLI_NUM : MYSQLI_ASSOC);
-        } else {
-            $rows = array();
+        $rows = array();
 
-            while ($row = $this->fetch($numeric))
-                $rows[] = $row;
-
-            return $rows;
+        while ($row = $this->fetch($numeric)) {
+            $rows[] = $row;
         }
+
+        return $rows;
     }
 
     /**

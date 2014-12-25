@@ -24,11 +24,11 @@
 namespace FlameCore\Infernum\Database;
 
 /**
- * Class for managing a database connection
+ * Class for managing database connections
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Connection
+class Database
 {
     private static $drivers = array(
         'mysql' => 'MySQL'
@@ -45,23 +45,27 @@ class Connection
      * @param array $options An array of options (prefix, charset)
      * @return \FlameCore\Infernum\Database\DriverInterface Returns the Driver object.
      */
-    public static function create($driver, $host = 'localhost', $user = 'root', $password = '', $database, array $options = [])
+    public static function connect($driver, $host = 'localhost', $user = 'root', $password = '', $database, array $options = [])
     {
         $driverClass = self::getDriverClass($driver);
 
-        if (!class_exists($driverClass))
+        if (!class_exists($driverClass)) {
             throw new \DomainException(sprintf('Database driver class "%s" is not available.', $driverClass));
+        }
 
-        if (!is_string($database) || empty($database))
+        if (!is_string($database) || empty($database)) {
             throw new \InvalidArgumentException('Database name is invalid.');
+        }
 
         $driver = new $driverClass($host, $user, $password, $database);
 
-        if (isset($options['prefix']))
+        if (isset($options['prefix'])) {
             $driver->setPrefix($options['prefix']);
+        }
 
-        if (isset($options['charset']))
+        if (isset($options['charset'])) {
             $driver->setCharset($options['charset']);
+        }
 
         return $driver;
     }
@@ -72,7 +76,7 @@ class Connection
      * @param string $dsn The Data Source Name (driver://user:password@host/database[?option=value&...])
      * @return \FlameCore\Infernum\Database\DriverInterface Returns the Driver object.
      */
-    public static function createFromDsn($dsn)
+    public static function connectDsn($dsn)
     {
         $params = parse_url($dsn);
 
@@ -80,11 +84,11 @@ class Connection
         $host = isset($params['host']) ? $params['host'] : null;
         $user = isset($params['user']) ? $params['user'] : null;
         $password = isset($params['pass']) ? $params['pass'] : null;
-        $database = isset($params['path']) ? trim($params['path'], '/') : false;
+        $database = isset($params['path']) ? trim($params['path'], '/ ') : false;
 
         parse_str($params['query'], $options);
 
-        return self::create($driver, $host, $user, $password, $database, $options);
+        return self::connect($driver, $host, $user, $password, $database, $options);
     }
 
     /**

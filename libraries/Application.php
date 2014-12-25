@@ -23,6 +23,7 @@
 
 namespace FlameCore\Infernum;
 
+use FlameCore\Infernum\Database\Database;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
 
@@ -85,7 +86,7 @@ final class Application implements \ArrayAccess
         $database = $this['settings']['database']['database'];
         $options = $this['settings']['database'];
 
-        $this['db'] = Database\Connection::create($driver, $host, $user, $password, $database, $options);
+        $this['db'] = Database::connect($driver, $host, $user, $password, $database, $options);
 
         // Set default timezone
         date_default_timezone_set($this['settings']['site']['timezone']);

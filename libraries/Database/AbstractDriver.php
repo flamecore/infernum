@@ -100,6 +100,14 @@ abstract class AbstractDriver implements DriverInterface
     /**
      * {@inheritdoc}
      */
+    public function getQueryCount()
+    {
+        return $this->queryCount;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getPrefix()
     {
         return $this->prefix;
@@ -114,14 +122,6 @@ abstract class AbstractDriver implements DriverInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getQueryCount()
-    {
-        return $this->queryCount;
-    }
-
-    /**
      * Encodes a PHP value for use in a SQL statement.
      *
      * @param mixed $value The value to encode
@@ -129,29 +129,31 @@ abstract class AbstractDriver implements DriverInterface
      */
     protected function encode($value)
     {
-        if (is_numeric($value)) {
-            return $value;
+        if (is_string($value)) {
+            return $this->quote($value);
         } elseif (is_bool($value)) {
             return (int) $value;
-        } elseif (is_string($value)) {
-            return $this->quote($value);
+        } elseif (is_numeric($value)) {
+            return $value;
+        } elseif ($value instanceof DateTime) {
+            return "'".$value->format('Y-m-d H:i:s')."'";
+        } elseif (is_object($value) && method_exists($value, '__toString')) {
+            return $this->quote((string) $value);
         } elseif (is_array($value)) {
             return $this->quote(implode(',', $value));
-        } elseif (is_object($value)) {
-            return $this->quote((string) $value);
         } else {
-            return 'NULL';
+            throw new \InvalidArgumentException(sprintf('Cannot encode value of type %s.', gettype($value)));
         }
     }
 
     /**
-     * Prepares a SQL statement. Replaces `<HOST>`, `<USER>`, `<DATABASE>`, `<PREFIX>` and `{variables}`, if neccessary.
+     * Interpolates a SQL statement. Replaces `<HOST>`, `<USER>`, `<DATABASE>`, `<PREFIX>` and `{variables}`, if neccessary.
      *
-     * @param string $statement The SQL statement to prepare
-     * @param array $vars An array of values replacing the variables. Only neccessary if you're using variables.
+     * @param string $statement The SQL statement to interpolate
+     * @param array $vars An array of values replacing the variables. Only neccessary if using variables.
      * @return string
      */
-    protected function prepare($statement, $vars = null)
+    protected function interpolate($statement, array $vars = null)
     {
         $replace = array(
             '<HOST>' => $this->host,
