@@ -122,38 +122,12 @@ abstract class AbstractDriver implements DriverInterface
     }
 
     /**
-     * Encodes a PHP value for use in a SQL statement.
-     *
-     * @param mixed $value The value to encode
-     * @return string
-     */
-    protected function encode($value)
-    {
-        if (is_string($value)) {
-            return $this->quote($value);
-        } elseif (is_bool($value)) {
-            return (int) $value;
-        } elseif (is_numeric($value)) {
-            return $value;
-        } elseif ($value instanceof DateTime) {
-            return "'".$value->format('Y-m-d H:i:s')."'";
-        } elseif (is_object($value) && method_exists($value, '__toString')) {
-            return $this->quote((string) $value);
-        } elseif (is_array($value)) {
-            return $this->quote(implode(',', $value));
-        } else {
-            throw new \InvalidArgumentException(sprintf('Cannot encode value of type %s.', gettype($value)));
-        }
-    }
-
-    /**
-     * Interpolates a SQL statement. Replaces `<HOST>`, `<USER>`, `<DATABASE>`, `<PREFIX>` and `{variables}`, if neccessary.
+     * Interpolates a SQL statement. Replaces `<HOST>`, `<USER>`, `<DATABASE>`, `<PREFIX>` if necessary.
      *
      * @param string $statement The SQL statement to interpolate
-     * @param array $vars An array of values replacing the variables. Only neccessary if using variables.
      * @return string
      */
-    protected function interpolate($statement, array $vars = null)
+    protected function interpolate($statement)
     {
         $replace = array(
             '<HOST>' => $this->host,
@@ -161,12 +135,6 @@ abstract class AbstractDriver implements DriverInterface
             '<DATABASE>' => $this->database,
             '<PREFIX>' => $this->prefix
         );
-
-        if (is_array($vars)) {
-            foreach ($vars as $key => $value) {
-                $replace['{'.$key.'}'] = $this->encode($value);
-            }
-        }
 
         return strtr($statement, $replace);
     }

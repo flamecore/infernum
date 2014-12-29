@@ -61,7 +61,7 @@ abstract class AbstractResource
             throw new \DomainException(sprintf('Cannot select by "%s.%s" field as it is not defined.', $table, $selector));
 
         $result = $database->select($table, $columns, [
-            'where' => "`$selector` = {0}",
+            'where' => "`$selector` = ?",
             'vars' => [$identifier],
             'limit' => 1
         ]);
@@ -96,7 +96,7 @@ abstract class AbstractResource
             throw new \DomainException(sprintf('Cannot select by "%s.%s" field as it is not defined.', $table, $selector));
 
         $result = $database->select($table, 'id', [
-            'where' => "`$selector` = {0}",
+            'where' => "`$selector` = ?",
             'vars' => [$identifier],
             'limit' => 1
         ]);

@@ -52,7 +52,7 @@ abstract class AbstractEntity extends AbstractResource
 
         $columns = array_map([__CLASS__, 'encode'], $columns);
         return $this->database->update($table, $columns, [
-            'where' => "`$selector` = {0}",
+            'where' => "`$selector` = ?",
             'vars' => [$identifier],
             'limit' => 1
         ]);

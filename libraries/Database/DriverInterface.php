@@ -45,7 +45,7 @@ interface DriverInterface
     public function disconnect();
 
     /**
-     * Performs a (optionally prepared) query on the database.
+     * Performs a query on the database.
      *
      * @param string $query The SQL query to be executed
      * @param array $vars An array of values replacing the variables. Only neccessary if you're using variables.
@@ -64,6 +64,14 @@ interface DriverInterface
      * @throws \RuntimeException on failure.
      */
     public function exec($sql, array $vars = null);
+
+    /**
+     * Prepares a statement.
+     *
+     * @param $sql The SQL statement to prepare
+     * @return \FlameCore\Infernum\Database\StatementInterface
+     */
+    public function prepare($sql);
 
     /**
      * Performs a SELECT query.

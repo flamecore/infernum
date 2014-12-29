@@ -73,7 +73,7 @@ class Session
     public static function init(Request $request, Application $app)
     {
         // Clean up sessions table from expired sessions before proceeding
-        $sql = 'DELETE FROM <PREFIX>sessions WHERE expire <= {0}';
+        $sql = 'DELETE FROM <PREFIX>sessions WHERE expire <= ?';
         $app['db']->query($sql, [date('Y-m-d H:i:s')]);
 
         $sid = $request->cookies->get($app->getCookieName('session'), uniqid(time(), true));
@@ -92,7 +92,7 @@ class Session
      */
     public function __construct($sid, Application $app)
     {
-        $sql = 'SELECT * FROM <PREFIX>sessions WHERE id = {0} AND expire > {1} LIMIT 1';
+        $sql = 'SELECT * FROM <PREFIX>sessions WHERE id = ? AND expire > ? LIMIT 1';
         $result = $app['db']->query($sql, [$sid, date('Y-m-d H:i:s')]);
 
         if ($result->hasRows()) {
@@ -111,7 +111,7 @@ class Session
             $this->lifetime = $app->setting('session.lifetime', $this->lifetime);
 
             // Create a new session
-            $sql = 'INSERT INTO <PREFIX>sessions (id, expire) VALUES({0}, {1})';
+            $sql = 'INSERT INTO <PREFIX>sessions (id, expire) VALUES(?, ?)';
             $app['db']->exec($sql, [$this->id, $this->getExpire()->format('Y-m-d H:i:s')]);
         }
 
@@ -158,7 +158,7 @@ class Session
     {
         $user = new User($user);
 
-        $sql = 'UPDATE <PREFIX>sessions SET user = {0} WHERE id = {1} LIMIT 1';
+        $sql = 'UPDATE <PREFIX>sessions SET user = ? WHERE id = ? LIMIT 1';
         $this->app['db']->exec($sql, [$user->getID(), $this->id]);
 
         $this->user = $user;
@@ -183,7 +183,7 @@ class Session
     {
         $this->lifetime = (int) $time;
 
-        $sql = 'UPDATE <PREFIX>sessions SET lifetime = {0}, expire = {1} WHERE id = {2} LIMIT 1';
+        $sql = 'UPDATE <PREFIX>sessions SET lifetime = ?, expire = ? WHERE id = ? LIMIT 1';
         $this->app['db']->exec($sql, [$this->lifetime, $this->getExpire()->format('Y-m-d H:i:s'), $this->id]);
     }
 
@@ -219,7 +219,7 @@ class Session
     {
         $this->data[$key] = $value;
 
-        $sql = 'UPDATE <PREFIX>sessions SET data = {0} WHERE id = {1} LIMIT 1';
+        $sql = 'UPDATE <PREFIX>sessions SET data = ? WHERE id = ? LIMIT 1';
         $this->app['db']->exec($sql, [serialize($this->data), $this->id]);
     }
 
@@ -230,7 +230,7 @@ class Session
      */
     public function refresh()
     {
-        $sql = 'UPDATE <PREFIX>sessions SET expire = {0} WHERE id = {1} LIMIT 1';
+        $sql = 'UPDATE <PREFIX>sessions SET expire = ? WHERE id = ? LIMIT 1';
         $this->app['db']->exec($sql, [$this->getExpire()->format('Y-m-d H:i:s'), $this->id]);
 
         // Update the assigned user's last activity time
@@ -245,7 +245,7 @@ class Session
      */
     public function destroy()
     {
-        $sql = 'DELETE FROM <PREFIX>sessions WHERE id = {0}';
+        $sql = 'DELETE FROM <PREFIX>sessions WHERE id = ?';
         return $this->app['db']->query($sql, [$this->id]);
 
         $this->id = null;

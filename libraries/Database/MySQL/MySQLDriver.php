@@ -64,20 +64,16 @@ class MySQLDriver extends AbstractDriver
      */
     public function query($query, array $vars = null)
     {
-        $query = $this->interpolate($query, $vars);
-        $result = @mysqli_query($this->link, $query);
+        $stmt = $this->prepare($query);
+        $result = $stmt->execute($vars);
 
-        if ($result) {
-            $this->queryCount++;
-
-            if ($result instanceof \mysqli_result) {
-                return new MySQLResult($result);
-            }
-
-            return true;
+        if (!$result) {
+            throw new \RuntimeException(sprintf('Failed to execute database query: %s', $stmt->getErrorInfo()[2]));
         }
 
-        throw new \RuntimeException(sprintf('Failed to execute database query: %s', mysqli_error($this->link)));
+        $this->queryCount++;
+
+        return $result;
     }
 
     /**
@@ -85,14 +81,24 @@ class MySQLDriver extends AbstractDriver
      */
     public function exec($sql, array $vars = null)
     {
-        $sql = $this->interpolate($sql, $vars);
-        $result = @mysqli_query($this->link, $sql);
+        $stmt = $this->prepare($sql);
+        $result = $stmt->execute($vars);
 
-        if ($result) {
-            return mysqli_affected_rows($this->link);
+        if (!$result) {
+            throw new \RuntimeException(sprintf('Failed to execute database statement: %s', $stmt->getErrorInfo()[2]));
         }
 
-        throw new \RuntimeException(sprintf('Failed to execute database statement: %s', mysqli_error($this->link)));
+        return $stmt->getAffectedRows();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function prepare($sql)
+    {
+        $sql = $this->interpolate($sql);
+
+        return new MySQLStatement($this->link, $sql);
     }
 
     /**
@@ -132,11 +138,13 @@ class MySQLDriver extends AbstractDriver
 
         foreach ($data as $column => $value) {
             $columns[] = '`'.$column.'`';
-            $values[]  = $this->encode($value);
+            $values[]  = $value;
         }
 
-        $sql = 'INSERT INTO `<PREFIX>'.$table.'` ('.implode(', ', $columns).') VALUES('.implode(', ', $values).')';
-        return $this->exec($sql);
+        $params = array_fill(0, count($values), '?');
+        $sql = 'INSERT INTO `<PREFIX>'.$table.'` ('.implode(', ', $columns).') VALUES('.implode(', ', $params).')';
+
+        return $this->exec($sql, $values);
     }
 
     /**
@@ -145,10 +153,11 @@ class MySQLDriver extends AbstractDriver
     public function update($table, $data, array $params = [])
     {
         $dataset = array();
+        $values = array();
 
-        foreach ($data as $key => $value) {
-            $value = $this->encode($value);
-            $dataset[] = '`'.$key.'` = '.$value;
+        foreach ($data as $column => $value) {
+            $dataset[] = '`'.$column.'` = ?';
+            $values[]  = $value;
         }
 
         $sql = 'UPDATE `<PREFIX>'.$table.'` SET '.implode(', ', $dataset);
@@ -160,7 +169,9 @@ class MySQLDriver extends AbstractDriver
             $sql .= ' LIMIT '.$params['limit'];
         }
 
-        return $this->exec($sql, isset($params['vars']) ? $params['vars'] : null);
+        $vars = isset($params['vars']) ? array_merge($values, (array) $params['vars']) : $values;
+
+        return $this->exec($sql, $vars);
     }
 
     /**

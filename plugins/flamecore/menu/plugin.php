@@ -15,7 +15,7 @@ class Extension extends BaseExtension
 
             $result = $app['db']->select('menu_types');
             while ($menutype = $result->fetch()) {
-                $sql = 'SELECT * FROM `<PREFIX>menu_links` WHERE menutype = {0} AND parent = 0 ORDER BY sort_order ASC';
+                $sql = 'SELECT * FROM `<PREFIX>menu_links` WHERE menutype = ? AND parent = 0 ORDER BY sort_order ASC';
                 $menuitems = $app['db']->query($sql, [$menutype['id']])->fetchAll();
 
                 $menus[$menutype['name']] = array(
@@ -38,10 +38,9 @@ class Extension extends BaseExtension
         foreach ($menuitems as $menuitem) {
             $menuitem['external'] = preg_match('#^https?://#', $menuitem['url']);
             $menuitem['url'] = $menuitem['external'] ? $menuitem['url'] : $app->makePageUrl($menuitem['url']);
-            $menuitem['selected'] = !$menuitem['external'] ? Util::matchesPatternList($app->getPagePath(),
-                $menuitem['selected_on']) : false;
+            $menuitem['selected'] = !$menuitem['external'] ? Util::matchesPatternList($app->getPagePath(), $menuitem['selected_on']) : false;
 
-            $sql = 'SELECT * FROM `<PREFIX>menu_links` WHERE parent = {0} ORDER BY sort_order ASC';
+            $sql = 'SELECT * FROM `<PREFIX>menu_links` WHERE parent = ? ORDER BY sort_order ASC';
             $result = $app['db']->query($sql, [$menuitem['id']]);
 
             if ($result->numRows() > 0) {

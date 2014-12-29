@@ -48,7 +48,7 @@ class Translations
     {
         // Load all strings of the selected language pack
         $this->strings = $app->cache('translations/'.$language, function () use ($language, $app) {
-            $sql = 'SELECT string, translation FROM <PREFIX>translations WHERE language = {0}';
+            $sql = 'SELECT string, translation FROM <PREFIX>translations WHERE language = ?';
             $result = $app['db']->query($sql, array($language));
 
             $strings = array();
