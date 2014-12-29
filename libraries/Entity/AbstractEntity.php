@@ -23,7 +23,6 @@
 
 namespace FlameCore\Infernum\Entity;
 
-use FlameCore\Infernum\System;
 use FlameCore\Infernum\Resource\AbstractResource;
 
 /**
@@ -36,24 +35,17 @@ abstract class AbstractEntity extends AbstractResource
     /**
      * Updates the given columns of the record.
      *
-     * @param mixed $identifier The identifier of the record
      * @param array $columns Names and values of columns to be updated (Format: `[name => value, ...]`)
      * @return bool
      */
-    protected function update($identifier, $columns)
+    protected function update($columns)
     {
         $table = static::getTable();
-        $fields = static::getFields();
-
-        list($selector, $identifier) = static::parseIdentifier($identifier);
-
-        if (!isset($fields[$selector]))
-            throw new \DomainException(sprintf('Cannot select by "%s.%s" field as it is not defined.', $table, $selector));
-
         $columns = array_map([__CLASS__, 'encode'], $columns);
+
         return $this->database->update($table, $columns, [
-            'where' => "`$selector` = ?",
-            'vars' => [$identifier],
+            'where' => "`$this->selector` = ?",
+            'vars' => [$this->identifier],
             'limit' => 1
         ]);
     }
@@ -78,11 +70,8 @@ abstract class AbstractEntity extends AbstractResource
      * @param array $values The new values of the data entries
      * @return bool
      */
-    protected function setMultiple($values)
+    protected function setMultiple(array $values)
     {
-        if (!is_array($values))
-            throw new \InvalidArgumentException('The $values parameter must be an array');
-
         $this->data = array_merge($this->data, $values);
 
         return $this->update($values);
@@ -112,8 +101,9 @@ abstract class AbstractEntity extends AbstractResource
      */
     protected function setListItems($key, $items)
     {
-        if (!is_array($items))
+        if (!is_array($items)) {
             throw new \InvalidArgumentException('The $items parameter must be an array');
+        }
 
         $this->data[$key] = array_merge($this->data[$key], $items);
 

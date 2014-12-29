@@ -32,33 +32,55 @@ use FlameCore\Infernum\Database\DriverInterface;
  */
 abstract class AbstractResource
 {
+    /**
+     * @var \FlameCore\Infernum\Database\DriverInterface
+     */
     protected $database;
+
+    /**
+     * @var string
+     */
+    protected $selector;
+
+    /**
+     * @var mixed
+     */
+    protected $identifier;
 
     /**
      * The data of the resource
      *
      * @var array
      */
-    private $data = array();
+    protected $data = array();
 
     /**
-     * Fetches the data of the record. This method must retrieve the data.
+     * Fetches the data of the record.
      *
      * @param mixed $identifier The identifier of the record
      * @param \FlameCore\Infernum\Database\DriverInterface $database The database connection to use
      */
     public function __construct($identifier, DriverInterface $database)
     {
-        $this->database = $database;
-
         $table = static::getTable();
         $fields = static::getFields();
         $columns = array_keys($fields);
 
-        list($selector, $identifier) = static::parseIdentifier($identifier);
+        $parsed = static::parseIdentifier($identifier);
 
-        if (!isset($fields[$selector]))
+        if (!is_array($parsed) || count($parsed) < 2) {
+            throw new \UnexpectedValueException(sprintf('Method %s::parseIdentifier() must return an array with at least two elements.', __CLASS__));
+        }
+
+        list($selector, $identifier) = $parsed;
+
+        if (!isset($fields[$selector])) {
             throw new \DomainException(sprintf('Cannot select by "%s.%s" field as it is not defined.', $table, $selector));
+        }
+
+        $this->database = $database;
+        $this->selector = $selector;
+        $this->identifier = $identifier;
 
         $result = $database->select($table, $columns, [
             'where' => "`$selector` = ?",
@@ -66,20 +88,22 @@ abstract class AbstractResource
             'limit' => 1
         ]);
 
-        if (!$result->hasRows())
+        if (!$result->hasRows()) {
             throw new \DomainException(sprintf('Resource does not exist. (%s.%s = %s)', $table, $selector, $identifier));
+        }
 
         $data = $result->fetch();
 
         $this->data = array();
-        foreach ($fields as $field => $type)
+        foreach ($fields as $field => $type) {
             $this->data[$field] = self::decode($data[$field], $fields[$field]);
+        }
 
         return $data;
     }
 
     /**
-     * Checks wheter or not the record with given identifier exists.
+     * Checks whether or not the record with given identifier exists.
      *
      * @param mixed $identifier The identifier of the record
      * @param \FlameCore\Infernum\Database\DriverInterface $database The database connection to use
@@ -90,10 +114,17 @@ abstract class AbstractResource
         $table = static::getTable();
         $fields = static::getFields();
 
-        list($selector, $identifier) = static::parseIdentifier($identifier);
+        $parsed = static::parseIdentifier($identifier);
 
-        if (!isset($fields[$selector]))
+        if (!is_array($parsed) || count($parsed) < 2) {
+            throw new \UnexpectedValueException(sprintf('Method %s::parseIdentifier() must return an array with at least two elements.', __CLASS__));
+        }
+
+        list($selector, $identifier) = $parsed;
+
+        if (!isset($fields[$selector])) {
             throw new \DomainException(sprintf('Cannot select by "%s.%s" field as it is not defined.', $table, $selector));
+        }
 
         $result = $database->select($table, 'id', [
             'where' => "`$selector` = ?",
@@ -116,14 +147,16 @@ abstract class AbstractResource
         $fields = static::getFields();
         $keyName = static::getKeyName();
 
-        if (!isset($fields[$keyName]))
+        if (!isset($fields[$keyName])) {
             throw new \DomainException(sprintf('Cannot select by "%s.%s" field as it is not defined.', $table, $keyName));
+        }
 
         $items = array();
 
         $result = $database->select($table, $keyName);
-        while ($data = $result->fetch())
+        while ($data = $result->fetch()) {
             $items[] = self::decode($data[$keyName], $fields[$keyName]);
+        }
 
         return $items;
     }
@@ -141,8 +174,9 @@ abstract class AbstractResource
         $columns = array_keys($fields);
         $keyName = static::getKeyName();
 
-        if (!isset($fields[$keyName]))
+        if (!isset($fields[$keyName])) {
             throw new \DomainException(sprintf('Cannot select by "%s.%s" field as it is not defined.', $table, $keyName));
+        }
 
         $items = array();
 
@@ -151,8 +185,9 @@ abstract class AbstractResource
             $key = self::decode($data[$keyName], $fields[$keyName]);
 
             $items[$key] = array();
-            foreach ($fields as $field => $type)
+            foreach ($fields as $field => $type) {
                 $items[$key][$field] = self::decode($data[$field], $fields[$field]);
+            }
         }
 
         return $items;
@@ -189,9 +224,7 @@ abstract class AbstractResource
      */
     protected static function encode($value)
     {
-        if (is_object($value) && $value instanceof DateTime) {
-            return $value->format('Y-m-d H:i:s');
-        } elseif (is_array($value)) {
+        if (is_array($value)) {
             return serialize($value);
         } else {
             return $value;
