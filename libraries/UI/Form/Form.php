@@ -2,11 +2,9 @@
 /**
  * Infernum
  * Copyright (C) 2011 IceFlame.net
- *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
- *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE
@@ -182,14 +180,19 @@ class Form implements \IteratorAggregate, \Countable
      */
     public function add($type, $name, array $params = [])
     {
-        if (empty($name))
+        $name = (string) $name;
+
+        if ($name === '') {
             throw new \InvalidArgumentException('Cannot add field without name.');
+        }
 
-        if ($this->has($name))
+        if ($this->has($name)) {
             throw new \LogicException(sprintf('Cannot add field with name "%s" since a field with this name is already defined.', $name));
+        }
 
-        if (!isset(self::$types[$type]))
+        if (!isset(self::$types[$type])) {
             throw new \DomainException(sprintf('The form field type "%s" is not valid.', $type));
+        }
 
         $class = sprintf('%s\Field\%s', __NAMESPACE__, self::$types[$type]);
         $this->fields[$name] = new $class($this, $name, $params);
@@ -219,11 +222,15 @@ class Form implements \IteratorAggregate, \Countable
      */
     public function remove($name)
     {
-        if (empty($name))
-            throw new \InvalidArgumentException('Cannot remove field without name.');
+        $name = (string) $name;
 
-        if ($this->has($name))
+        if ($name === '') {
+            throw new \InvalidArgumentException('Cannot remove field without name.');
+        }
+
+        if (!$this->has($name)) {
             throw new \LogicException(sprintf('Cannot remove field with name "%s" since a field with this name is not defined.', $name));
+        }
 
         unset($this->fields[$name]);
 
@@ -238,6 +245,8 @@ class Form implements \IteratorAggregate, \Countable
      */
     public function get($name)
     {
+        $name = (string) $name;
+
         return isset($this->fields[$name]) ? $this->fields[$name] : null;
     }
 
@@ -249,6 +258,8 @@ class Form implements \IteratorAggregate, \Countable
      */
     public function has($name)
     {
+        $name = (string) $name;
+
         return isset($this->fields[$name]);
     }
 
@@ -262,11 +273,15 @@ class Form implements \IteratorAggregate, \Countable
      */
     public function addButton($type, $title, array $params = [])
     {
-        if (empty($title))
-            throw new \InvalidArgumentException('Cannot add button without title.');
+        $title = (string) $title;
 
-        if (!isset(self::$buttonTypes[$type]))
+        if ($title === '') {
+            throw new \InvalidArgumentException('Cannot add button without title.');
+        }
+
+        if (!isset(self::$buttonTypes[$type])) {
             throw new \DomainException(sprintf('The form field type "%s" is not valid.', $type));
+        }
 
         $class = sprintf('%s\Button\%s', __NAMESPACE__, self::$buttonTypes[$type]);
         $this->buttons[] = new $class($this, $title, $params);
@@ -344,16 +359,18 @@ class Form implements \IteratorAggregate, \Countable
      */
     public function handleRequest(Request $request)
     {
-        if ($this->get('_submit')->retrieve($request) == $this->name)
+        if ($this->get('_submit')->retrieve($request) == $this->name) {
             $this->submitted = true;
+        }
 
         if ($this->submitted) {
             foreach ($this->fields as $field) {
                 $name = $field->getName();
                 $value = $field->retrieve($request);
 
-                if (!$field->validate($value))
+                if (!$field->validate($value)) {
                     $this->invalid[] = $name;
+                }
 
                 $this->data[$name] = $value;
             }
