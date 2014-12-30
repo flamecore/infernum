@@ -112,7 +112,7 @@ class Session
 
             // Create a new session
             $sql = 'INSERT INTO <PREFIX>sessions (id, expire) VALUES(?, ?)';
-            $app['db']->exec($sql, [$this->id, $this->getExpire()->format('Y-m-d H:i:s')]);
+            $app['db']->exec($sql, [$this->id, $this->getExpire()]);
         }
 
         $this->app = $app;
@@ -184,7 +184,7 @@ class Session
         $this->lifetime = (int) $time;
 
         $sql = 'UPDATE <PREFIX>sessions SET lifetime = ?, expire = ? WHERE id = ? LIMIT 1';
-        $this->app['db']->exec($sql, [$this->lifetime, $this->getExpire()->format('Y-m-d H:i:s'), $this->id]);
+        $this->app['db']->exec($sql, [$this->lifetime, $this->getExpire(), $this->id]);
     }
 
     /**
@@ -231,7 +231,7 @@ class Session
     public function refresh()
     {
         $sql = 'UPDATE <PREFIX>sessions SET expire = ? WHERE id = ? LIMIT 1';
-        $this->app['db']->exec($sql, [$this->getExpire()->format('Y-m-d H:i:s'), $this->id]);
+        $this->app['db']->exec($sql, [$this->getExpire(), $this->id]);
 
         // Update the assigned user's last activity time
         if ($user = $this->getUser())
