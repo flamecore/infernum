@@ -74,7 +74,7 @@ abstract class AbstractStatement
             return (int) $value;
         } elseif (is_scalar($value)) {
             return $value;
-        } elseif ($value instanceof DateTime) {
+        } elseif ($value instanceof \DateTime) {
             return $value->format('Y-m-d H:i:s');
         } elseif (is_object($value) && method_exists($value, '__toString')) {
             return (string) $value;
