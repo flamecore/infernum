@@ -35,21 +35,40 @@ use Symfony\Component\HttpFoundation\Response;
  */
 final class Kernel implements \ArrayAccess
 {
+    /**
+     * @var bool
+     */
     private $booted = false;
 
+    /**
+     * @var \FlameCore\Infernum\Container
+     */
     private $container;
 
+    /**
+     * @var string|bool
+     */
     private $pagePath = false;
 
+    /**
+     * @var \FlameCore\Infernum\Interfaces\ExtensionAbstraction|bool
+     */
     private $runningExtension = false;
 
+    /**
+     * @var string|bool
+     */
     private $loadedModule = false;
 
+    /**
+     * @var array
+     */
     private $loadedPlugins = array();
 
     /**
      * Initializes the Kernel.
      *
+     * @param string $domain The domain
      * @param string $path The engine path
      */
     public function __construct($domain, $path)
@@ -90,7 +109,7 @@ final class Kernel implements \ArrayAccess
     /**
      * Gets the requested page path.
      *
-     * @return string Returns the requested page path or FALSE if no request is handled yet.
+     * @return string|bool Returns the requested page path or FALSE if no request is handled yet.
      * @api
      */
     public function getPagePath()
@@ -112,7 +131,7 @@ final class Kernel implements \ArrayAccess
     /**
      * Gets the loaded module.
      *
-     * @return string Returns the name of the loaded module or FALSE if no module is loaded yet.
+     * @return string|bool Returns the name of the loaded module or FALSE if no module is loaded yet.
      * @api
      */
     public function getLoadedModule()
@@ -134,7 +153,7 @@ final class Kernel implements \ArrayAccess
     /**
      * Returns the value of a setting.
      *
-     * @param string $address The settings address in the form `<section>[:<keyname>]`
+     * @param string $key The settings key in the form `<section>[:<keyname>]`
      * @param mixed $default Custom default value (optional)
      * @return mixed
      * @api
@@ -293,6 +312,7 @@ final class Kernel implements \ArrayAccess
      * Loads the given plugin.
      *
      * @param string $pluginName The plugin name
+     * @return \FlameCore\Infernum\Plugin
      * @throws \RuntimeException if the plugin does not exist or if its information could not be loaded.
      * @api
      */

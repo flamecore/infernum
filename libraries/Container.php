@@ -24,18 +24,30 @@
 namespace FlameCore\Infernum;
 
 /**
- * Infernum Kernel
+ * The Container class
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
 class Container
 {
+    /**
+     * @var string
+     */
     protected $name;
 
+    /**
+     * @var array
+     */
     protected $items = array();
 
+    /**
+     * @var array
+     */
     protected $locked = array();
 
+    /**
+     * @var array
+     */
     protected $typemap = array();
 
     /**

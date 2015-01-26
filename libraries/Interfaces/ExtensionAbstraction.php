@@ -30,9 +30,18 @@ namespace FlameCore\Infernum\Interfaces;
  */
 interface ExtensionAbstraction
 {
+    /**
+     * @return string
+     */
     public function getName();
 
+    /**
+     * @return string
+     */
     public function getPath();
 
+    /**
+     * @return string
+     */
     public function getNamespace();
 }

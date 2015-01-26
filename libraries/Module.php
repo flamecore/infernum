@@ -34,16 +34,35 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Module implements ExtensionAbstraction
 {
+    /**
+     * @var string
+     */
     private $name;
 
+    /**
+     * @var string
+     */
     private $path;
 
+    /**
+     * @var string
+     */
     private $namespace;
 
+    /**
+     * @var array
+     */
     private $provides = array();
 
+    /**
+     * @var array
+     */
     private $requires = array();
 
+    /**
+     * @param string $name
+     * @param \FlameCore\Infernum\Kernel $kernel
+     */
     public function __construct($name, Kernel $kernel)
     {
         if (!$kernel->moduleExists($name))
@@ -63,31 +82,54 @@ class Module implements ExtensionAbstraction
         $this->requires = $metadata['requires'];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPath()
     {
         return $this->path;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getNamespace()
     {
         return $this->namespace;
     }
 
+    /**
+     * @param string $type
+     * @return bool
+     */
     public function provides($type)
     {
         return $this->provides[$type];
     }
 
+    /**
+     * @return array
+     */
     public function getRequiredPlugins()
     {
         return $this->requires['plugins'];
     }
 
+    /**
+     * @param \FlameCore\Infernum\Application $app
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param string $action
+     * @param array $arguments
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function run(Application $app, Request $request, $action, $arguments)
     {
         require_once $this->path.'/controller.php';
@@ -101,6 +143,9 @@ class Module implements ExtensionAbstraction
         return $controller->run($request, $action, $arguments);
     }
 
+    /**
+     * @return array
+     */
     private function loadMetadata()
     {
         try {

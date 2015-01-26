@@ -1,0 +1,16 @@
+/install2.sql
+/index_1.php
+/libraries/Fileserver/
+
+/nbproject/
+/.idea/
+/vendor/
+/composer.lock
+
+/cache/*
+/logs/*
+/modules/flamecore/test
+/plugins/flamecore/test
+/websites/default/site.yml
+/websites/default/settings.yml
+/config.yml

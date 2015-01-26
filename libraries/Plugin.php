@@ -33,14 +33,30 @@ use FlameCore\Infernum\Configuration\PluginMetadata;
  */
 class Plugin implements ExtensionAbstraction
 {
+    /**
+     * @var string
+     */
     private $name;
 
+    /**
+     * @var string
+     */
     private $namespace;
 
+    /**
+     * @var string
+     */
     private $path;
 
+    /**
+     * @var array
+     */
     private $provides = array();
 
+    /**
+     * @param string $name
+     * @param \FlameCore\Infernum\Kernel $kernel
+     */
     public function __construct($name, Kernel $kernel)
     {
         if (!$kernel->pluginExists($name))
@@ -59,26 +75,42 @@ class Plugin implements ExtensionAbstraction
         $this->provides = $metadata['provides'];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getNamespace()
     {
         return $this->namespace;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPath()
     {
         return $this->path;
     }
 
+    /**
+     * @param string $type
+     * @return bool
+     */
     public function provides($type)
     {
         return $this->provides[$type];
     }
 
+    /**
+     * @return void
+     */
     public function initialize()
     {
         require_once $this->path.'/plugin.php';
@@ -91,6 +123,9 @@ class Plugin implements ExtensionAbstraction
         $class::initialize();
     }
 
+    /**
+     * @param \FlameCore\Infernum\Application $app
+     */
     public function run(Application $app)
     {
         require_once $this->path.'/plugin.php';
@@ -103,6 +138,9 @@ class Plugin implements ExtensionAbstraction
         $class::run($app);
     }
 
+    /**
+     * @return array
+     */
     private function loadMetadata()
     {
         try {
