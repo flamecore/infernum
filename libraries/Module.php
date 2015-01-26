@@ -78,9 +78,9 @@ class Module implements ExtensionAbstraction
         return $this->namespace;
     }
 
-    public function providesLibraries()
+    public function provides($type)
     {
-        return $this->provides['libraries'];
+        return $this->provides[$type];
     }
 
     public function getRequiredPlugins()

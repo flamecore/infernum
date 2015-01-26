@@ -74,9 +74,9 @@ class Plugin implements ExtensionAbstraction
         return $this->path;
     }
 
-    public function providesLibraries()
+    public function provides($type)
     {
-        return $this->provides['libraries'];
+        return $this->provides[$type];
     }
 
     public function initialize()

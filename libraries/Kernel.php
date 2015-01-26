@@ -257,7 +257,7 @@ final class Kernel implements \ArrayAccess
             $this->loadPlugin($plugin);
         }
 
-        if (isset($this['loader']) && $module->providesLibraries())
+        if (isset($this['loader']) && $module->provides('libraries'))
             $this['loader']->addSource($module->getNamespace(), $module->getPath());
 
         $this->loadedModule = $moduleName;
@@ -301,7 +301,7 @@ final class Kernel implements \ArrayAccess
         if (!isset($this->loadedPlugins[$pluginName])) {
             $plugin = new Plugin($pluginName, $this);
 
-            if (isset($this['loader']) && $plugin->providesLibraries())
+            if (isset($this['loader']) && $plugin->provides('libraries'))
                 $this['loader']->addSource($plugin->getNamespace(), $plugin->getPath());
 
             $plugin->initialize();
