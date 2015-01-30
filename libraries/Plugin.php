@@ -54,6 +54,16 @@ class Plugin implements ExtensionAbstraction
     private $provides = array();
 
     /**
+     * @var bool
+     */
+    private $initialized = false;
+
+    /**
+     * @var bool
+     */
+    private $run = false;
+
+    /**
      * @param string $name
      * @param \FlameCore\Infernum\Kernel $kernel
      */
@@ -113,12 +123,17 @@ class Plugin implements ExtensionAbstraction
      */
     public function initialize()
     {
+        if ($this->initialized)
+            throw new \LogicException(sprintf('Plugin "%s" is already initialized.', $this->name));
+
         require_once $this->path.'/plugin.php';
 
         $class = $this->namespace.'\Extension';
 
         if (!class_exists($class) || !is_subclass_of($class, __NAMESPACE__.'\Extension'))
             throw new \RuntimeException(sprintf('Plugin "%s" does not provide a valid extension class.', $this->name));
+
+        $this->initialized = true;
 
         $class::initialize();
     }
@@ -128,12 +143,17 @@ class Plugin implements ExtensionAbstraction
      */
     public function run(Application $app)
     {
+        if ($this->run)
+            throw new \LogicException(sprintf('Plugin "%s" is already run.', $this->name));
+
         require_once $this->path.'/plugin.php';
 
         $class = $this->namespace.'\Extension';
 
         if (!class_exists($class) || !is_subclass_of($class, __NAMESPACE__.'\Extension'))
             throw new \RuntimeException(sprintf('Plugin "%s" does not provide a valid extension class.', $this->name));
+
+        $this->run = true;
 
         $class::run($app);
     }

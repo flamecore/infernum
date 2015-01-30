@@ -60,6 +60,11 @@ class Module implements ExtensionAbstraction
     private $requires = array();
 
     /**
+     * @var bool
+     */
+    private $run = false;
+
+    /**
      * @param string $name
      * @param \FlameCore\Infernum\Kernel $kernel
      */
@@ -132,6 +137,8 @@ class Module implements ExtensionAbstraction
      */
     public function run(Application $app, Request $request, $action, $arguments)
     {
+        if ($this->run)
+            throw new \LogicException(sprintf('Module "%s" is already run.', $this->name));
         require_once $this->path.'/controller.php';
 
         $class = $this->namespace.'\Controller';
@@ -139,7 +146,9 @@ class Module implements ExtensionAbstraction
         if (!class_exists($class) || !is_subclass_of($class, __NAMESPACE__.'\Controller'))
             throw new \LogicException(sprintf('Module "%s" does not provide a valid Controller class.', $this->name));
 
-        $controller = new $class($app);
+        $this->run = true;
+
+        $controller = new $class($app, $this->options);
         return $controller->run($request, $action, $arguments);
     }
 
