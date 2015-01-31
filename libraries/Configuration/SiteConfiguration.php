@@ -44,7 +44,7 @@ class SiteConfiguration extends AbstractConfiguration
                     ->prototype('array')
                         ->children()
                             ->scalarNode('module')->isRequired()->end()
-                            ->scalarNode('alias')->isRequired()->end()
+                            ->scalarNode('alias')->end()
                         ->end()
                     ->end()
                 ->end()

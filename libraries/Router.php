@@ -119,12 +119,29 @@ class Router
      * Mounts the given module.
      *
      * @param string $name The name of the module to mount
-     * @param string $mountpoint Mountpoint alias
+     * @param string $alias The mountpoint alias (optional)
      */
-    public function mountModule($name, $mountpoint)
+    public function mountModule($name, $alias = null)
     {
-        if (!$this->kernel->moduleExists($name))
+        if (!$this->kernel->moduleExists($name)) {
             throw new \LogicException(sprintf('Cannot mount module "%s" since it does not exist.', $name));
+        }
+
+        $alias = (string) $alias;
+
+        if ($alias !== '') {
+            $mountpoint = $alias;
+
+            if (isset($this->modules[$mountpoint])) {
+                throw new \LogicException(sprintf('Cannot mount module "%s" with alias "%s" since this mountpoint name is already in use.', $name, $alias));
+            }
+        } else {
+            $mountpoint = array_pop(explode('/', $name));
+
+            if (isset($this->modules[$mountpoint])) {
+                throw new \LogicException(sprintf('Cannot mount module "%s" as "%s" since this mountpoint name is already in use. Please make use of an alias.', $name, $mountpoint));
+            }
+        }
 
         $this->modules[$mountpoint] = $name;
     }

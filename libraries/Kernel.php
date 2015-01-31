@@ -248,7 +248,7 @@ final class Kernel implements \ArrayAccess
         foreach ($routes as $route) {
             if (!$this->moduleExists($route['module']))
                 throw new \RuntimeException(sprintf('Site "%s" depends on module "%s" which is not installed.', $sitename, $route['module']));
-            $this['router']->mountModule($route['module'], $route['alias']);
+            $this['router']->mountModule($route['module'], isset($route['alias']) ? $route['alias'] : null);
         }
 
         $this->booted = true;
