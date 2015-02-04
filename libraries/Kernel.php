@@ -368,7 +368,9 @@ final class Kernel implements \ArrayAccess
     /**
      * Reads data from cache. The $callback is used to generate the data if missing or expired.
      *
+     * @param string $name The name of the cache file
      * @param callable $callback The callback function that returns the data to store
+     * @param int $lifetime The lifetime in seconds (Default: 86400)
      * @return mixed
      * @api
      */
@@ -411,11 +413,12 @@ final class Kernel implements \ArrayAccess
     /**
      * Handles an error.
      *
-     * @param type $code The error code
-     * @param type $message The error message
-     * @param type $file The file
-     * @param type $line The line
+     * @param int $code The error code
+     * @param string $message The error message
+     * @param string $file The file
+     * @param int $line The line
      * @return bool
+     * @throws \ErrorException
      * @internal
      */
     public function handleError($code, $message, $file, $line)

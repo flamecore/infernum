@@ -68,9 +68,9 @@ class Router
      *
      * @param string $path The requested page path
      * @return array|bool Returns an array with module, action, arguments and options if the path
-     *   matches a mountpoint, or FALSE if the path is empty.
-     * @throws \FlameCore\Infernum\Exception\Router\RouteNotFoundException if the path is not empty
-     *   and doesn't match any mountpoint.
+     *   matches a mountpoint, or FALSE if the path is invalid or empty.
+     * @throws \FlameCore\Infernum\Exceptions\RouteNotFoundException if the path is not empty
+     *   but does not match any mountpoint.
      */
     public function parse($path)
     {
