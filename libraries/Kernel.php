@@ -180,13 +180,17 @@ final class Kernel implements \ArrayAccess
             $this->pagePath = $request->query->get('p', '');
 
             if ($result = $this['router']->parse($this->pagePath)) {
-                list($module, $action, $arguments) = $result;
+                $module = $result['module'];
+                $action = $result['action'];
+                $arguments = $result['arguments'];
+                $extra = $result['extra'];
             } else {
                 list($module, $action) = explode(':', $app->setting('site.frontpage'));
                 $arguments = null;
+                $extra = null;
             }
 
-            $module = $this->loadModule($module);
+            $module = $this->loadModule($module, $extra);
 
             foreach ($this->loadedPlugins as $plugin) {
                 $this->runningExtension = $plugin;
@@ -248,7 +252,9 @@ final class Kernel implements \ArrayAccess
         foreach ($routes as $route) {
             if (!$this->moduleExists($route['module']))
                 throw new \RuntimeException(sprintf('Site "%s" depends on module "%s" which is not installed.', $sitename, $route['module']));
-            $this['router']->mountModule($route['module'], isset($route['alias']) ? $route['alias'] : null);
+            $alias = isset($route['alias']) ? $route['alias'] : null;
+            $extra = isset($route['extra']) ? $route['extra'] : null;
+            $this['router']->mountModule($route['module'], $alias, $extra);
         }
 
         $this->booted = true;
@@ -260,14 +266,15 @@ final class Kernel implements \ArrayAccess
      * Loads the given module.
      *
      * @param string $moduleName The module name
+     * @param mixed $extra The extra options (optional)
      * @return \FlameCore\Infernum\Module Returns the Module object.
      * @throws \LogicException if the module does not exist or if its information could not be loaded.
      * @throws \RuntimeException if the module depends on a plugin which is not installed.
      * @api
      */
-    public function loadModule($moduleName)
+    public function loadModule($moduleName, $extra = null)
     {
-        $module = new Module($moduleName, $this);
+        $module = new Module($moduleName, $this, $extra);
 
         $plugins = $module->getRequiredPlugins();
         foreach ($plugins as $plugin) {

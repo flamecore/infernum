@@ -45,6 +45,7 @@ class SiteConfiguration extends AbstractConfiguration
                         ->children()
                             ->scalarNode('module')->isRequired()->end()
                             ->scalarNode('alias')->end()
+                            ->variableNode('extra')->end()
                         ->end()
                     ->end()
                 ->end()

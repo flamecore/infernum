@@ -45,10 +45,13 @@ abstract class Controller
      * Generates a new Controller object.
      *
      * @param \FlameCore\Infernum\Application $context The application context
+     * @param mixed $extra The extra options (optional)
      */
-    final public function __construct(Application $context)
+    final public function __construct(Application $context, $extra = null)
     {
         $this->context = $context;
+
+        $this->initialize($context, $extra);
     }
 
     /**
@@ -85,6 +88,16 @@ abstract class Controller
     final public function actionExists($action)
     {
         return method_exists($this, 'action_'.$action);
+    }
+
+    /**
+     * Initializes the controller.
+     *
+     * @param \FlameCore\Infernum\Application $context The application context
+     * @param mixed $extra The extra options
+     */
+    protected function initialize(Application $context, $extra)
+    {
     }
 
     /**

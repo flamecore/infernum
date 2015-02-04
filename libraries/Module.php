@@ -60,15 +60,21 @@ class Module implements ExtensionAbstraction
     private $requires = array();
 
     /**
+     * @var array
+     */
+    private $extra = array();
+
+    /**
      * @var bool
      */
     private $run = false;
 
     /**
-     * @param string $name
-     * @param \FlameCore\Infernum\Kernel $kernel
+     * @param string $name The module name
+     * @param \FlameCore\Infernum\Kernel $kernel The kernel
+     * @param mixed $extra The extra options (optional)
      */
-    public function __construct($name, Kernel $kernel)
+    public function __construct($name, Kernel $kernel, $extra = null)
     {
         if (!$kernel->moduleExists($name))
             throw new \LogicException(sprintf('Module "%s" does not exist.', $name));
@@ -80,6 +86,7 @@ class Module implements ExtensionAbstraction
 
         $this->name = $name;
         $this->path = $path;
+        $this->extra = $extra;
 
         $metadata = $this->loadMetadata();
         $this->namespace = $metadata['namespace'];
@@ -139,6 +146,7 @@ class Module implements ExtensionAbstraction
     {
         if ($this->run)
             throw new \LogicException(sprintf('Module "%s" is already run.', $this->name));
+
         require_once $this->path.'/controller.php';
 
         $class = $this->namespace.'\Controller';
@@ -148,7 +156,7 @@ class Module implements ExtensionAbstraction
 
         $this->run = true;
 
-        $controller = new $class($app, $this->options);
+        $controller = new $class($app, $this->extra);
         return $controller->run($request, $action, $arguments);
     }
 

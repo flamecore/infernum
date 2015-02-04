@@ -47,6 +47,13 @@ class Router
     private $modules = array();
 
     /**
+     * The module options
+     *
+     * @var array
+     */
+    private $options = array();
+
+    /**
      * Creates a Router object.
      *
      * @param Kernel $kernel The kernel
@@ -60,37 +67,43 @@ class Router
      * Parses the query string parameters and returns corresponding module, action and arguments.
      *
      * @param string $path The requested page path
-     * @return array|bool Returns an array in the form `[module, action, arguments]` if the path
+     * @return array|bool Returns an array with module, action, arguments and options if the path
      *   matches a mountpoint, or FALSE if the path is empty.
      * @throws \FlameCore\Infernum\Exception\Router\RouteNotFoundException if the path is not empty
      *   and doesn't match any mountpoint.
      */
     public function parse($path)
     {
-        if (!empty($path)) {
-            $path_parts = explode('/', $path);
-
-            if (count($path_parts) > 2) {
-                $mount = array_shift($path_parts);
-                $action = array_shift($path_parts);
-                $arguments = $path_parts;
-            } elseif (count($path_parts) == 2) {
-                $mount = $path_parts[0];
-                $action = $path_parts[1];
-                $arguments = null;
-            } else {
-                $mount = $path_parts[0];
-                $action = 'index';
-                $arguments = null;
-            }
-
-            if (!$module = $this->getMountedModule($mount))
-                throw new RouteNotFoundException(sprintf('No module mounted as "%s".', $mount));
-        } else {
+        if (empty($path)) {
             return false;
         }
 
-        return array($module, $action, $arguments);
+        $parts = explode('/', $path);
+
+        if (count($parts) > 2) {
+            $mount = array_shift($parts);
+            $action = array_shift($parts);
+            $arguments = $parts;
+        } elseif (count($parts) == 2) {
+            $mount = $parts[0];
+            $action = $parts[1];
+            $arguments = null;
+        } else {
+            $mount = $parts[0];
+            $action = 'index';
+            $arguments = null;
+        }
+
+        if (!$module = $this->getMountedModule($mount)) {
+            throw new RouteNotFoundException(sprintf('No module mounted as "%s".', $mount));
+        }
+
+        return array(
+            'module'    => $module,
+            'action'    => $action,
+            'arguments' => $arguments,
+            'extra'     => $this->options[$mount]
+        );
     }
 
     /**
@@ -120,8 +133,9 @@ class Router
      *
      * @param string $name The name of the module to mount
      * @param string $alias The mountpoint alias (optional)
+     * @param mixed $extra The extra options of the module (optional)
      */
-    public function mountModule($name, $alias = null)
+    public function mountModule($name, $alias = null, $extra = null)
     {
         if (!$this->kernel->moduleExists($name)) {
             throw new \LogicException(sprintf('Cannot mount module "%s" since it does not exist.', $name));
@@ -144,6 +158,7 @@ class Router
         }
 
         $this->modules[$mountpoint] = $name;
+        $this->options[$mountpoint] = $extra;
     }
 
     /**
