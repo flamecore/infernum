@@ -61,6 +61,11 @@ class Session
      */
     private $lifetime = 3600;
 
+    /**
+     * The application context
+     *
+     * @var \FlameCore\Infernum\Application
+     */
     private $app;
 
     /**
@@ -101,18 +106,20 @@ class Session
             $this->id = $info['id'];
             $this->lifetime = (int) $info['lifetime'];
 
-            if ($info['user'] > 0)
+            if ($info['user'] > 0) {
                 $this->user = new User((int) $info['user'], $app['db']);
+            }
 
-            if (!empty($info['data']))
+            if (!empty($info['data'])) {
                 $this->data = unserialize($info['data']);
+            }
         } else {
             $this->id = $sid;
             $this->lifetime = $app->setting('session.lifetime', $this->lifetime);
 
             // Create a new session
-            $sql = 'INSERT INTO <PREFIX>sessions (id, expire) VALUES(?, ?)';
-            $app['db']->exec($sql, [$this->id, $this->getExpire()]);
+            $sql = 'INSERT INTO <PREFIX>sessions (id, lifetime, expire) VALUES(?, ?, ?)';
+            $app['db']->exec($sql, [$sid, $this->lifetime, $this->getExpire()]);
         }
 
         $this->app = $app;
@@ -156,7 +163,7 @@ class Session
      */
     public function assignUser($user)
     {
-        $user = new User($user);
+        $user = new User($user, $this->app['db']);
 
         $sql = 'UPDATE <PREFIX>sessions SET user = ? WHERE id = ? LIMIT 1';
         $this->app['db']->exec($sql, [$user->getID(), $this->id]);
@@ -234,8 +241,9 @@ class Session
         $this->app['db']->exec($sql, [$this->getExpire(), $this->id]);
 
         // Update the assigned user's last activity time
-        if ($user = $this->getUser())
+        if ($user = $this->getUser()) {
             $user->setLastActive();
+        }
     }
 
     /**
