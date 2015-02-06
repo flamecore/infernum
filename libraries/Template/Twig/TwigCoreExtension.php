@@ -65,7 +65,7 @@ class TwigCoreExtension extends Twig_Extension
             $filters[] = new Twig_SimpleFilter('lformat_money', [$this->app['intl'], 'formatMoney']);
             $filters[] = new Twig_SimpleFilter('lformat_time', [$this->app['intl'], 'formatTime']);
             $filters[] = new Twig_SimpleFilter('lformat_date', [$this->app['intl'], 'formatDate']);
-            $filters[] = new Twig_SimpleFilter('t', [$this->app['intl'], 'translate']);
+            $filters[] = new Twig_SimpleFilter('t', [$this->app['intl'], 'translate'], ['is_safe' => ['html']]);
         }
 
         return $filters;
