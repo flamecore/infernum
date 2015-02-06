@@ -79,7 +79,7 @@ class MySQLStatement extends AbstractStatement
 
             $types = '';
             $values = array();
-            foreach ($parameters as $parameter) {
+            foreach ($parameters as $i => $parameter) {
                 $value = $this->encode($parameter);
 
                 if (is_int($value)) {
@@ -91,7 +91,9 @@ class MySQLStatement extends AbstractStatement
                 }
 
                 $types .= $type;
-                $values[] = &$value;
+
+                $values[$i] = $value;
+                $values[$i] = &$values[$i];
             }
 
             call_user_func_array('mysqli_stmt_bind_param', array_merge([$this->stmt, $types], $values));
