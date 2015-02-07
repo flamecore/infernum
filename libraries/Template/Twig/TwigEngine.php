@@ -27,6 +27,7 @@ use FlameCore\Infernum\Application;
 use FlameCore\Infernum\Template\TemplateLocator;
 use FlameCore\Infernum\Template\EngineInterface;
 use Twig_Environment;
+use Twig_Extension_Debug;
 use Twig_Extensions_Extension_Text;
 
 /**
@@ -69,6 +70,10 @@ class TwigEngine implements EngineInterface
 
             $format = $locale->getDateFormat();
             $twig->getExtension('core')->setDateFormat($format, '%d days');
+        }
+
+        if ($engineOptions['debug']) {
+            $twig->addExtension(new Twig_Extension_Debug);
         }
 
         $twig->addExtension(new Twig_Extensions_Extension_Text);
