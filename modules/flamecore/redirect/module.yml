@@ -1,0 +1,6 @@
+title: Redirect
+description: Redirects to the given page or URL
+author: IceFlame.net
+website: http://www.flamecore.org
+
+namespace: FlameCore\InfernumRedirectModule
