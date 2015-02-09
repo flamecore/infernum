@@ -8,7 +8,7 @@ use FlameCore\Infernum\Util;
 
 class Extension extends BaseExtension
 {
-    public static function run(Application $app)
+    public function run(Application $app)
     {
         $menus = $app->cache('menus', function () use ($app) {
             $menus = array();
@@ -31,7 +31,7 @@ class Extension extends BaseExtension
         Template::setGlobal('menus', $menus);
     }
 
-    private static function generateMenuTree(array $menuitems, Application $app)
+    private function generateMenuTree(array $menuitems, Application $app)
     {
         $tree = array();
 

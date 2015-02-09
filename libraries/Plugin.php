@@ -54,9 +54,14 @@ class Plugin implements ExtensionAbstraction
     private $provides = array();
 
     /**
+     * @var \FlameCore\Infernum\Extension
+     */
+    private $object;
+
+    /**
      * @var bool
      */
-    private $initialized = false;
+    private $booted = false;
 
     /**
      * @var bool
@@ -83,6 +88,15 @@ class Plugin implements ExtensionAbstraction
         $metadata = $this->loadMetadata();
         $this->namespace = $metadata['namespace'];
         $this->provides = $metadata['provides'];
+
+        require_once $this->path.'/plugin.php';
+
+        $class = $this->namespace.'\Extension';
+
+        if (!class_exists($class) || !is_subclass_of($class, __NAMESPACE__.'\Extension'))
+            throw new \RuntimeException(sprintf('Plugin "%s" does not provide a valid extension class.', $this->name));
+
+        $this->object = new $class();
     }
 
     /**
@@ -121,21 +135,14 @@ class Plugin implements ExtensionAbstraction
     /**
      * @return void
      */
-    public function initialize()
+    public function boot()
     {
-        if ($this->initialized)
+        if ($this->booted)
             throw new \LogicException(sprintf('Plugin "%s" is already initialized.', $this->name));
 
-        require_once $this->path.'/plugin.php';
+        $this->object->boot();
 
-        $class = $this->namespace.'\Extension';
-
-        if (!class_exists($class) || !is_subclass_of($class, __NAMESPACE__.'\Extension'))
-            throw new \RuntimeException(sprintf('Plugin "%s" does not provide a valid extension class.', $this->name));
-
-        $this->initialized = true;
-
-        $class::initialize();
+        $this->booted = true;
     }
 
     /**
@@ -146,16 +153,9 @@ class Plugin implements ExtensionAbstraction
         if ($this->run)
             throw new \LogicException(sprintf('Plugin "%s" is already run.', $this->name));
 
-        require_once $this->path.'/plugin.php';
-
-        $class = $this->namespace.'\Extension';
-
-        if (!class_exists($class) || !is_subclass_of($class, __NAMESPACE__.'\Extension'))
-            throw new \RuntimeException(sprintf('Plugin "%s" does not provide a valid extension class.', $this->name));
+        $this->object->run($app);
 
         $this->run = true;
-
-        $class::run($app);
     }
 
     /**

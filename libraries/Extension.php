@@ -33,14 +33,14 @@ class Extension
     /**
      * @return void
      */
-    public static function initialize()
+    public function boot()
     {
     }
 
     /**
      * @param \FlameCore\Infernum\Application $app
      */
-    public static function run(Application $app)
+    public function run(Application $app)
     {
     }
 }

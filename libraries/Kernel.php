@@ -331,7 +331,7 @@ final class Kernel implements \ArrayAccess
             if (isset($this['loader']) && $plugin->provides('libraries'))
                 $this['loader']->addSource($plugin->getNamespace(), $plugin->getPath());
 
-            $plugin->initialize();
+            $plugin->boot();
 
             $this->loadedPlugins[$pluginName] = $plugin;
         } else {
