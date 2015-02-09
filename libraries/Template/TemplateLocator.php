@@ -100,8 +100,9 @@ class TemplateLocator
     {
         $template = preg_replace('#/{2,}#', '/', strtr((string) $template, '\\', '/'));
 
-        if (strpos($template, "\0") !== false)
+        if (strpos($template, "\0") !== false) {
             throw new BadNameException('A template name cannot contain NUL bytes.');
+        }
 
         $template = ltrim($template, '/');
         $parts = explode('/', $template);
@@ -113,34 +114,39 @@ class TemplateLocator
                 ++$level;
             }
 
-            if ($level < 0)
+            if ($level < 0) {
                 throw new BadNameException(sprintf('Looks like you try to load a template outside configured directories. (%s)', $template));
+            }
         }
 
         if ($template[0] == '@') {
-            if (false === $pos = strpos($template, '/'))
+            if (false === $pos = strpos($template, '/')) {
                 throw new BadNameException(sprintf('Malformed namespaced template name "%s". (expecting "@namespace/template_name")', $template));
+            }
 
             $namespace = substr($template, 1, $pos - 1);
 
-            if (!$this->isNamespaceDefined($namespace))
+            if (!$this->isNamespaceDefined($namespace)) {
                 throw new BadNameException(sprintf('Cannot find template "%s": The template namespace "%s" is not defined.', $template, $namespace));
+            }
 
             $name = substr($template, $pos + 1);
             $path = $this->getNamespace($namespace);
 
             $filename = "$path/$name.twig";
         } else {
-            $localPath = $this->getLocalPath();
+            $path = $this->getLocalPath();
 
-            if (!$localPath)
+            if (!$path) {
                 throw new BadNameException(sprintf('Cannot find template "%s": There is no local template path defined.', $template));
+            }
 
-            $filename = "$localPath/$template.twig";
+            $filename = "$path/$template.twig";
         }
 
-        if (!file_exists($filename))
+        if (!file_exists($filename)) {
             throw new NotFoundException(sprintf('Unable to find template "%s". (looked into: %s)', $template, $path));
+        }
 
         return $filename;
     }
