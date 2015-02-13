@@ -72,7 +72,9 @@ abstract class Controller
 
         if ($result instanceof Response) {
             return $result;
-        } elseif ($result instanceof View || is_string($result)) {
+        } elseif ($result instanceof View) {
+            return new Response($result->render());
+        } elseif (is_string($result)) {
             return new Response($result);
         } else {
             throw new \UnexpectedValueException(sprintf('Action "%s" of Controller "%s" does not provide a valid response result', $action, get_class($this)));
@@ -124,7 +126,7 @@ abstract class Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    final protected function errorNotFound()
+    fin#al protected function errorNotFound()
     {
         $view = new View('@global/404_body', $this->context);
         return new Response($view, 404);

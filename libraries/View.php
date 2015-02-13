@@ -80,21 +80,6 @@ class View
     }
 
     /**
-     * Returns the rendered view
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        try {
-            return $this->render();
-        } catch (\Exception $e) {
-            trigger_error($e->getMessage(), E_USER_WARNING);
-            return '';
-        }
-    }
-
-    /**
      * Renders the view
      *
      * @return string
