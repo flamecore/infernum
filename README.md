@@ -3,8 +3,11 @@ Infernum – Web Application Engine
 
 Infernum is a lightweight Web Application Engine written in PHP 5.5.
 
-ATTENTION! Infernum is currently under heavy development and therefore not usable in a production environment. Use it at your own risk!
+**ATTENTION! Infernum is currently under heavy development and therefore not usable in a production environment. Use it at your own risk!**
 
+Complete installation instructions and more information can be found on [our Wiki](https://github.com/FlameCore/Infernum/wiki).
+
+Support: [Chat with us at Gitter](https://gitter.im/FlameCore/Infernum) or drop us a message at <info@flamecore.org>.
 
 Requirements
 ------------
