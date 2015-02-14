@@ -65,8 +65,9 @@ abstract class Controller
      */
     final public function run(Request $request, $action, array $arguments = null)
     {
-        if (!$this->actionExists($action))
+        if (!$this->actionExists($action)) {
             return $this->errorNotFound();
+        }
 
         $result = call_user_func([$this, 'action_'.$action], $arguments, $request, $this->context);
 
@@ -126,7 +127,7 @@ abstract class Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    fin#al protected function errorNotFound()
+    final protected function errorNotFound()
     {
         $view = new View('@global/404_body', $this->context);
         return new Response($view, 404);
