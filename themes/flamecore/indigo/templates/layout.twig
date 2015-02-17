@@ -1,79 +1,93 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 {% for tag in METATAGS %}
-        <meta name="{{ tag.name }}" content="{{ tag.content }}" />
+    <meta name="{{ tag.name }}" content="{{ tag.content }}" />
 {% endfor %}
 {% for tag in LINKTAGS %}
-        <link rel="{{ tag.rel }}" href="{{ tag.href }}" type="{{ tag.type }}" />
+    <link rel="{{ tag.rel }}" href="{{ tag.href }}" type="{{ tag.type }}" />
 {% endfor %}
-        <link rel="stylesheet" type="text/css" href="{{ file('css/default.css') }}" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="{{ file('css/default.css') }}" media="screen"/>
 {% for tag in STYLESHEETS %}
-        <link rel="stylesheet" href="{{ tag.url }}" type="text/css" media="{{ tag.media }}" />
+    <link rel="stylesheet" href="{{ tag.url }}" type="text/css" media="{{ tag.media }}" />
 {% endfor %}
 {% for tag in JAVASCRIPTS %}
-        <script src="{{ tag.url }}" type="{{ tag.type }}"></script>
+    <script src="{{ tag.url }}" type="{{ tag.type }}"></script>
 {% endfor %}
-        <title>{{ PAGE_TITLE }}</title>
-    </head>
-    <body>
+    <title>{{ PAGE_TITLE }}</title>
+</head>
+<body>
 
-        <div class="container">
+<div class="container">
 
-            <div class="header">
+    <div class="header">
 
-                <div class="title">
-                    <h1><a href="{{ SITE_URL }}">{{ SITE_TITLE }}</a></h1>
-                </div>
+        {% block header %}
+            <div class="title">
+                <h1><a href="{{ SITE_URL }}">{{ SITE_TITLE }}</a></h1>
+            </div>
 
-                <div class="navigation">
-{% for item in menus.main.items %}
+            <div class="navigation">
+                {% for item in menus.main.items %}
                     <a href="{{ item.url }}"{% if item.selected %} class="selected"{% endif %}>{{ item.title }}</a>
-{% endfor %}
-                    <div class="clearer"><span></span></div>
-                </div>
+                {% endfor %}
+                <div class="clearer"><span></span></div>
+            </div>
+        {% endblock %}
+
+    </div>
+
+    <div class="main">
+
+        {% block main %}
+            <div class="content">
+
+                {% block pre_content %}
+                    {% block heading %}{% endblock %}
+                {% endblock %}
+
+                {% block content %}{% endblock %}
+
+                {% block post_content %}{% endblock %}
 
             </div>
 
-            <div class="main">
+            <div class="sidebar">
 
-                <div class="content">
-
-{% block content %}{% endblock %}
-
-                </div>
-
-                <div class="sidebar">
-
-{% block sidebar %}
-    {% if menus.sidebar %}
-                    <h1>{{ menus.sidebar.title }}</h1>
-                    <ul>
-        {% for item in menus.sidebar.items %}
-                        <li><a href="{{ item.url }}"{% if item.selected %} class="selected"{% endif %}>{{ item.title }}</a></li>
-        {% endfor %}
-                    </ul>
-    {% endif %}
-{% endblock %}
-
-                </div>
-
-                <div class="clearer">&nbsp;</div>
+                {% block sidebar %}
+                    {% if menus.sidebar %}
+                        <h1>{{ menus.sidebar.title }}</h1>
+                        <ul>
+                            {% for item in menus.sidebar.items %}
+                                <li>
+                                    <a href="{{ item.url }}"{% if item.selected %} class="selected"{% endif %}>{{ item.title }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endblock %}
 
             </div>
+        {% endblock %}
 
-        </div>
+        <div class="clearer">&nbsp;</div>
 
-        <div class="footer">
+    </div>
 
-            <div class="left">Copyright &copy; {{ 'now'|date('Y') }} Infernum</div>
+</div>
 
-            <div class="right">Powered by <a href="http://github.com/iceflame-net/Infernum">Infernum</a> – Theme by <a href="http://templates.arcsin.se/">Arcsin</a></div>
+<div class="footer">
 
-            <div class="clearer">&nbsp;</div>
+    {% block footer %}
+        <div class="left">Copyright &copy; {{ 'now'|date('Y') }} Infernum</div>
 
-        </div>
+        <div class="right">Powered by <a href="http://github.com/FlameCore/Infernum">Infernum</a> – Theme by <a href="http://templates.arcsin.se/">Arcsin</a></div>
 
-    </body>
+        <div class="clearer">&nbsp;</div>
+    {% endblock %}
+
+</div>
+
+</body>
 </html>
