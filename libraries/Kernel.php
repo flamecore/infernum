@@ -208,7 +208,8 @@ final class Kernel implements \ArrayAccess
 
             $this->runningExtension = false;
 
-            $response = new Response(new View('@global/404_body', $app), 404);
+            $view = new View('@global/404_body', $app);
+            $response = new Response($view->render(), 404);
         }
 
         $response->prepare($request);
