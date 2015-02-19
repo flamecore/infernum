@@ -90,20 +90,15 @@ class TwigCoreExtension extends Twig_Extension
 
     public function renderForm(Form $form = null)
     {
-        if ($form == null)
+        if ($form == null) {
             throw new \InvalidArgumentException('Cannot render form without Form object.');
+        }
 
         return $form->render();
     }
 
     public function renderInjection(Template $template)
     {
-        if ($hookpoint == null)
-            throw new \InvalidArgumentException('Cannot render injection without hookpoint name.');
-
-        if (!isset($this->hooks[$hookpoint]))
-            throw new \DomainException(sprintf('The hookpoint "%s" does not exist.', $hookpoint));
-
-        return $hook->render();
+        return $template->render();
     }
 }

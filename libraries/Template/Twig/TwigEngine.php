@@ -85,13 +85,7 @@ class TwigEngine implements EngineInterface
     }
 
     /**
-     * Renders the given template
-     *
-     * @param string $name The name of the template
-     * @param array $variables The variables to use
-     * @return string
-     * @throws \FlameCore\Infernum\Template\NotFoundException
-     * @throws \FlameCore\Infernum\Template\BadNameException
+     * {@inheritdoc}
      */
     public function render($name, array $variables = [])
     {

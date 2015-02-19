@@ -74,13 +74,15 @@ class Plugin implements ExtensionAbstraction
      */
     public function __construct($name, Kernel $kernel)
     {
-        if (!$kernel->pluginExists($name))
+        if (!$kernel->pluginExists($name)) {
             throw new \LogicException(sprintf('Plugin "%s" does not exist.', $name));
+        }
 
         $path = $kernel->getPluginPath($name);
 
-        if (!file_exists($path.'/plugin.php'))
+        if (!file_exists($path.'/plugin.php')) {
             throw new \LogicException(sprintf('Plugin "%s" does not provide an extension.', $name));
+        }
 
         $this->name = $name;
         $this->path = $path;
@@ -93,8 +95,9 @@ class Plugin implements ExtensionAbstraction
 
         $class = $this->namespace.'\Extension';
 
-        if (!class_exists($class) || !is_subclass_of($class, __NAMESPACE__.'\Extension'))
+        if (!class_exists($class) || !is_subclass_of($class, __NAMESPACE__.'\Extension')) {
             throw new \RuntimeException(sprintf('Plugin "%s" does not provide a valid extension class.', $this->name));
+        }
 
         $this->object = new $class();
     }
@@ -137,8 +140,9 @@ class Plugin implements ExtensionAbstraction
      */
     public function boot()
     {
-        if ($this->booted)
+        if ($this->booted) {
             throw new \LogicException(sprintf('Plugin "%s" is already initialized.', $this->name));
+        }
 
         $this->object->boot();
 
@@ -150,8 +154,9 @@ class Plugin implements ExtensionAbstraction
      */
     public function run(Application $app)
     {
-        if ($this->run)
+        if ($this->run) {
             throw new \LogicException(sprintf('Plugin "%s" is already run.', $this->name));
+        }
 
         $this->object->run($app);
 

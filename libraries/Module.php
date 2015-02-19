@@ -76,13 +76,15 @@ class Module implements ExtensionAbstraction
      */
     public function __construct($name, Kernel $kernel, $extra = null)
     {
-        if (!$kernel->moduleExists($name))
+        if (!$kernel->moduleExists($name)) {
             throw new \LogicException(sprintf('Module "%s" does not exist.', $name));
+        }
 
         $path = $kernel->getModulePath($name);
 
-        if (!file_exists($path.'/controller.php'))
+        if (!file_exists($path.'/controller.php')) {
             throw new \LogicException(sprintf('Module "%s" does not provide a controller.', $name));
+        }
 
         $this->name = $name;
         $this->path = $path;
@@ -144,15 +146,17 @@ class Module implements ExtensionAbstraction
      */
     public function run(Application $app, Request $request, $action, $arguments)
     {
-        if ($this->run)
+        if ($this->run) {
             throw new \LogicException(sprintf('Module "%s" is already run.', $this->name));
+        }
 
         require_once $this->path.'/controller.php';
 
         $class = $this->namespace.'\Controller';
 
-        if (!class_exists($class) || !is_subclass_of($class, __NAMESPACE__.'\Controller'))
+        if (!class_exists($class) || !is_subclass_of($class, __NAMESPACE__.'\Controller')) {
             throw new \LogicException(sprintf('Module "%s" does not provide a valid Controller class.', $this->name));
+        }
 
         $this->run = true;
 

@@ -38,13 +38,6 @@ class View
     private $template;
 
     /**
-     * The name of the theme to use (Default: value given in settings)
-     *
-     * @var string
-     */
-    private static $theme;
-
-    /**
      * The title of the page
      *
      * @var string

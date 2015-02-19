@@ -52,8 +52,9 @@ class Translations
             $result = $app['db']->query($sql, array($language));
 
             $strings = array();
-            while ($entry = $result->fetch())
+            while ($entry = $result->fetch()) {
                 $strings[$entry['string']] = $entry['translation'];
+            }
 
             return $strings;
         });
@@ -77,8 +78,9 @@ class Translations
 
         // Replace variables if needed
         if (is_array($vars)) {
-            foreach ($vars as $key => $val)
+            foreach ($vars as $key => $val) {
                 $translation = str_replace('%'.$key.'%', $val, $translation);
+            }
         }
 
         return $translation;

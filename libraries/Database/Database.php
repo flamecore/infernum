@@ -101,13 +101,15 @@ class Database
     {
         $driver = (string) $driver;
 
-        if ($driver === '')
+        if ($driver === '') {
             throw new \InvalidArgumentException('Database driver name is invalid.');
+        }
 
         $driver = strtolower($driver);
 
-        if (!isset(self::$drivers[$driver]))
+        if (!isset(self::$drivers[$driver])) {
             throw new \DomainException(sprintf('Database driver "%s" is not supported.', $driver));
+        }
 
         return sprintf('%1$s\%2$s\%2$sDriver', __NAMESPACE__, self::$drivers[$driver]);
     }

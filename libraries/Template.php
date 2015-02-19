@@ -67,8 +67,9 @@ class Template
      */
     public function __construct($name, Application $app)
     {
-        if (!isset($app['tpl']))
+        if (!isset($app['tpl'])) {
             throw new \LogicException('No template engine available.');
+        }
 
         $this->name = $name;
         $this->engine = $app['tpl'];

@@ -34,10 +34,19 @@ use Psr\Log\InvalidArgumentException;
  */
 class Logger extends AbstractLogger
 {
+    /**
+     * @var string
+     */
     protected $name;
 
+    /**
+     * @var string
+     */
     protected $filename;
 
+    /**
+     * @var bool
+     */
     protected $active = false;
 
     /**
@@ -51,8 +60,9 @@ class Logger extends AbstractLogger
     {
         $name = (string) $name;
 
-        if ($name === '')
+        if ($name === '') {
             throw new \InvalidArgumentException('The log channel name must not be empty');
+        }
 
         $this->name = $name;
         $this->filename = $kernel['path'].'/logs/'.$name.'.log';
@@ -70,8 +80,9 @@ class Logger extends AbstractLogger
      */
     public function log($severity, $message, array $context = [])
     {
-        if (!$this->active)
+        if (!$this->active) {
             return true;
+        }
 
         if ($severity == LogLevel::EMERGENCY) {
             $tag = 'EMERGENCY';

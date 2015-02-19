@@ -34,10 +34,19 @@ use FlameCore\Infernum\Template\NotFoundException;
  */
 class TemplateLocator
 {
+    /**
+     * @var \FlameCore\Infernum\Application
+     */
     protected $app;
 
+    /**
+     * @var array
+     */
     protected $namespaces = array();
 
+    /**
+     * @param \FlameCore\Infernum\Application $app
+     */
     final public function __construct(Application $app)
     {
         $this->setNamespace('global', $app->getTemplatePath());

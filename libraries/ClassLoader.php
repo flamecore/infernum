@@ -91,14 +91,17 @@ class ClassLoader
      */
     public function addSource($prefix, $path, $base = 'libraries/*.php')
     {
-        if ($this->hasSource($prefix))
+        if ($this->hasSource($prefix)) {
             return;
+        }
 
-        if (!is_dir($path))
+        if (!is_dir($path)) {
             throw new \DomainException(sprintf('The path "%s" does not exist.', $path));
+        }
 
-        if (strpos($base, '*') === false)
+        if (strpos($base, '*') === false) {
             throw new \InvalidArgumentException(sprintf('The base path does not contain a filename wildcard.', $prefix));
+        }
 
         $prefix = $this->normalize($prefix);
         $this->sources[$prefix] = $path.'/'.$base;
@@ -135,8 +138,9 @@ class ClassLoader
                 $name_without_prefix = substr($class, strlen($prefix));
                 $file = str_replace('*', str_replace('\\', '/', $name_without_prefix), $pattern);
 
-                if (file_exists($file))
+                if (file_exists($file)) {
                     return $file;
+                }
             }
         }
 

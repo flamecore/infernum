@@ -136,8 +136,9 @@ abstract class AbstractField implements FieldInterface
     {
         $name = (string) $name;
 
-        if (empty($name))
+        if (empty($name)) {
             throw new \InvalidArgumentException('The form field name must not be empty.');
+        }
 
         $this->name = $name;
 
@@ -251,8 +252,9 @@ abstract class AbstractField implements FieldInterface
      */
     public function isRequired()
     {
-        if ($this->asserts['required'])
+        if ($this->asserts['required']) {
             return true;
+        }
 
         return isset($this->asserts['min_length']);
     }
@@ -280,14 +282,17 @@ abstract class AbstractField implements FieldInterface
      */
     public function validate($value)
     {
-        if ($this->asserts['required'] && (string) $value === '')
+        if ($this->asserts['required'] && (string) $value === '') {
             return false;
+        }
 
-        if (isset($this->asserts['min_length']) && strlen($value) < (int) $this->asserts['min_length'])
+        if (isset($this->asserts['min_length']) && strlen($value) < (int) $this->asserts['min_length']) {
             return false;
+        }
 
-        if (isset($this->asserts['max_length']) && strlen($value) > (int) $this->asserts['max_length'])
+        if (isset($this->asserts['max_length']) && strlen($value) > (int) $this->asserts['max_length']) {
             return false;
+        }
 
         return true;
     }

@@ -33,20 +33,37 @@ use FlameCore\Infernum\Configuration\SiteSettings;
  */
 class Site
 {
+    /**
+     * @var string
+     */
     private $name;
 
+    /**
+     * @var string
+     */
     private $path;
 
+    /**
+     * @var array
+     */
     private $routes;
 
+    /**
+     * @var array
+     */
     private $plugins;
 
+    /**
+     * @param string $name
+     * @param \FlameCore\Infernum\Kernel $kernel
+     */
     public function __construct($name, Kernel $kernel)
     {
         $path = $kernel['path'].'/websites/'.$name;
 
-        if (!is_dir($path))
+        if (!is_dir($path)) {
             throw new \LogicException(sprintf('Directory of site "%s" does not exist (%s).', $name, $path));
+        }
 
         $this->name = $name;
         $this->path = $path;
@@ -56,26 +73,41 @@ class Site
         $this->plugins = $config['plugins'];
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * @return string
+     */
     public function getPath()
     {
         return $this->path;
     }
 
+    /**
+     * @return array
+     */
     public function getRoutes()
     {
         return $this->routes;
     }
 
+    /**
+     * @return array
+     */
     public function getPlugins()
     {
         return $this->plugins;
     }
 
+    /**
+     * @return array
+     */
     public function loadSettings()
     {
         try {
@@ -86,6 +118,9 @@ class Site
         }
     }
 
+    /**
+     * @return array
+     */
     private function loadConfiguration()
     {
         try {

@@ -173,8 +173,9 @@ final class Kernel implements \ArrayAccess
      */
     public function handle(Request $request, Application $app)
     {
-        if (!$this->isReady())
+        if (!$this->isReady()) {
             throw new \LogicException('Kernel must be booted to handle requests.');
+        }
 
         try {
             $this->pagePath = $request->query->get('p', '');
@@ -244,15 +245,17 @@ final class Kernel implements \ArrayAccess
 
         $plugins = $site->getPlugins();
         foreach ($plugins as $plugin) {
-            if (!$this->pluginExists($plugin))
+            if (!$this->pluginExists($plugin)) {
                 throw new \RuntimeException(sprintf('Site "%s" depends on plugin "%s" which is not installed.', $sitename, $plugin));
+            }
             $this->loadPlugin($plugin);
         }
 
         $routes = $site->getRoutes();
         foreach ($routes as $route) {
-            if (!$this->moduleExists($route['module']))
+            if (!$this->moduleExists($route['module'])) {
                 throw new \RuntimeException(sprintf('Site "%s" depends on module "%s" which is not installed.', $sitename, $route['module']));
+            }
             $alias = isset($route['alias']) ? $route['alias'] : null;
             $extra = isset($route['extra']) ? $route['extra'] : null;
             $this['router']->mountModule($route['module'], $alias, $extra);
@@ -279,13 +282,15 @@ final class Kernel implements \ArrayAccess
 
         $plugins = $module->getRequiredPlugins();
         foreach ($plugins as $plugin) {
-            if (!$this->pluginExists($plugin))
+            if (!$this->pluginExists($plugin)) {
                 throw new \RuntimeException(sprintf('Module "%s" depends on plugin "%s" which is not installed.', $moduleName, $plugin));
+            }
             $this->loadPlugin($plugin);
         }
 
-        if (isset($this['loader']) && $module->provides('libraries'))
+        if (isset($this['loader']) && $module->provides('libraries')) {
             $this['loader']->addSource($module->getNamespace(), $module->getPath());
+        }
 
         $this->loadedModule = $moduleName;
 
@@ -329,8 +334,9 @@ final class Kernel implements \ArrayAccess
         if (!isset($this->loadedPlugins[$pluginName])) {
             $plugin = new Plugin($pluginName, $this);
 
-            if (isset($this['loader']) && $plugin->provides('libraries'))
+            if (isset($this['loader']) && $plugin->provides('libraries')) {
                 $this['loader']->addSource($plugin->getNamespace(), $plugin->getPath());
+            }
 
             $plugin->boot();
 
@@ -377,9 +383,6 @@ final class Kernel implements \ArrayAccess
      */
     public function cache($name, callable $callback, $lifetime = 86400)
     {
-        if (!is_callable($callback))
-            throw new \InvalidArgumentException(sprintf('Invalid callback given for cache file "%s".', $name));
-
         if ($this['cache']->contains($name)) {
             // We were able to retrieve data
             return $this['cache']->get($name);
@@ -402,11 +405,13 @@ final class Kernel implements \ArrayAccess
     {
         $cachePath = $this['path'].'/cache';
 
-        if (isset($subpath))
+        if (isset($subpath)) {
             $cachePath .= '/'.$subpath;
+        }
 
-        if (!is_dir($cachePath))
+        if (!is_dir($cachePath)) {
             mkdir($cachePath, 0777, true);
+        }
 
         return $cachePath;
     }

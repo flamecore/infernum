@@ -57,10 +57,12 @@ class Filter
     public static function isInt($var, $minRange = null, $maxRange = null, $flags = 0)
     {
         $options = array();
-        if (isset($minRange))
+        if (isset($minRange)) {
             $options['min_range'] = $minRange;
-        if (isset($maxRange))
+        }
+        if (isset($maxRange)) {
             $options['max_range'] = $maxRange;
+        }
 
         $optionsArg = array(
             'options' => $options,
@@ -81,8 +83,9 @@ class Filter
     public static function isFloat($var, $decimal = null, $flags = 0)
     {
         $options = array();
-        if (isset($decimal))
+        if (isset($decimal)) {
             $options['decimal'] = $decimal;
+        }
 
         $optionsArg = array(
             'options' => $options,

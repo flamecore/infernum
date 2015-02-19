@@ -39,8 +39,9 @@ class MultiSelectField extends SelectField
     {
         $style = (string) $style;
 
-        if ($style != 'select' && $style != 'checkbox')
+        if ($style != 'select' && $style != 'checkbox') {
             throw new \DomainException(sprintf('Style "%s" is not available for multiselect fields. (expecting one of: select, checkbox)', $style));
+        }
 
         $this->style = $style;
 

@@ -61,8 +61,9 @@ class TextField extends SimpleField
         } else {
             $scheme = (string) $scheme;
 
-            if (!in_array($scheme, ['tel', 'url', 'email']))
+            if (!in_array($scheme, ['tel', 'url', 'email'])) {
                 throw new \DomainException(sprintf('The text field scheme "%s" is not available. (expecting one of: tel, url, email)', $scheme));
+            }
 
             $this->scheme = $scheme;
         }
@@ -104,11 +105,13 @@ class TextField extends SimpleField
         if ($this->scheme) {
             $value = (string) $value;
 
-            if ($this->scheme == 'email' && !Filter::isEmail($value))
+            if ($this->scheme == 'email' && !Filter::isEmail($value)) {
                 return false;
+            }
 
-            if ($this->scheme == 'url' && !Filter::isURL($value))
+            if ($this->scheme == 'url' && !Filter::isURL($value)) {
                 return false;
+            }
         }
 
         return parent::validate($value);

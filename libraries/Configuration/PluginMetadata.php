@@ -32,6 +32,9 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
  */
 class PluginMetadata extends AbstractConfiguration
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function getDefinitionTree()
     {
         $treeBuilder = new TreeBuilder();

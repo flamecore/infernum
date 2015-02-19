@@ -42,8 +42,9 @@ class Util
         $patterns = explode(',', $list);
 
         foreach ($patterns as $pattern) {
-            if (fnmatch($pattern, $value))
+            if (fnmatch($pattern, $value)) {
                 return true;
+            }
         }
 
         return false;

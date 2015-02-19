@@ -59,8 +59,9 @@ class International
         $locales = Localization::listAll($app['db']);
         $defaultLang = $app->setting('site.language');
 
-        if (!in_array($defaultLang, $locales))
+        if (!in_array($defaultLang, $locales)) {
             throw new \DomainException('The default language is invalid or undefined.');
+        }
 
         // Detect the user's preferred language
         if (isset($app['session']) && $sessionLang = $app['session']->read('language')) {
@@ -161,8 +162,9 @@ class International
     {
         $format = $this->locale->getDateFormat($length);
 
-        if ($withTime)
+        if ($withTime) {
             $format .= ', ' . $this->locale->getTimeFormat();
+        }
 
         return Format::time($input, $format);
     }

@@ -32,6 +32,9 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
  */
 class SystemConfiguration extends AbstractConfiguration
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function getDefinitionTree()
     {
         $treeBuilder = new TreeBuilder();

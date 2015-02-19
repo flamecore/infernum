@@ -34,36 +34,56 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
  */
 abstract class AbstractConfiguration
 {
+    /**
+     * @var array
+     */
     private $files = array();
 
+    /**
+     * @var \Symfony\Component\Config\Definition\Builder\TreeBuilder
+     */
     private $treeBuilder;
 
+    /**
+     * @var \Symfony\Component\Config\Definition\Processor
+     */
     private $processor;
 
+    /**
+     * @param string|array $files
+     */
     public function __construct($files)
     {
         $this->files = (array) $files;
 
         $treeBuilder = $this->getDefinitionTree();
 
-        if (!$treeBuilder instanceof TreeBuilder)
+        if (!$treeBuilder instanceof TreeBuilder) {
             throw new \UnexpectedValueException(sprintf('%s::getDefinitionTree() does not provide a Symfony\Component\Config\Definition\Builder\TreeBuilder object.', get_class($this)));
+        }
 
         $this->treeBuilder = $treeBuilder;
         $this->processor = new Processor();
     }
 
+    /**
+     * @return array
+     */
     public function load()
     {
         $configs = array();
         foreach ($this->files as $file) {
-            if (!file_exists($file))
+            if (!file_exists($file)) {
                 throw new \LogicException(sprintf('File "%s" does not exist.', $file));
+            }
             $configs[] = Yaml::parse($file);
         }
 
         return $this->processor->process($this->treeBuilder->buildTree(), $configs);
     }
 
+    /**
+     * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder
+     */
     abstract protected function getDefinitionTree();
 }

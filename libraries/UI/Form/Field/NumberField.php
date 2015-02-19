@@ -68,8 +68,9 @@ class NumberField extends SimpleField
         if ($minimum === null) {
             $this->minimum = null;
         } else {
-            if ($this->maximum !== null && $minimum > $this->maximum)
+            if ($this->maximum !== null && $minimum > $this->maximum) {
                 throw new \InvalidArgumentException(sprintf('The minimum value (%d) must be lower than or equal to the maximum value (%d).', $minimum, $this->maximum));
+            }
 
             $this->minimum = $this->normalize($minimum);
         }
@@ -100,11 +101,13 @@ class NumberField extends SimpleField
 
     public function validate($value)
     {
-        if ($this->minimum !== null && $value < $this->minimum)
+        if ($this->minimum !== null && $value < $this->minimum) {
             return false;
+        }
 
-        if ($this->maximum !== null && $value > $this->maximum)
+        if ($this->maximum !== null && $value > $this->maximum) {
             return false;
+        }
 
         return true;
     }

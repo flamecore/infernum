@@ -70,8 +70,9 @@ class DateField extends SimpleField
         if ($minimum === null) {
             $this->minimum = null;
         } elseif ($minimum = $this->normalize($minimum)) {
-            if ($this->maximum !== null && $minimum > $this->maximum)
+            if ($this->maximum !== null && $minimum > $this->maximum) {
                 throw new \InvalidArgumentException(sprintf('The minimum date (%s) must be lower than or equal to the maximum date (%s).', $minimum->format('Y-m-d'), $this->maximum->format('Y-m-d')));
+            }
 
             $this->minimum = $minimum;
         } else {
@@ -116,14 +117,17 @@ class DateField extends SimpleField
 
     public function validate($value)
     {
-        if (!$value instanceof \DateTime)
+        if (!$value instanceof \DateTime) {
             return false;
+        }
 
-        if ($this->minimum !== null && $value < $this->minimum)
+        if ($this->minimum !== null && $value < $this->minimum) {
             return false;
+        }
 
-        if ($this->maximum !== null && $value > $this->maximum)
+        if ($this->maximum !== null && $value > $this->maximum) {
             return false;
+        }
 
         return true;
     }

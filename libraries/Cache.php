@@ -44,8 +44,9 @@ class Cache
      */
     public function __construct($path)
     {
-        if (!is_writable($path))
+        if (!is_writable($path)) {
             throw new \LogicException('The cache directory is not writable.');
+        }
 
         $this->path = $path;
     }
@@ -58,8 +59,9 @@ class Cache
      */
     public function get($name)
     {
-        if (!$this->validateName($name))
+        if (!$this->validateName($name)) {
             throw new \InvalidArgumentException(sprintf('Given cache name "%s" is invalid.', $name));
+        }
 
         $rawdata = '';
         $expire = 0;
@@ -99,8 +101,9 @@ class Cache
      */
     public function set($name, $data, $lifetime)
     {
-        if (!$this->validateName($name))
+        if (!$this->validateName($name)) {
             throw new \InvalidArgumentException(sprintf('Given cache name "%s" is invalid.', $name));
+        }
 
         $rawdata = serialize($data);
         $expire = time() + (int) $lifetime;
@@ -184,11 +187,19 @@ class Cache
         }
     }
 
+    /**
+     * @param string $name
+     * @return string
+     */
     private function getFilename($name)
     {
         return $this->path.'/'.$name.'.dat';
     }
 
+    /**
+     * @param string $name
+     * @return bool
+     */
     private function validateName($name)
     {
         return preg_match('#^[\w-+@\./]+$#', $name) && $name[0] != '/';

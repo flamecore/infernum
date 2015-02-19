@@ -61,8 +61,9 @@ class Container
     {
         $name = (string) $name;
 
-        if ($name === '')
+        if ($name === '') {
             throw new \InvalidArgumentException('The container name must not be empty');
+        }
 
         $this->name = $name;
         $this->typemap = $typemap;
@@ -107,29 +108,34 @@ class Container
     {
         $name = (string) $name;
 
-        if ($name === '')
+        if ($name === '') {
             throw new \InvalidArgumentException(sprintf('Cannot set item with empty name in %s container.', $this->name));
+        }
 
-        if ($this->has($name) && in_array($name, $this->locked))
+        if ($this->has($name) && in_array($name, $this->locked)) {
             throw new \LogicException(sprintf('Cannot override locked item "%s" in %s container.', $name, $this->name));
+        }
 
         if (isset($this->typemap[$name])) {
             $type = $this->typemap[$name];
             if ($type[0] == '\\') {
                 $className = substr($type, 1);
-                if (!$value instanceof $className)
+                if (!$value instanceof $className) {
                     throw new \InvalidArgumentException(sprintf('Value for item "%s" in %s container must be an instance of %s class, but %s given.', $name, $this->name, $className, $this->getType($value)));
+                }
             } else {
                 $actualType = $this->getType($value);
-                if ($actualType != $type)
+                if ($actualType != $type) {
                     throw new \InvalidArgumentException(sprintf('Value for item "%s" in %s container must be of type %s, but %s given.', $name, $this->name, $type, $actualType));
+                }
             }
         }
 
         $this->items[$name] = $value;
 
-        if ((bool) $lock)
+        if ((bool) $lock) {
             $this->locked[] = $name;
+        }
     }
 
     /**
@@ -142,11 +148,13 @@ class Container
     {
         $name = (string) $name;
 
-        if ($name === '')
+        if ($name === '') {
             throw new \InvalidArgumentException(sprintf('Cannot unset item with empty name in %s container.', $this->name));
+        }
 
-        if ($this->has($name) && in_array($name, $this->locked))
+        if ($this->has($name) && in_array($name, $this->locked)) {
             throw new \LogicException(sprintf('Cannot unset locked item "%s" in %s container.', $name, $this->name));
+        }
 
         unset($this->items[$name]);
     }

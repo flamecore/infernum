@@ -59,8 +59,9 @@ class SelectField extends SimpleField
     {
         $style = (string) $style;
 
-        if ($style != 'select' && $style != 'radio')
+        if ($style != 'select' && $style != 'radio') {
             throw new \DomainException(sprintf('Style "%s" is not available for select fields. (expecting one of: select, radio)', $style));
+        }
 
         $this->style = $style;
 

@@ -24,6 +24,7 @@
 namespace FlameCore\Infernum;
 
 use FlameCore\Infernum\Database\Database;
+use FlameCore\Infernum\Interfaces\ExtensionAbstraction;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
 
@@ -34,12 +35,24 @@ use Symfony\Component\HttpFoundation\Cookie;
  */
 final class Application implements \ArrayAccess
 {
+    /**
+     * @var \FlameCore\Infernum\Container
+     */
     private $container;
 
+    /**
+     * @var \FlameCore\Infernum\Site
+     */
     private $site;
 
+    /**
+     * @var \FlameCore\Infernum\Kernel
+     */
     private $kernel;
 
+    /**
+     * @var string|bool
+     */
     private $theme = false;
 
     /**
@@ -162,8 +175,9 @@ final class Application implements \ArrayAccess
     {
         $result = $this['url'].'/'.$path;
 
-        if (isset($query))
+        if (isset($query)) {
             $result .= '?'.$query;
+        }
 
         return $result;
     }
@@ -181,13 +195,15 @@ final class Application implements \ArrayAccess
         if ($this->setting('web.url_rewrite')) {
             $result = $this['url'].'/'.$pagePath;
 
-            if (isset($query))
+            if (isset($query)) {
                 $result .= '?'.$query;
+            }
         } else {
             $result = $this['url'].'/?p='.$pagePath;
 
-            if (isset($query))
+            if (isset($query)) {
                 $result .= '&'.$query;
+            }
         }
 
         return $result;
@@ -227,9 +243,6 @@ final class Application implements \ArrayAccess
      */
     public function cache($name, callable $callback, $lifetime = null)
     {
-        if (!is_callable($callback))
-            throw new \InvalidArgumentException(sprintf('Invalid callback given for cache file "%s".', $name));
-
         if ($this->isCacheEnabled()) {
             if ($this['cache']->contains($name)) {
                 // We were able to retrieve data
@@ -323,8 +336,9 @@ final class Application implements \ArrayAccess
     {
         $completeSubpath = $this->site->getName();
 
-        if (isset($subpath))
+        if (isset($subpath)) {
             $completeSubpath .= '/'.$subpath;
+        }
 
         return $this->kernel->getCachePath($completeSubpath);
     }
@@ -341,7 +355,7 @@ final class Application implements \ArrayAccess
         if ($fromExtension) {
             $extension = $this->kernel->getRunningExtension();
 
-            if ($extension instanceof Module || $extension instanceof Plugin) {
+            if ($extension instanceof ExtensionAbstraction) {
                 return $extension->getPath().'/templates';
             } else {
                 return false;
