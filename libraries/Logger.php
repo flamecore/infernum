@@ -65,7 +65,7 @@ class Logger extends AbstractLogger
         }
 
         $this->name = $name;
-        $this->filename = $kernel['path'].'/logs/'.$name.'.log';
+        $this->filename = $kernel->getPath().'/logs/'.$name.'.log';
 
         $this->active = $kernel->config('enable_logging');
     }

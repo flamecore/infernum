@@ -59,7 +59,7 @@ class Site
      */
     public function __construct($name, Kernel $kernel)
     {
-        $path = $kernel['path'].'/websites/'.$name;
+        $path = $kernel->getPath().'/websites/'.$name;
 
         if (!is_dir($path)) {
             throw new \LogicException(sprintf('Directory of site "%s" does not exist (%s).', $name, $path));

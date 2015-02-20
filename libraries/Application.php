@@ -355,7 +355,7 @@ final class Application implements \ArrayAccess
      */
     public function getThemePath()
     {
-        return $this->kernel['path'].'/themes/'.$this->theme;
+        return $this->kernel->getPath().'/themes/'.$this->theme;
     }
 
     /**

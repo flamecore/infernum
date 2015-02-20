@@ -36,6 +36,11 @@ use Symfony\Component\HttpFoundation\Response;
 final class Kernel implements \ArrayAccess
 {
     /**
+     * @var string
+     */
+    private $path;
+
+    /**
      * @var bool
      */
     private $booted = false;
@@ -82,16 +87,15 @@ final class Kernel implements \ArrayAccess
      */
     public function __construct($path)
     {
+        $this->path = $path;
+
         $this->container = new Container('kernel', [
-            'path' => 'string',
             'config' => 'array',
             'loader' => '\FlameCore\Infernum\ClassLoader',
             'logger' => '\Psr\Log\LoggerInterface',
             'cache' => '\FlameCore\Infernum\Cache',
             'router' => '\FlameCore\Infernum\Router'
         ]);
-
-        $this['path'] = $path;
 
         set_error_handler([$this, 'handleError']);
 
@@ -101,6 +105,16 @@ final class Kernel implements \ArrayAccess
 
         $this['logger'] = new Logger('system', $this);
         $this['router'] = new Router($this);
+    }
+
+    /**
+     * Gets the system path.
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
     }
 
     /**
@@ -349,7 +363,7 @@ final class Kernel implements \ArrayAccess
      */
     public function getModulePath($moduleName)
     {
-        return $this['path'].'/modules/'.$moduleName;
+        return $this->path.'/modules/'.$moduleName;
     }
 
     /**
@@ -400,7 +414,7 @@ final class Kernel implements \ArrayAccess
      */
     public function getPluginPath($pluginName)
     {
-        return $this['path'].'/plugins/'.$pluginName;
+        return $this->path.'/plugins/'.$pluginName;
     }
 
     /**
@@ -434,7 +448,7 @@ final class Kernel implements \ArrayAccess
      */
     public function getCachePath($subpath = null)
     {
-        $cachePath = $this['path'].'/cache';
+        $cachePath = $this->path.'/cache';
 
         if (isset($subpath)) {
             $cachePath .= '/'.$subpath;
@@ -486,7 +500,7 @@ final class Kernel implements \ArrayAccess
     public function loadConfiguration()
     {
         try {
-            $config = new SystemConfiguration($this['path'].'/config.yml');
+            $config = new SystemConfiguration($this->path.'/config.yml');
             return $config->load();
         } catch (\Exception $e) {
             throw new \RuntimeException(sprintf('Unable to load system configuration: %s', $e->getMessage()));
