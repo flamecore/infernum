@@ -53,7 +53,7 @@ class ThemeMetadata extends AbstractConfiguration
                     ->prototype('array')
                         ->children()
                             ->scalarNode('file')->isRequired()->end()
-                            ->scalarNode('media')->end()
+                            ->scalarNode('media')->defaultValue('all')->end()
                         ->end()
                     ->end()
                 ->end()

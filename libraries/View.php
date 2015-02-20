@@ -45,11 +45,32 @@ class View
     private static $title;
 
     /**
-     * The list of all head tags
+     * The list of all meta tags
      *
      * @var array
      */
-    private static $headTags = array();
+    private static $metatags = array();
+
+    /**
+     * The list of all link tags
+     *
+     * @var array
+     */
+    private static $linktags = array();
+
+    /**
+     * The list of all stylesheets
+     *
+     * @var array
+     */
+    private static $stylesheets = array();
+
+    /**
+     * The list of all javascripts
+     *
+     * @var array
+     */
+    private static $javascripts = array();
 
     /**
      * Generates a View object
@@ -63,11 +84,12 @@ class View
 
         $template->set('SITE_URL', $app->getUrl());
         $template->set('SITE_TITLE', $app->setting('site.title'));
-        $template->set('PAGE_TITLE', self::getTitle());
-        $template->set('METATAGS', self::getHeadTags('meta'));
-        $template->set('LINKTAGS', self::getHeadTags('link'));
-        $template->set('STYLESHEETS', self::getHeadTags('css'));
-        $template->set('JAVASCRIPTS', self::getHeadTags('script'));
+        $template->set('PAGE_TITLE', self::$title);
+
+        $template->set('METATAGS', self::$metatags);
+        $template->set('LINKTAGS', self::$linktags);
+        $template->set('STYLESHEETS', self::$stylesheets);
+        $template->set('JAVASCRIPTS', self::$javascripts);
 
         $this->template = $template;
     }
@@ -80,16 +102,6 @@ class View
     public function render()
     {
         return $this->template->render();
-    }
-
-    /**
-     * Displays the view
-     *
-     * @return void
-     */
-    public function display()
-    {
-        $this->template->display();
     }
 
     /**
@@ -109,7 +121,7 @@ class View
      *
      * @return string
      */
-    public static function getTitle($title = null, $append = true)
+    public static function getTitle()
     {
         return self::$title;
     }
@@ -137,7 +149,7 @@ class View
      */
     public static function addMetaTag($name, $content)
     {
-        self::$headTags['meta'][] = array(
+        self::$metatags[] = array(
             'name'    => $name,
             'content' => $content
         );
@@ -152,7 +164,7 @@ class View
      */
     public static function addLinkTag($rel, $url, $type)
     {
-        self::$headTags['link'][] = array(
+        self::$linktags[] = array(
             'rel'  => $rel,
             'href' => $url,
             'type' => $type
@@ -167,7 +179,7 @@ class View
      */
     public static function addCSS($url, $media = 'all')
     {
-        self::$headTags['css'][] = array(
+        self::$stylesheets[] = array(
             'url'   => $url,
             'media' => $media
         );
@@ -181,24 +193,9 @@ class View
      */
     public static function addScript($url, $type = 'application/javascript')
     {
-        self::$headTags['script'][] = array(
+        self::$javascripts[] = array(
             'url'  => $url,
             'type' => $type
         );
-    }
-
-    /**
-     * Lists all registered head tags of a given group
-     *
-     * @param string $group The group of head tags to return
-     * @return array
-     */
-    public static function getHeadTags($group)
-    {
-        if (isset(self::$headTags[$group])) {
-            return self::$headTags[$group];
-        } else {
-            return array();
-        }
     }
 }

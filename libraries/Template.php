@@ -88,16 +88,6 @@ class Template
     }
 
     /**
-     * Displays the template
-     *
-     * @return void
-     */
-    public function display()
-    {
-        echo $this->render();
-    }
-
-    /**
      * Sets one or more template variables
      *
      * @param mixed $param1 The name of the variable (string) or pairs of names and values of multiple
