@@ -48,6 +48,16 @@ final class Kernel implements \ArrayAccess
     /**
      * @var string|bool
      */
+    private $domain = false;
+
+    /**
+     * @var bool
+     */
+    private $secure = false;
+
+    /**
+     * @var string|bool
+     */
     private $pagePath = false;
 
     /**
@@ -68,13 +78,11 @@ final class Kernel implements \ArrayAccess
     /**
      * Initializes the Kernel.
      *
-     * @param string $domain The domain
      * @param string $path The engine path
      */
-    public function __construct($domain, $path)
+    public function __construct($path)
     {
         $this->container = new Container('kernel', [
-            'domain' => 'string',
             'path' => 'string',
             'config' => 'array',
             'loader' => '\FlameCore\Infernum\ClassLoader',
@@ -83,7 +91,6 @@ final class Kernel implements \ArrayAccess
             'router' => '\FlameCore\Infernum\Router'
         ]);
 
-        $this['domain'] = $domain;
         $this['path'] = $path;
 
         set_error_handler([$this, 'handleError']);
@@ -104,6 +111,26 @@ final class Kernel implements \ArrayAccess
     public function isReady()
     {
         return $this->booted;
+    }
+
+    /**
+     * Gets the domain.
+     *
+     * @return bool|string
+     */
+    public function getDomain()
+    {
+        return $this->domain;
+    }
+
+    /**
+     * Returns whether the connection is secure.
+     *
+     * @return bool
+     */
+    public function isSecure()
+    {
+        return $this->secure;
     }
 
     /**
@@ -222,17 +249,21 @@ final class Kernel implements \ArrayAccess
     /**
      * Starts up the system.
      *
+     * @param \Symfony\Component\HttpFoundation\Request $request The request
      * @return \FlameCore\Infernum\Site Returns the object of the recognized site.
      * @throws \RuntimeException if the site depends on a module or plugin which is not installed.
      * @api
      */
-    public function boot()
+    public function boot(Request $request)
     {
+        $this->domain = $request->server->get('SERVER_NAME');
+        $this->secure = $request->isSecure();
+
         if ($this->config('enable_multisite') && $sites = $this->config('sites')) {
             // This is a multi-site installation, so we need to know the current domain name
             // Check if there is a site for the current domain, fall back to default site otherwise
-            if (isset($sites[$this['domain']])) {
-                $sitename = $sites[$this['domain']];
+            if (isset($sites[$this->domain])) {
+                $sitename = $sites[$this->domain];
             } else {
                 $sitename = $this->config('default_site', 'default');
             }

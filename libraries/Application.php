@@ -88,7 +88,10 @@ final class Application implements \ArrayAccess
         }
 
         // Set web URL
-        $url = strtr($this['settings']['web']['url'], ['%domain%' => $kernel['domain']]);
+        $url = strtr($this['settings']['web']['url'], [
+            '%protocol%' => $kernel->isSecure() ? 'https' : 'http',
+            '%domain%' => $kernel->getDomain()
+        ]);
         $this['url'] = rtrim($url, '/');
 
         // Now we can load our database driver

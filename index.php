@@ -47,12 +47,11 @@ try {
     $loader->register();
 
     $request = Request::createFromGlobals();
-    $domain = $request->server->get('SERVER_NAME');
 
-    $kernel = new Kernel($domain, INFERNUM_PATH);
+    $kernel = new Kernel(INFERNUM_PATH);
     $kernel['loader'] = $loader;
 
-    $site = $kernel->boot($request->server);
+    $site = $kernel->boot($request);
 
     $app = new Application($site, $kernel);
     $app['session'] = Session::init($request, $app);
