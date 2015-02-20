@@ -9,8 +9,8 @@ site:
   timezone: "Europe/Berlin"
 
 web:
-  # URL of Infernum root
-  url: "http://localhost/Infernum"
+  # URL path to Infernum root dir
+  path: /infernum
   # Use URL rewriting for page paths
   url_rewrite: true
   # Theme from /themes folder

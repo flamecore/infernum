@@ -87,13 +87,6 @@ final class Application implements \ArrayAccess
             $this['settings'] = $site->loadSettings();
         }
 
-        // Set web URL
-        $url = strtr($this['settings']['web']['url'], [
-            '%protocol%' => $kernel->isSecure() ? 'https' : 'http',
-            '%domain%' => $kernel->getDomain()
-        ]);
-        $this['url'] = rtrim($url, '/');
-
         // Now we can load our database driver
         $driver = $this['settings']['database']['driver'];
         $host = $this['settings']['database']['host'];
@@ -109,6 +102,10 @@ final class Application implements \ArrayAccess
 
         // Open cache instance
         $this['cache'] = new Cache($this->getCachePath('data'));
+
+        // Set web URL
+        $protocol = $kernel->isSecure() ? 'https' : 'http';
+        $this['url'] = rtrim(sprintf('%s://%s%s', $protocol, $kernel->getDomain(), $this['settings']['web']['path']), '/');
     }
 
     /**
