@@ -106,6 +106,9 @@ final class Application implements \ArrayAccess
         // Set web URL
         $protocol = $kernel->isSecure() ? 'https' : 'http';
         $this['url'] = rtrim(sprintf('%s://%s%s', $protocol, $kernel->getDomain(), $this['settings']['web']['path']), '/');
+
+        // Set theme
+        $this->theme = $this->setting('web.theme', 'default');
     }
 
     /**
@@ -116,11 +119,11 @@ final class Application implements \ArrayAccess
      */
     public function getTheme()
     {
-        return $this->theme ? $this->theme : $this->setting('web.theme', 'default');
+        return $this->theme;
     }
 
     /**
-     * Overrides the theme.
+     * Sets the theme to use.
      *
      * @param string $theme The theme to use
      * @api
@@ -128,17 +131,6 @@ final class Application implements \ArrayAccess
     public function setTheme($theme)
     {
         $this->theme = (string) $theme;
-    }
-
-    /**
-     * Resets the theme.
-     *
-     * @return void
-     * @api
-     */
-    public function resetTheme()
-    {
-        $this->theme = false;
     }
 
     /**
@@ -344,6 +336,17 @@ final class Application implements \ArrayAccess
     }
 
     /**
+     * Gets the theme path.
+     *
+     * @return string
+     * @api
+     */
+    public function getThemePath()
+    {
+        return $this->kernel['path'].'/themes/'.$this->theme;
+    }
+
+    /**
      * Gets the template path.
      *
      * @param bool $fromExtension Use template path of the running extension. If FALSE, use global template path.
@@ -361,7 +364,7 @@ final class Application implements \ArrayAccess
                 return false;
             }
         } else {
-            return $this->kernel['path'].'/themes/'.$this->getTheme().'/templates';
+            return $this->getThemePath().'/templates';
         }
     }
 
