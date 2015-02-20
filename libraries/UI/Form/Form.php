@@ -155,7 +155,7 @@ class Form implements \IteratorAggregate, \Countable
      */
     public function setAction($action)
     {
-        $this->action = $action !== null ? $action : $this->context->makePageURL($this->context->getPagePath());
+        $this->action = $action !== null ? $action : $this->context->makePageUrl($this->context->getPagePath());
 
         return $this;
     }

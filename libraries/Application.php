@@ -51,6 +51,11 @@ final class Application implements \ArrayAccess
     private $kernel;
 
     /**
+     * @var string
+     */
+    private $url;
+
+    /**
      * @var string|bool
      */
     private $theme = false;
@@ -68,7 +73,6 @@ final class Application implements \ArrayAccess
         $this->kernel = $kernel;
 
         $this->container = new Container('application', [
-            'url' => 'string',
             'settings' => 'array',
             'logger' => '\Psr\Log\LoggerInterface',
             'db' => '\FlameCore\Infernum\Database\DriverInterface',
@@ -105,10 +109,18 @@ final class Application implements \ArrayAccess
 
         // Set web URL
         $protocol = $kernel->isSecure() ? 'https' : 'http';
-        $this['url'] = rtrim(sprintf('%s://%s%s', $protocol, $kernel->getDomain(), $this['settings']['web']['path']), '/');
+        $this->url = rtrim(sprintf('%s://%s%s', $protocol, $kernel->getDomain(), $this['settings']['web']['path']), '/');
 
         // Set theme
         $this->theme = $this->setting('web.theme', 'default');
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
     }
 
     /**
@@ -163,9 +175,9 @@ final class Application implements \ArrayAccess
      * @return string
      * @api
      */
-    public function makeURL($path = '', $query = null)
+    public function makeUrl($path = '', $query = null)
     {
-        $result = $this['url'].'/'.$path;
+        $result = $this->url.'/'.$path;
 
         if (isset($query)) {
             $result .= '?'.$query;
@@ -182,16 +194,16 @@ final class Application implements \ArrayAccess
      * @return string
      * @api
      */
-    public function makePageURL($pagePath, $query = null)
+    public function makePageUrl($pagePath, $query = null)
     {
         if ($this->setting('web.url_rewrite')) {
-            $result = $this['url'].'/'.$pagePath;
+            $result = $this->url.'/'.$pagePath;
 
             if (isset($query)) {
                 $result .= '?'.$query;
             }
         } else {
-            $result = $this['url'].'/?p='.$pagePath;
+            $result = $this->url.'/?p='.$pagePath;
 
             if (isset($query)) {
                 $result .= '&'.$query;
@@ -215,14 +227,14 @@ final class Application implements \ArrayAccess
             $extension = $this->kernel->getRunningExtension();
 
             if ($extension instanceof Module) {
-                return $this['url'].'/modules/'.$extension->getName().'/public/'.$filename;
+                return $this->url.'/modules/'.$extension->getName().'/public/'.$filename;
             } elseif ($extension instanceof Plugin) {
-                return $this['url'].'/plugins/'.$extension->getName().'/public/'.$filename;
+                return $this->url.'/plugins/'.$extension->getName().'/public/'.$filename;
             } else {
                 return false;
             }
         } else {
-            return $this['url'].'/themes/'.$this->getTheme().'/public/'.$filename;
+            return $this->url.'/themes/'.$this->getTheme().'/public/'.$filename;
         }
     }
 

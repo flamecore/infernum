@@ -74,8 +74,8 @@ class TwigCoreExtension extends Twig_Extension
     public function getFunctions()
     {
         $functions = array();
-        $functions[] = new Twig_SimpleFunction('u', [$this->app, 'makeURL']);
-        $functions[] = new Twig_SimpleFunction('page', [$this->app, 'makePageURL']);
+        $functions[] = new Twig_SimpleFunction('u', [$this->app, 'makeUrl']);
+        $functions[] = new Twig_SimpleFunction('page', [$this->app, 'makePageUrl']);
         $functions[] = new Twig_SimpleFunction('file', [$this->app, 'makeFileUrl']);
         $functions[] = new Twig_SimpleFunction('form', [$this, 'renderForm'], ['is_safe' => ['html']]);
         $functions[] = new Twig_SimpleFunction('inject', [$this, 'renderInjection'], ['is_safe' => ['html']]);
