@@ -81,6 +81,7 @@ class View
     public function __construct($template, Application $app)
     {
         $template = new Template($template, $app);
+        $theme = $app->getTheme();
 
         $template->set('SITE_URL', $app->getUrl());
         $template->set('SITE_TITLE', $app->setting('site.title'));
@@ -88,7 +89,16 @@ class View
 
         $template->set('METATAGS', self::$metatags);
         $template->set('LINKTAGS', self::$linktags);
-        $template->set('STYLESHEETS', self::$stylesheets);
+
+        $stylesheets = array();
+        foreach ($theme->getStylesheets() as $stylesheet) {
+            $stylesheets[] = array(
+                'url' => $app->makeFileUrl($stylesheet['file']),
+                'media' => $stylesheet['media']
+            );
+        }
+        $template->set('STYLESHEETS', array_merge($stylesheets, self::$stylesheets));
+
         $template->set('JAVASCRIPTS', self::$javascripts);
 
         $this->template = $template;
