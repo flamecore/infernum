@@ -56,9 +56,9 @@ final class Application implements \ArrayAccess
     private $url;
 
     /**
-     * @var string|bool
+     * @var \FlameCore\Infernum\Theme
      */
-    private $theme = false;
+    private $theme;
 
     /**
      * Initializes the application.
@@ -112,7 +112,8 @@ final class Application implements \ArrayAccess
         $this->url = rtrim(sprintf('%s://%s%s', $protocol, $kernel->getDomain(), $this['settings']['web']['path']), '/');
 
         // Set theme
-        $this->theme = $this->setting('web.theme', 'default');
+        $themeName = $this->setting('web.theme', 'default');
+        $this->setTheme($themeName);
     }
 
     /**
@@ -124,9 +125,9 @@ final class Application implements \ArrayAccess
     }
 
     /**
-     * Returns the name of the theme in use.
+     * Returns the theme in use.
      *
-     * @return string
+     * @return \FlameCore\Infernum\Theme
      * @api
      */
     public function getTheme()
@@ -135,14 +136,14 @@ final class Application implements \ArrayAccess
     }
 
     /**
-     * Sets the theme to use.
+     * Sets the name of the theme to use.
      *
-     * @param string $theme The theme to use
+     * @param string $name The name of the theme to use
      * @api
      */
-    public function setTheme($theme)
+    public function setTheme($name)
     {
-        $this->theme = (string) $theme;
+        $this->theme = new Theme($name, $this->kernel);
     }
 
     /**
@@ -234,7 +235,7 @@ final class Application implements \ArrayAccess
                 return false;
             }
         } else {
-            return $this->url.'/themes/'.$this->getTheme().'/public/'.$filename;
+            return $this->url.'/themes/'.$this->theme->getName().'/public/'.$filename;
         }
     }
 
@@ -355,7 +356,7 @@ final class Application implements \ArrayAccess
      */
     public function getThemePath()
     {
-        return $this->kernel->getPath().'/themes/'.$this->theme;
+        return $this->theme->getPath();
     }
 
     /**

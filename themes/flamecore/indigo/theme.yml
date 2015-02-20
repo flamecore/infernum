@@ -1,0 +1,7 @@
+title: Indigo
+description: Simple demo theme
+author: IceFlame.net
+website: http://www.flamecore.org
+
+stylesheets:
+  - { file: css/default.css }
