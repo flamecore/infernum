@@ -70,6 +70,7 @@ class SiteSettings extends AbstractConfiguration
                     ->end()
                 ->end()
                 ->arrayNode('database')
+                    ->isRequired()
                     ->children()
                         ->scalarNode('driver')
                             ->isRequired()

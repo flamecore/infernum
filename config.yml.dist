@@ -1,5 +1,19 @@
+# Show all error details including stack trace
 enable_debugmode: false
+
+# Enable logging of significant events
 enable_logging: false
+
+# Enable data caching to improve performance
 enable_caching: false
 
+# The life time of cache files in seconds (default)
+#cache_lifetime: 86400
+
+# Enable the multisite feature
 enable_multisite: false
+
+# Uncomment the following lines when multisite is enabled (example!)
+#sites:
+#  www.example.com: default
+#  subdomain.example.com: subdomain

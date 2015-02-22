@@ -1,5 +1,7 @@
+# List of modules to mount:
 routes:
-    - { module: acme/my-module, alias: foo }
+  - { module: acme/my-module, alias: foo }
 
+# List of plugins to load:
 plugins:
-    - flamecore/menu
+  - flamecore/menu

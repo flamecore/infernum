@@ -47,6 +47,7 @@ class SystemConfiguration extends AbstractConfiguration
                 ->booleanNode('enable_caching')->defaultValue(true)->end()
                 ->integerNode('cache_lifetime')->defaultValue(86400)->end()
                 ->booleanNode('enable_multisite')->defaultValue(true)->end()
+                ->arrayNode('sites')->end()
             ->end();
 
         return $treeBuilder;
