@@ -108,7 +108,7 @@ abstract class Controller
      *
      * @param string $message The text of the message to show. In the template, this value can be retrieved via
      *   the `message` variable.
-     * @param string $type The type of the message, should be either 'info', 'success', 'warning' or 'error'.
+     * @param string $type The type of the message, must be either 'info', 'success', 'warning' or 'danger'. (Default: 'info')
      *   In the template, this value can be retrieved via the `type` variable.
      * @param int $status The status code (Default: 200)
      * @return \Symfony\Component\HttpFoundation\Response
@@ -119,7 +119,7 @@ abstract class Controller
         $view->set('message', $message);
         $view->set('type', $type);
 
-        return new Response($view, $status);
+        return new Response($view->render(), $status);
     }
 
     /**
@@ -130,7 +130,7 @@ abstract class Controller
     final protected function errorNotFound()
     {
         $view = new View('@global/404_body', $this->context);
-        return new Response($view, 404);
+        return new Response($view->render(), 404);
     }
 
     /**
@@ -141,7 +141,7 @@ abstract class Controller
     final protected function errorForbidden()
     {
         $view = new View('@global/403_body', $this->context);
-        return new Response($view, 403);
+        return new Response($view->render(), 403);
     }
 
     /**
