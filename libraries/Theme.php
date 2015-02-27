@@ -48,6 +48,11 @@ class Theme
     private $stylesheets = array();
 
     /**
+     * @var array
+     */
+    private $javascripts = array();
+
+    /**
      * @param string $name
      * @param \FlameCore\Infernum\Kernel $kernel
      */
@@ -65,6 +70,7 @@ class Theme
 
         $metadata = $this->loadMetadata();
         $this->stylesheets = $metadata['stylesheets'];
+        $this->javascripts = $metadata['javascripts'];
     }
 
     /**
@@ -89,6 +95,14 @@ class Theme
     public function getStylesheets()
     {
         return $this->stylesheets;
+    }
+
+    /**
+     * @return array
+     */
+    public function getJavascripts()
+    {
+        return $this->javascripts;
     }
 
     /**

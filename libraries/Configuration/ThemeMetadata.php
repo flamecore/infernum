@@ -57,6 +57,13 @@ class ThemeMetadata extends AbstractConfiguration
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('javascripts')
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('file')->isRequired()->end()
+                        ->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $treeBuilder;

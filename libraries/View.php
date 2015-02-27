@@ -99,7 +99,14 @@ class View
         }
         $template->set('STYLESHEETS', array_merge($stylesheets, self::$stylesheets));
 
-        $template->set('JAVASCRIPTS', self::$javascripts);
+        $javascripts = array();
+        foreach ($theme->getJavascripts() as $javascript) {
+            $javascripts[] = array(
+                'url' => $app->makeFileUrl($javascript['file']),
+                'type' => 'application/javascript'
+            );
+        }
+        $template->set('JAVASCRIPTS', array_merge($javascripts, self::$javascripts));
 
         $this->template = $template;
     }
