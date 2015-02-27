@@ -1,0 +1,8 @@
+<div class="checkbox{% if submitted and field.name in invalid %} has-error{% endif %}">
+    <label>
+        <input type="checkbox" name="{{ field.name }}" id="{{ field.name }}"{% if submitted ? data[field.name] : field.value %} checked="checked"{% endif %} value="true"{% if field.class %} class="{{ field.class }}"{% endif %}>
+        {{ field.title }}{% if field.required %} <em class="required">*</em>{% endif %}
+    </label>
+    {% if field.errorText and submitted and field.name in invalid %}<p class="help-block error-text">{{ field.errorText }}</p>{% endif %}
+    {% if field.description %}<p class="help-block">{{ field.description }}</p>{% endif %}
+</div>

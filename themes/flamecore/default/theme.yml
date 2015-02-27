@@ -1,0 +1,13 @@
+title: Default
+description: Simple frontend theme based on Bootstrap
+author: IceFlame.net
+website: http://www.flamecore.org
+
+stylesheets:
+  - { file: css/bootstrap.min.css }
+  - { file: css/font-awesome.min.css }
+  - { file: css/style.css }
+
+javascripts:
+  - { file: js/jquery.min.js }
+  - { file: js/bootstrap.min.js }

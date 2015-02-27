@@ -1,0 +1,13 @@
+<div class="form-group{% if submitted and field.name in invalid %} has-error{% endif %}">
+    <strong>{{ field.title }}{% if field.required %} <em class="required">*</em>{% endif %}</strong>
+{% for value, caption in field.options %}
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" name="{{ field.name }}[]" id="{{ field.name~'_'~loop.index }}" value="{{ value }}"{% if value in (submitted ? data[field.name] : field.value) %} checked="checked"{% endif %}{% if field.class %} class="{{ field.class }}"{% endif %}>
+            {{ caption }}
+        </label>
+    </div>
+{% endfor %}
+    {% if field.errorText and submitted and field.name in invalid %}<p class="help-block error-text">{{ field.errorText }}</p>{% endif %}
+    {% if field.description %}<p class="help-block">{{ field.description }}</p>{% endif %}
+</div>

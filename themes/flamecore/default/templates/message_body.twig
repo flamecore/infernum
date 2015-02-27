@@ -1,0 +1,13 @@
+{% extends '@global/layout' %}
+
+{% block heading %}
+    <h1 class="page-header">{{ 'Information'|t }}</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="alert alert-{{ type }}">{{ message|t }}</div>
+        </div>
+    </div>
+{% endblock %}

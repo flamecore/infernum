@@ -1,0 +1,13 @@
+<form name="{{ form.name }}" action="{{ form.action }}" method="{{ form.method }}" enctype="multipart/form-data" id="{{ form.name }}">
+{% for field in form %}
+    {% include field.templateName %}
+{% endfor %}
+    <div class="form-group">
+{% for button in form.buttons %}
+        <button type="{{ button.type }}" class="btn {{ field.class|default('btn-default') }}">{{ button.title }}</button>
+{% else %}
+        <button type="submit" class="btn btn-primary">{{ 'Submit'|t }}</button>
+        <button type="reset" class="btn btn-default">{{ 'Reset'|t }}</button>
+{% endfor %}
+    </div>
+</form>

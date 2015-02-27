@@ -1,0 +1,6 @@
+<div class="form-group{% if submitted and field.name in invalid %} has-error{% endif %}">
+    <label for="{{ field.name }}">{{ field.title }}{% if field.required %} <em class="required">*</em>{% endif %}</label>
+    <input type="number" name="{{ field.name }}" id="{{ field.name }}"{% if field.value or submitted %} value="{{ submitted ? data[field.name] : field.value }}"{% endif %}{% if field.maximum %} max="{{ field.maximum }}"{% endif %}{% if field.minimum %} min="{{ field.minimum }}"{% endif %} class="{{ field.class|default('form-control') }}">
+    {% if field.errorText and submitted and field.name in invalid %}<p class="help-block error-text">{{ field.errorText }}</p>{% endif %}
+    {% if field.description %}<p class="help-block">{{ field.description }}</p>{% endif %}
+</div>

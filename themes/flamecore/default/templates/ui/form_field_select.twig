@@ -1,0 +1,10 @@
+<div class="form-group{% if submitted and field.name in invalid %} has-error{% endif %}">
+    <label for="{{ field.name }}">{{ field.title }}{% if field.required %} <em class="required">*</em>{% endif %}</label>
+    <select name="{{ field.name }}" id="{{ field.name }}"{% if field.size %} size="{{ field.size }}"{% endif %} class="{{ field.class|default('form-control') }}">
+{% for value, caption in field.options %}
+        <option value="{{ value }}"{% if value == (submitted ? data[field.name] : field.value) %} selected="selected"{% endif %}>{{ caption }}</option>
+{% endfor %}
+    </select>
+    {% if field.errorText and submitted and field.name in invalid %}<p class="help-block error-text">{{ field.errorText }}</p>{% endif %}
+    {% if field.description %}<p class="help-block">{{ field.description }}</p>{% endif %}
+</div>

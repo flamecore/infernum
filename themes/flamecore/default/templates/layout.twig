@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+{% for tag in METATAGS %}
+        <meta name="{{ tag.name }}" content="{{ tag.content }}" />
+{% endfor %}
+        <title>{{ PAGE_TITLE }}</title>
+{% for tag in LINKTAGS %}
+        <link rel="{{ tag.rel }}" href="{{ tag.href }}" type="{{ tag.type }}" />
+{% endfor %}
+{% for tag in STYLESHEETS %}
+        <link rel="stylesheet" href="{{ tag.url }}" type="text/css" media="{{ tag.media }}" />
+{% endfor %}
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{{ SITE_URL }}">{{ SITE_TITLE }}</a>
+                </div>
+{% if menus.main %}
+                <div class="collapse navbar-collapse" id="navbar">
+                    <ul class="nav navbar-nav navbar-right">
+    {% for item in menus.main.items %}
+        {% if item.submenu %}
+                        <li class="dropdown{% if item.selected %} active{% endif %}">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ item.title }} <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+            {% for subitem in item.submenu %}
+                                <li>
+                                    <a href="{{ subitem.url }}"{% if subitem.selected %} class="active"{% endif %}>{{ subitem.title }}</a>
+                                </li>
+            {% endfor %}
+                            </ul>
+                        </li>
+        {% else %}
+                        <li{% if item.selected %} class="active"{% endif %}>
+                            <a href="{{ item.url }}">{{ item.title }}</a>
+                        </li>
+        {% endif %}
+    {% endfor %}
+                    </ul>
+                </div>
+{% endif %}
+            </div>
+        </nav>
+
+        {% block pre_content %}{% endblock %}
+
+        <div class="container">
+
+            <div class="row">
+                <div class="col-lg-12">
+                    {% block heading %}{% endblock %}
+                </div>
+            </div>
+
+            {% block content %}{% endblock %}
+
+            {% block post_content %}{% endblock %}
+
+            <hr>
+
+            <footer>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p>
+                            <span>Copyright &copy; {{ 'now'|date('Y') }} {{ SITE_TITLE }}</span>
+                            <span class="pull-right text-muted">Powered by <a href="http://github.com/FlameCore/Infernum">Infernum</a></span>
+                        </p>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+{% for tag in JAVASCRIPTS %}
+        <script src="{{ tag.url }}" type="{{ tag.type }}"></script>
+{% endfor %}
+
+    </body>
+</html>

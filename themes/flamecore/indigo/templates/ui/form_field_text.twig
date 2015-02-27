@@ -1,6 +1,0 @@
-<div class="field{% if submitted and field.name in invalid %} error{% endif %}">
-    {% if field.title %}<label for="{{ field.name }}">{{ field.title }}{% if field.required %} <em class="required">*</em>{% endif %}</label>{% endif %}
-    <input type="{{ field.scheme ?: 'text' }}" name="{{ field.name }}" id="{{ field.name }}"{% if field.value or submitted %} value="{{ submitted ? data[field.name]|e : field.value|e }}"{% endif %}{% if field.size %} size="{{ field.size }}"{% endif %}{% if field.maxLength %} maxlength="{{ field.maxLength }}"{% endif %}{% if field.class %} class="{{ field.class }}"{% endif %} />
-    {% if field.description %}<span class="description">{{ field.description }}</span>{% endif %}
-    {% if field.errorText and submitted and field.name in invalid %}<span class="error-text">{{ field.errorText }}</span>{% endif %}
-</div>

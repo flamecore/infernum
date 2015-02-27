@@ -1,0 +1,6 @@
+<div class="form-group{% if submitted and field.name in invalid %} has-error{% endif %}">
+    <label for="{{ field.name }}">{{ field.title }}{% if field.required %} <em class="required">*</em>{% endif %}</label>
+    <textarea name="{{ field.name }}" id="{{ field.name }}"{% if field.rows > 0 %} rows="{{ field.rows }}"{% endif %}{% if field.cols > 0 %} cols="{{ field.cols }}"{% endif %} class="{{ field.class|default('form-control') }}">{{ submitted ? data[field.name]|e : field.value|e }}</textarea>
+    {% if field.errorText and submitted and field.name in invalid %}<p class="help-block error-text">{{ field.errorText }}</p>{% endif %}
+    {% if field.description %}<p class="help-block">{{ field.description }}</p>{% endif %}
+</div>
