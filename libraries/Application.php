@@ -112,7 +112,7 @@ final class Application implements \ArrayAccess
         $this->url = rtrim(sprintf('%s://%s%s', $protocol, $kernel->getDomain(), $this['settings']['web']['path']), '/');
 
         // Set theme
-        $themeName = $this->setting('web.theme', 'default');
+        $themeName = $this->setting('web.theme', 'flamecore/default');
         $this->setTheme($themeName);
     }
 

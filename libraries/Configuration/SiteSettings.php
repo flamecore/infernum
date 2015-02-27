@@ -64,7 +64,7 @@ class SiteSettings extends AbstractConfiguration
                         ->end()
                         ->booleanNode('url_rewrite')->defaultValue(false)->end()
                         ->scalarNode('theme')
-                            ->isRequired()
+                            ->defaultValue('flamecore/default')
                             ->cannotBeEmpty()
                         ->end()
                     ->end()
