@@ -91,3 +91,8 @@ footer {
         height: 70%;
     }
 }
+
+form .required,
+form .error-text {
+    color: #C00;
+}
