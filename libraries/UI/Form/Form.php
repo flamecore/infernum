@@ -2,9 +2,11 @@
 /**
  * Infernum
  * Copyright (C) 2011 IceFlame.net
+ *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE
@@ -34,22 +36,49 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Form implements \IteratorAggregate, \Countable
 {
+    /**
+     * @var string
+     */
     private $name;
 
+    /**
+     * @var string
+     */
     private $method;
 
+    /**
+     * @var string
+     */
     private $action;
 
+    /**
+     * @var bool
+     */
     private $submitted = false;
 
+    /**
+     * @var array
+     */
     private $data = array();
 
+    /**
+     * @var array
+     */
     private $invalid = array();
 
+    /**
+     * @var \FlameCore\Infernum\UI\Form\Field\FieldInterface[]
+     */
     private $fields = array();
 
+    /**
+     * @var \FlameCore\Infernum\UI\Form\Button\ButtonInterface[]
+     */
     private $buttons = array();
 
+    /**
+     * @var \FlameCore\Infernum\Application
+     */
     private $context;
 
     private static $types = array(
@@ -203,7 +232,6 @@ class Form implements \IteratorAggregate, \Countable
     /**
      * Adds a field object to the stack.
      *
-     * @param string $name The name of the field
      * @param \FlameCore\Infernum\UI\Form\Field\FieldInterface $object The field object
      * @return \FlameCore\Infernum\UI\Form\Form
      */
