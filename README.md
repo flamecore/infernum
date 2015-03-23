@@ -1,11 +1,14 @@
 Infernum – Web Application Engine
 =================================
 
+[![Code Climate](http://img.shields.io/codeclimate/github/FlameCore/Infernum.svg)](https://codeclimate.com/github/FlameCore/Infernum)
+[![License](https://img.shields.io/badge/license-ISC-blue.svg)](http://www.flamecore.org/projects/infernum)
+
 Infernum is a lightweight Web Application Engine written in PHP 5.5.
 
 **ATTENTION! Infernum is currently under heavy development and therefore not usable in a production environment. Use it at your own risk!**
 
-Complete installation instructions and more information can be found on [our Wiki](https://github.com/FlameCore/Infernum/wiki).
+Complete installation instructions and more information can be found [in our Wiki](https://github.com/FlameCore/Infernum/wiki).
 
 Support: [Chat with us at Gitter](https://gitter.im/FlameCore/Infernum) or drop us a message at <info@flamecore.org>.
 
@@ -35,6 +38,8 @@ Installation
 
 Contributors
 ------------
+
+If you want to contribute, please see the [CONTRIBUTING](CONTRIBUTING.md) file first.
 
 Thanks to the contributors:
 
