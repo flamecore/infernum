@@ -23,7 +23,7 @@
 
 namespace FlameCore\Infernum;
 
-use FlameCore\Infernum\Interfaces\ExtensionAbstraction;
+use FlameCore\Infernum\Interfaces\ExtensionMeta;
 use FlameCore\Infernum\Configuration\ModuleMetadata;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -32,7 +32,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class Module implements ExtensionAbstraction
+class Module implements ExtensionMeta
 {
     /**
      * @var string

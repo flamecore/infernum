@@ -66,7 +66,7 @@ final class Kernel implements \ArrayAccess
     private $pagePath = false;
 
     /**
-     * @var \FlameCore\Infernum\Interfaces\ExtensionAbstraction|bool
+     * @var \FlameCore\Infernum\Interfaces\ExtensionMeta|bool
      */
     private $runningExtension = false;
 
@@ -161,7 +161,7 @@ final class Kernel implements \ArrayAccess
     /**
      * Gets the currently running extension.
      *
-     * @return \FlameCore\Infernum\Interfaces\ExtensionAbstraction|bool Returns an abstraction object of the running extension or FALSE if no extension is running.
+     * @return \FlameCore\Infernum\Interfaces\ExtensionMeta|bool Returns an abstraction object of the running extension or FALSE if no extension is running.
      * @api
      */
     public function getRunningExtension()

@@ -24,11 +24,11 @@
 namespace FlameCore\Infernum\Interfaces;
 
 /**
- * The ExtensionAbstraction interface
+ * The ExtensionMeta interface
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-interface ExtensionAbstraction
+interface ExtensionMeta
 {
     /**
      * @return string

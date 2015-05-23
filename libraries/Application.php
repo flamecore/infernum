@@ -24,7 +24,7 @@
 namespace FlameCore\Infernum;
 
 use FlameCore\Infernum\Database\Database;
-use FlameCore\Infernum\Interfaces\ExtensionAbstraction;
+use FlameCore\Infernum\Interfaces\ExtensionMeta;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
 
@@ -371,7 +371,7 @@ final class Application implements \ArrayAccess
         if ($fromExtension) {
             $extension = $this->kernel->getRunningExtension();
 
-            if ($extension instanceof ExtensionAbstraction) {
+            if ($extension instanceof ExtensionMeta) {
                 return $extension->getPath().'/templates';
             } else {
                 return false;
