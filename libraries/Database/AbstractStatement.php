@@ -28,7 +28,7 @@ namespace FlameCore\Infernum\Database;
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-abstract class AbstractStatement
+abstract class AbstractStatement implements StatementInterface
 {
     /**
      * @var array
