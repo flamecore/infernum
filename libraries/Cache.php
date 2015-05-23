@@ -108,10 +108,9 @@ class Cache
         $rawdata = serialize($data);
         $expire = time() + (int) $lifetime;
         $filename = $this->getFilename($name);
+        $directory = dirname($filename);
 
         if (strpos($name, '/') !== false) {
-            $directory = dirname($filename);
-
             if (!is_dir($directory)) {
                 if (false === @mkdir($directory, 0777, true) && !is_dir($directory)) {
                     return false;
