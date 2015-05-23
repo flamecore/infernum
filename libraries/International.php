@@ -36,7 +36,7 @@ class International
     /**
      * The currently used locale pack
      *
-     * @var \FlameCore\Infernum\Localization
+     * @var \FlameCore\Infernum\Resource\Localization
      */
     private $locale;
 
@@ -64,6 +64,7 @@ class International
         }
 
         // Detect the user's preferred language
+        $detectedLang = $defaultLang;
         if (isset($app['session']) && $sessionLang = $app['session']->read('language')) {
             // There was found a language setting in the user's session
             $detectedLang = $sessionLang;
