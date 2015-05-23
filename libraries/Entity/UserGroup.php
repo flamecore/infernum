@@ -100,7 +100,7 @@ class UserGroup extends AbstractEntity
      */
     public function isAuthorized($mingroup)
     {
-        $mingroup = new self($mingroup);
+        $mingroup = new self($mingroup, $this->database);
         $minlevel = $mingroup->getAccessLevel();
 
         return $this->get('accesslevel') >= $minlevel;

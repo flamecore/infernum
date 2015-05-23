@@ -121,7 +121,7 @@ class User extends AbstractEntity
      */
     public function setGroup($group)
     {
-        $group = new UserGroup($group);
+        $group = new UserGroup($group, $this->database);
         $this->set('group', $group);
     }
 
@@ -201,7 +201,7 @@ class User extends AbstractEntity
      */
     public function isAuthorized($mingroup)
     {
-        $group = new UserGroup($this->get('group'));
+        $group = new UserGroup($this->get('group'), $this->database);
         return $group->isAuthorized($mingroup);
     }
 
