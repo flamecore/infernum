@@ -150,7 +150,8 @@ class Router
                 throw new \LogicException(sprintf('Cannot mount module "%s" with alias "%s" since this mountpoint name is already in use.', $name, $alias));
             }
         } else {
-            $mountpoint = array_pop(explode('/', $name));
+            $nameparts = explode('/', $name);
+            $mountpoint = array_pop($nameparts);
 
             if (isset($this->modules[$mountpoint])) {
                 throw new \LogicException(sprintf('Cannot mount module "%s" as "%s" since this mountpoint name is already in use. Please make use of an alias.', $name, $mountpoint));

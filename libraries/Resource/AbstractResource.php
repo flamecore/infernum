@@ -98,8 +98,6 @@ abstract class AbstractResource
         foreach ($fields as $field => $type) {
             $this->data[$field] = self::decode($data[$field], $fields[$field]);
         }
-
-        return $data;
     }
 
     /**
