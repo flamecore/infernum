@@ -84,11 +84,11 @@ class Database
         $host = isset($params['host']) ? $params['host'] : null;
         $user = isset($params['user']) ? $params['user'] : null;
         $password = isset($params['pass']) ? $params['pass'] : null;
-        $database = isset($params['path']) ? trim($params['path'], '/ ') : false;
+        $database = isset($params['path']) ? trim($params['path'], '/ ') : '';
 
         parse_str($params['query'], $options);
 
-        return self::connect($driver, $host, $user, $password, $database, $options);
+        return self::connect($driver, $host, $user, $password, $database, $options ?: []);
     }
 
     /**
