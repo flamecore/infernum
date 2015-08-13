@@ -23,7 +23,7 @@
 
 namespace FlameCore\Infernum\Configuration;
 
-use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
@@ -72,14 +72,29 @@ abstract class AbstractConfiguration
     public function load()
     {
         $configs = array();
+
         foreach ($this->files as $file) {
             if (!file_exists($file)) {
                 throw new \LogicException(sprintf('File "%s" does not exist.', $file));
             }
-            $configs[] = Yaml::parse($file);
+
+            $configs[] = $this->parseConfigFile($file);
         }
 
-        return $this->processor->process($this->treeBuilder->buildTree(), $configs);
+        $tree = $this->treeBuilder->buildTree();
+
+        return $this->processor->process($tree, $configs);
+    }
+
+    /**
+     * @param string $file
+     * @return array
+     */
+    protected function parseConfigFile($file)
+    {
+        $yaml = new Parser();
+
+        return $yaml->parse(file_get_contents($file));
     }
 
     /**
