@@ -30,7 +30,7 @@ namespace FlameCore\Infernum\Database;
  */
 class Database
 {
-    private static $drivers = array(
+    protected static $drivers = array(
         'mysql' => 'MySQL'
     );
 
@@ -88,7 +88,7 @@ class Database
 
         parse_str($params['query'], $options);
 
-        return self::connect($driver, $host, $user, $password, $database, $options ?: []);
+        return static::connect($driver, $host, $user, $password, $database, $options ?: []);
     }
 
     /**
@@ -97,7 +97,7 @@ class Database
      * @param string $driver The name of the driver
      * @return string Returns the name of the driver class.
      */
-    private static function getDriverClass($driver)
+    protected static function getDriverClass($driver)
     {
         $driver = (string) $driver;
 
