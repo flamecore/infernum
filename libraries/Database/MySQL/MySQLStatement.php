@@ -79,6 +79,7 @@ class MySQLStatement extends AbstractStatement
 
             $types = '';
             $values = array();
+
             foreach ($parameters as $i => $parameter) {
                 $value = $this->encode($parameter);
 

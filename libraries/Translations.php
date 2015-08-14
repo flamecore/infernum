@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Infernum
  * Copyright (C) 2011 IceFlame.net
