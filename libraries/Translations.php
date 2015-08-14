@@ -32,6 +32,13 @@ namespace FlameCore\Infernum;
 class Translations
 {
     /**
+     * The language
+     *
+     * @var string
+     */
+    protected $language;
+
+    /**
      * All registered strings with their translation
      *
      * @var array
@@ -46,17 +53,11 @@ class Translations
      */
     public function __construct($language, Application $app)
     {
+        $this->language = $language;
+
         // Load all strings of the selected language pack
-        $this->strings = $app->cache('translations/'.$language, function () use ($language, $app) {
-            $sql = 'SELECT string, translation FROM <PREFIX>translations WHERE language = ?';
-            $result = $app['db']->query($sql, array($language));
-
-            $strings = array();
-            while ($entry = $result->fetch()) {
-                $strings[$entry['string']] = $entry['translation'];
-            }
-
-            return $strings;
+        $this->strings = $app->cache('translations/'.$language, function () use ($app) {
+            return $this->loadStrings($app);
         });
     }
 
@@ -67,7 +68,7 @@ class Translations
      * @param array $vars Variables ('%var%') to replace as array. The key is the name of the variable.
      * @return string
      */
-    public function get($string, $vars = null)
+    public function get($string, array $vars = null)
     {
         // Check if a translation is available, if not use the input string
         if (isset($this->strings[$string])) {
@@ -77,12 +78,31 @@ class Translations
         }
 
         // Replace variables if needed
-        if (is_array($vars)) {
+        if ($vars !== null) {
             foreach ($vars as $key => $val) {
                 $translation = str_replace('%'.$key.'%', $val, $translation);
             }
         }
 
         return $translation;
+    }
+
+    /**
+     * Loads the array of strings with their translations.
+     *
+     * @param \FlameCore\Infernum\Application $app The application context
+     * @return array
+     */
+    protected function loadStrings(Application $app)
+    {
+        $sql = 'SELECT string, translation FROM <PREFIX>translations WHERE language = ?';
+        $result = $app['db']->query($sql, [$this->language]);
+
+        $strings = array();
+        while ($entry = $result->fetch()) {
+            $strings[$entry['string']] = $entry['translation'];
+        }
+
+        return $strings;
     }
 }
