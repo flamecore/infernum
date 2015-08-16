@@ -16,10 +16,10 @@
 namespace FlameCore\Infernum\Exceptions;
 
 /**
- * This exception is thrown if a route is not found
+ * This exception is thrown on system errors.
  *
  * @author   Christian Neff <christian.neff@gmail.com>
  */
-class RouteNotFoundException extends SystemException
+class SystemException extends \Exception
 {
 }
