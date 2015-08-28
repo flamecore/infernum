@@ -167,7 +167,9 @@ class Cache
      */
     public function clear()
     {
-        $iterator = new RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->path, \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
+        $iterator = new \RecursiveDirectoryIterator($this->path, \FilesystemIterator::SKIP_DOTS);
+        $iterator = new \RecursiveIteratorIterator($iterator, \RecursiveIteratorIterator::CHILD_FIRST);
+
         foreach ($iterator as $filename => $file) {
             if ($file->isDir()) {
                 $this->clear($filename);
