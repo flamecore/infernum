@@ -363,7 +363,7 @@ final class Kernel implements \ArrayAccess
      *
      * @param string $pluginName The plugin name
      * @return \FlameCore\Infernum\Plugin
-     * @throws \RuntimeException if the plugin does not exist or if its information could not be loaded.
+     * @throws \LogicException if the plugin does not exist or if its information could not be loaded.
      * @api
      */
     public function loadPlugin($pluginName)

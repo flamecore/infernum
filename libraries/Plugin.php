@@ -88,7 +88,7 @@ class Plugin implements ExtensionMeta
         $class = $this->namespace.'\Extension';
 
         if (!class_exists($class) || !is_subclass_of($class, __NAMESPACE__.'\Extension')) {
-            throw new \RuntimeException(sprintf('Plugin "%s" does not provide a valid extension class.', $this->name));
+            throw new \LogicException(sprintf('Plugin "%s" does not provide a valid extension class.', $this->name));
         }
 
         $this->object = new $class();
