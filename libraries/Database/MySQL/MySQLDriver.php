@@ -99,10 +99,16 @@ class MySQLDriver extends AbstractDriver
     public function select($table, $columns = '*', array $params = [])
     {
         if (is_array($columns)) {
-            $columns = '`'.implode('`, `', $columns).'`';
+            $columns = implode(', ', array_map([$this, 'quoteField'], $columns));
+        } elseif ($columns != '*') {
+            $columns = $this->quoteField($columns);
         }
 
-        $sql = 'SELECT '.$columns.' FROM `<PREFIX>'.$table.'`';
+        $sql = sprintf(
+            'SELECT %s FROM %s',
+            $columns,
+            $this->quoteField($this->prefix.$table)
+        );
 
         if (isset($params['where'])) {
             $sql .= ' WHERE '.$params['where'];
@@ -134,7 +140,13 @@ class MySQLDriver extends AbstractDriver
         }
 
         $params = array_fill(0, count($values), '?');
-        $sql = 'INSERT INTO `<PREFIX>'.$table.'` ('.implode(', ', $columns).') VALUES('.implode(', ', $params).')';
+
+        $sql = sprintf(
+            'INSERT INTO %s (%s) VALUES(%s)',
+            $this->quoteField($this->prefix.$table),
+            implode(', ', $columns),
+            implode(', ', $params)
+        );
 
         return $this->exec($sql, $values);
     }
@@ -148,11 +160,16 @@ class MySQLDriver extends AbstractDriver
         $values = array();
 
         foreach ($data as $column => $value) {
-            $dataset[] = '`'.$column.'` = ?';
+            $dataset[] = sprintf('%s = ?', $this->quoteField($column));
             $values[]  = $value;
         }
 
-        $sql = 'UPDATE `<PREFIX>'.$table.'` SET '.implode(', ', $dataset);
+        $sql = sprintf(
+            'UPDATE %s SET %s',
+            $this->quoteField($this->prefix.$table),
+            implode(', ', $dataset)
+        );
+
 
         if (isset($params['where'])) {
             $sql .= ' WHERE '.$params['where'];
@@ -263,12 +280,28 @@ class MySQLDriver extends AbstractDriver
     /**
      * {@inheritdoc}
      */
+    public function escape($string)
+    {
+        return mysqli_real_escape_string($this->link, $string);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function quote($string)
     {
-        $string = mysqli_real_escape_string($this->link, $string);
+        $string = $this->escape($string);
         $string = addcslashes($string, '%_');
 
         return "'$string'";
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function quoteField($field)
+    {
+        return '`'.$this->escape($field).'`';
     }
 
     /**

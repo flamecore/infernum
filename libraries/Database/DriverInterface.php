@@ -50,7 +50,7 @@ interface DriverInterface
     /**
      * Executes the given SQL statement.
      *
-     * @param $sql The statement to execute
+     * @param string $sql The statement to execute
      * @param array $vars An array of values replacing the variables. Only neccessary if you're using variables.
      * @return int Returns the number of affected rows.
      * @throws \RuntimeException on failure.
@@ -60,7 +60,7 @@ interface DriverInterface
     /**
      * Prepares a statement.
      *
-     * @param $sql The SQL statement to prepare
+     * @param string $sql The SQL statement to prepare
      * @return \FlameCore\Infernum\Database\StatementInterface
      */
     public function prepare($sql);
@@ -161,12 +161,28 @@ interface DriverInterface
     public function inTransaction();
 
     /**
+     * Escapes a string for use in a SQL statement, taking into account the current charset of the connection.
+     *
+     * @param string $string The string to be escaped
+     * @return string Returns the escaped string.
+     */
+    public function escape($string);
+
+    /**
      * Quotes a string for use in a SQL statement, taking into account the current charset of the connection.
      *
      * @param string $string The string to be escaped
      * @return string Returns the quoted string.
      */
     public function quote($string);
+
+    /**
+     * Quotes a field name for use in a SQL statement.
+     *
+     * @param string $field The field name to quote
+     * @return string Returns the quoted field name.
+     */
+    public function quoteField($field);
 
     /**
      * Returns the error code for the most recent statement call.
