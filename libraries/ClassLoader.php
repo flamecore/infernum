@@ -59,6 +59,7 @@ class ClassLoader
     public function hasSource($prefix)
     {
         $prefix = $this->normalize($prefix);
+        
         return isset($this->sources[$prefix]);
     }
 
@@ -71,6 +72,7 @@ class ClassLoader
     public function getSource($prefix)
     {
         $prefix = $this->normalize($prefix);
+        
         return isset($this->sources[$prefix]) ? $this->sources[$prefix] : null;
     }
 
@@ -92,7 +94,7 @@ class ClassLoader
         }
 
         if (strpos($base, '*') === false) {
-            throw new \InvalidArgumentException(sprintf('The base path does not contain a filename wildcard.', $prefix));
+            throw new \InvalidArgumentException(sprintf('The base path "%s" does not contain a filename wildcard.', $base));
         }
 
         $prefix = $this->normalize($prefix);
@@ -108,7 +110,8 @@ class ClassLoader
     public function loadClass($name)
     {
         if ($classfile = $this->findFile($name)) {
-            require_once $classfile;
+            require $classfile;
+            
             return true;
         }
 
