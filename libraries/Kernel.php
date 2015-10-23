@@ -333,9 +333,7 @@ final class Kernel implements \ArrayAccess
             throw new \RuntimeException(sprintf('Module "%s" depends on plugin "%s" but it is not installed.', $moduleName, $e->getPluginName()));
         }
 
-        if (isset($this['loader']) && $module->provides('libraries')) {
-            $this['loader']->addSource($module->getNamespace(), $module->getPath());
-        }
+        $this->prepareExtension($module);
 
         $this->loadedModule = $moduleName;
 
@@ -384,10 +382,7 @@ final class Kernel implements \ArrayAccess
 
             $plugin = new Plugin($pluginName, $this);
 
-            if (isset($this['loader']) && $plugin->provides('libraries')) {
-                $this['loader']->addSource($plugin->getNamespace(), $plugin->getPath());
-            }
-
+            $this->prepareExtension($plugin);
             $plugin->boot();
 
             $this->loadedPlugins[$pluginName] = $plugin;
