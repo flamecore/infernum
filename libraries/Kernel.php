@@ -17,6 +17,7 @@ namespace FlameCore\Infernum;
 
 use FlameCore\Infernum\Configuration\SystemConfiguration;
 use FlameCore\Infernum\Exceptions\RouteNotFoundException;
+use FlameCore\Infernum\Interfaces\ExtensionMeta;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -68,7 +69,7 @@ final class Kernel implements \ArrayAccess
     private $loadedModule = false;
 
     /**
-     * @var array
+     * @var \FlameCore\Infernum\Plugin[]
      */
     private $loadedPlugins = array();
 
@@ -288,11 +289,11 @@ final class Kernel implements \ArrayAccess
             $this->loadPlugin($plugin);
         }
 
-        $routes = $site->getRoutes();
-        foreach ($routes as $route) {
+        foreach ($site->getRoutes() as $route) {
             if (!$this->moduleExists($route['module'])) {
-                throw new \RuntimeException(sprintf('Site "%s" depends on module "%s" which is not installed.', $sitename, $route['module']));
+                throw new \RuntimeException(sprintf('Site "%s" depends on module "%s" but it is not installed.', $sitename, $route['module']));
             }
+
             $alias = isset($route['alias']) ? $route['alias'] : null;
             $extra = isset($route['extra']) ? $route['extra'] : null;
             $this['router']->mountModule($route['module'], $alias, $extra);
@@ -471,11 +472,10 @@ final class Kernel implements \ArrayAccess
             case E_USER_ERROR:
             case E_RECOVERABLE_ERROR:
                 throw new \ErrorException($message, $code, 2, $file, $line);
-                break;
+
             case E_WARNING:
             case E_USER_WARNING:
                 $this['logger']->warning($message);
-                break;
         }
 
         return true;
@@ -543,5 +543,17 @@ final class Kernel implements \ArrayAccess
     public function offsetUnset($offset)
     {
         $this->container->remove($offset);
+    }
+
+    /**
+     * Prepares the given extension.
+     *
+     * @param \FlameCore\Infernum\Interfaces\ExtensionMeta $extension The extension
+     */
+    protected function prepareExtension(ExtensionMeta $extension)
+    {
+        if (isset($this['loader']) && $extension->provides('libraries')) {
+            $this['loader']->addSource($extension->getNamespace(), $extension->getPath());
+        }
     }
 }
