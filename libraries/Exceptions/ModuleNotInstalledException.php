@@ -32,7 +32,7 @@ class ModuleNotInstalledException extends SystemException
      *
      * @param string $moduleName The name of the missing module
      */
-    public function __constructor($moduleName)
+    public function __construct($moduleName)
     {
         $this->moduleName = $moduleName;
 

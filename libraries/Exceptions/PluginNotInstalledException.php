@@ -32,7 +32,7 @@ class PluginNotInstalledException extends SystemException
      *
      * @param string $pluginName The name of the missing plugin
      */
-    public function __constructor($pluginName)
+    public function __construct($pluginName)
     {
         $this->pluginName = $pluginName;
 
