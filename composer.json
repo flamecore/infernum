@@ -4,6 +4,7 @@
     "license": "ISC",
     "require": {
         "php": ">=5.5",
+        "flamecore/container": "–1.0",
         "symfony/yaml": "~2.5",
         "symfony/config": "~2.5",
         "symfony/http-foundation": "~2.5",
