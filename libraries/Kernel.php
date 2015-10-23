@@ -16,6 +16,8 @@
 namespace FlameCore\Infernum;
 
 use FlameCore\Infernum\Configuration\SystemConfiguration;
+use FlameCore\Infernum\Exceptions\ModuleNotInstalledException;
+use FlameCore\Infernum\Exceptions\PluginNotInstalledException;
 use FlameCore\Infernum\Exceptions\RouteNotFoundException;
 use FlameCore\Infernum\Interfaces\ExtensionMeta;
 use Symfony\Component\HttpFoundation\Request;
@@ -281,12 +283,12 @@ final class Kernel implements \ArrayAccess
 
         $site = new Site($sitename, $this);
 
-        $plugins = $site->getPlugins();
-        foreach ($plugins as $plugin) {
-            if (!$this->pluginExists($plugin)) {
-                throw new \RuntimeException(sprintf('Site "%s" depends on plugin "%s" which is not installed.', $sitename, $plugin));
+        try {
+            foreach ($site->getPlugins() as $plugin) {
+                $this->loadPlugin($plugin);
             }
-            $this->loadPlugin($plugin);
+        } catch (PluginNotInstalledException $e) {
+            throw new \RuntimeException(sprintf('Site "%s" depends on plugin "%s" but it is not installed.', $sitename, $e->getPluginName()));
         }
 
         foreach ($site->getRoutes() as $route) {
@@ -310,20 +312,25 @@ final class Kernel implements \ArrayAccess
      * @param string $moduleName The module name
      * @param mixed $extra The extra options (optional)
      * @return \FlameCore\Infernum\Module Returns the Module object.
-     * @throws \LogicException if the module does not exist or if its information could not be loaded.
+     * @throws ModuleNotInstalledException if the module does not exist.
+     * @throws \LogicException if the module's information could not be loaded.
      * @throws \RuntimeException if the module depends on a plugin which is not installed.
      * @api
      */
     public function loadModule($moduleName, $extra = null)
     {
+        if (!$this->moduleExists($moduleName)) {
+            throw new ModuleNotInstalledException($moduleName);
+        }
+
         $module = new Module($moduleName, $this, $extra);
 
-        $plugins = $module->getRequiredPlugins();
-        foreach ($plugins as $plugin) {
-            if (!$this->pluginExists($plugin)) {
-                throw new \RuntimeException(sprintf('Module "%s" depends on plugin "%s" which is not installed.', $moduleName, $plugin));
+        try {
+            foreach ($module->getRequiredPlugins() as $plugin) {
+                $this->loadPlugin($plugin);
             }
-            $this->loadPlugin($plugin);
+        } catch (PluginNotInstalledException $e) {
+            throw new \RuntimeException(sprintf('Module "%s" depends on plugin "%s" but it is not installed.', $moduleName, $e->getPluginName()));
         }
 
         if (isset($this['loader']) && $module->provides('libraries')) {
@@ -364,12 +371,17 @@ final class Kernel implements \ArrayAccess
      *
      * @param string $pluginName The plugin name
      * @return \FlameCore\Infernum\Plugin
-     * @throws \LogicException if the plugin does not exist or if its information could not be loaded.
+     * @throws PluginNotInstalledException if the plugin does not exist.
+     * @throws \LogicException if the plugin's information could not be loaded.
      * @api
      */
     public function loadPlugin($pluginName)
     {
         if (!isset($this->loadedPlugins[$pluginName])) {
+            if (!$this->pluginExists($pluginName)) {
+                throw new PluginNotInstalledException($pluginName);
+            }
+
             $plugin = new Plugin($pluginName, $this);
 
             if (isset($this['loader']) && $plugin->provides('libraries')) {
