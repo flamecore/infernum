@@ -36,4 +36,10 @@ interface ExtensionMeta
      * @return string
      */
     public function getNamespace();
+
+    /**
+     * @param string $type
+     * @return bool
+     */
+    public function provides($type);
 }
