@@ -29,8 +29,9 @@ define('DS', DIRECTORY_SEPARATOR);
 define('INFERNUM_PATH', DS != '/' ? str_replace(DS, '/', __DIR__) : __DIR__);
 
 try {
-    if (!is_readable(INFERNUM_PATH.'/vendor/autoload.php'))
+    if (!is_readable(INFERNUM_PATH.'/vendor/autoload.php')) {
         throw new \LogicException('Vendor autoloader not found or unreadable. Please make sure that you have installed the required libraries using Composer.');
+    }
 
     require_once INFERNUM_PATH.'/libraries/ClassLoader.php';
     require_once INFERNUM_PATH.'/vendor/autoload.php';
@@ -38,10 +39,10 @@ try {
     $loader = new ClassLoader(__NAMESPACE__, INFERNUM_PATH);
     $loader->register();
 
-    $request = Request::createFromGlobals();
-
     $kernel = new Kernel(INFERNUM_PATH);
     $kernel['loader'] = $loader;
+
+    $request = Request::createFromGlobals();
 
     $site = $kernel->boot($request);
 
