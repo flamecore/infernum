@@ -14,7 +14,7 @@ web:
   # Use URL rewriting for page paths
   url_rewrite: false
   # Theme from /themes folder
-  theme: flamecore/indigo
+  theme: flamecore/default
 
 database:
   # Database driver to use
@@ -28,7 +28,7 @@ database:
   # Name of database
   database: infernum
   # Database table prefix
-  prefix: "infernum_"
+  prefix: infernum_
 
 session:
   # Default session lifetime
@@ -38,11 +38,11 @@ session:
 
 guest:
   # Username for anonymous users
-  username: "Anonymous"
+  username: Anonymous
 
 cookie:
   # Name prefix for cookies
-  name_prefix: "infernum_"
+  name_prefix: infernum_
   # Domain that cookies are available to
   domain: ""
   # Path on the server in which cookies will be available on
